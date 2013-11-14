@@ -81,6 +81,8 @@ build/
 *.sln
 *.vcxproj
 *.filters
+*.bat
+Debug/*
 
 # Visual C++ cache files
 ipch/
