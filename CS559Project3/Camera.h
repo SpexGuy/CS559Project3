@@ -51,7 +51,7 @@ public:
 	/* pushes a Rotation onto the decorator stack, then adds
 	 * an animation to the given group
 	 * Returns a pointer to the base of the stack */
-	Camera *animateRotation(AnimationGroup *ag, TimeFunction<glm::vec3> *axis, TimeFunction<float> *angle);
+	Camera *animateRotation(const glm::vec3 &axis, TimeFunction<float> *angle);
 
 
 };

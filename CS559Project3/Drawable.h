@@ -56,8 +56,7 @@ public:
 	 * an animation to the given group
 	 * Returns a pointer to the base of the stack */
 	Drawable *animateRotation(
-				AnimationGroup *ag,
-				TimeFunction<glm::vec3> *axis,
+				const glm::vec3 &axis,
 				TimeFunction<float> *angle);
 	
 	/* pushes a DisableDepthTest onto the decorator stack

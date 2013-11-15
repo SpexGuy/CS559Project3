@@ -8,34 +8,30 @@
 using namespace glm;
 using namespace std;
 
-RotatableMixin::RotatableMixin() {
-	this->axis = vec3(0.0f, 1.0f, 0.0f);
-	this->angle = 0.0f;
-}
-
-void RotatableMixin::transform(glm::mat4 &context) const {
-	context = rotate(context, angle, axis);
-}
-
-void RotatableMixin::setRotation(const vec3 &axis, const float &angle) {
-	this->axis = axis;
-	this->angle = angle;
-}
-
 
 
 void Rotation::draw(const mat4 &model) {
-	mat4 m = model;
-	transform(m);
-	child->draw(m);
+	child->draw(rotate(model, angle, axis));
+}
+
+
+
+void RotationAnimation::draw(const mat4 &model) {
+	child->draw(rotate(model, angle->evaluate(Graphics::inst()->getTime()), axis));
 }
 
 
 
 mat4 CamRotation::generateViewMatrix() {
-	mat4 view = next->generateViewMatrix();
-	view = glm::rotate(view, -angle, axis);
-	return view;
+	return rotate(next->generateViewMatrix(), -angle, axis);
+}
+
+
+
+mat4 CamRotationAnimation::generateViewMatrix() {
+	return rotate(next->generateViewMatrix(),
+			-(angle->evaluate(Graphics::inst()->getTime())),
+			axis);
 }
 
 

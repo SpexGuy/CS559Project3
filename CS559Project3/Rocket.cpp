@@ -84,7 +84,6 @@ bool Rocket::initialize()
 
 void Rocket::draw(const mat4 &model) {
 	mat4 m = model;
-	transform(m);
 
 	head->draw(m);
 	for(int i = 0; i< 4; i++)

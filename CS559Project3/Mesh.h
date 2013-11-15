@@ -2,11 +2,11 @@
 #include <vector>
 #include "Shader.h"
 #include "Vertex.h"
-#include "Transformable.h"
+#include "Drawable.h"
 #include "ilcontainer.h"
 #include <glm/glm.hpp>
 
-class Mesh : public Drawable, public TransformableMixin {
+class Mesh : public Drawable {
 private:
 	Mesh();
 protected:

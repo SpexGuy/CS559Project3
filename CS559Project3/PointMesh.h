@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "Drawable.h"
-#include "Transformable.h"
 #include "Camera.h"
 #include "Vertex.h"
 #include <glm/glm.hpp>

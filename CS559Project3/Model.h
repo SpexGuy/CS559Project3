@@ -1,7 +1,7 @@
 #pragma once
-#include "Transformable.h"
 #include "Animation.h"
+#include "Drawable.h"
 
 //@Deprecated
-class Model : public TransformableGroup, public AnimationGroup {
+class Model : public DrawableGroup, public AnimationGroup {
 };

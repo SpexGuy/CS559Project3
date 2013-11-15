@@ -21,28 +21,19 @@ Camera *Camera::store(Camera *&bucket) {
 }
 
 Camera *Camera::rotated(const vec3 &axis, const float &angle) {
-	CamRotation *rot = new CamRotation();
-	rot->setRotation(axis, angle);
-	return pushDecorator(rot);
+	return pushDecorator(new CamRotation(angle, axis));
 }
 
 Camera *Camera::translated(const vec3 &position) {
-	CamTranslation *trans = new CamTranslation();
-	trans->position(position);
-	return pushDecorator(trans);
+	return pushDecorator(new CamTranslation(position));
 }
 
 Camera *Camera::scaled(const vec3 &scale) {
-	CamScale *sc = new CamScale();
-	sc->scale(scale);
-	return pushDecorator(sc);
+	return pushDecorator(new CamScale(scale));
 }
 
-Camera *Camera::animateRotation(AnimationGroup *ag, TimeFunction<vec3> *axis, TimeFunction<float> *angle) {
-	CamRotation *rot = new CamRotation();
-	RotationAnimation *anim = new RotationAnimation(rot, axis, angle);
-	ag->addAnimation(anim);
-	return pushDecorator(rot);
+Camera *Camera::animateRotation(const vec3 &axis, TimeFunction<float> *angle) {
+	return pushDecorator(new CamRotationAnimation(axis, angle));
 }
 
 

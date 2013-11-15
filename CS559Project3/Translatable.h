@@ -1,45 +1,43 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "Transformer.h"
 #include "Drawable.h"
 #include "Camera.h"
 
-/**
- * An interface representing an object which can be translated
- */
-class Translatable : public Transformer {
-public:
-	virtual void translate(const glm::vec3 & offset) = 0;
-	virtual glm::vec3 position() const = 0;
-	virtual void position(glm::vec3 pos) = 0;
-};
 
-/**
- * A mixin to facilitate implementation of the Translatable interface
- */
-class TranslatableMixin : public Translatable {
+class Translation : public DrawableDecorator {
 protected:
-	virtual void transform(glm::mat4 & context) const;
 	glm::vec3 pos;
 public:
-	/* initializes the position to (0, 0, 0) */
-	TranslatableMixin();
-	virtual void translate(const glm::vec3 & offset);
-	virtual glm::vec3 position() const;
-	virtual void position(glm::vec3 pos);
-};
-
-
-class Translation : public TranslatableMixin, public DrawableDecorator {
-public:
 	Translation() :
-		DrawableDecorator() {}
+		pos(0.0f) {}
+	Translation(const glm::vec3 &pos) :
+		pos(pos) {}
+
 	virtual void draw(const glm::mat4 &model);
+
+	inline glm::vec3 getPosition() {
+		return pos;
+	}
+	inline void setPosition(const glm::vec3 &pos) {
+		this->pos = pos;
+	}
 };
 
-class CamTranslation : public TranslatableMixin, public CameraDecorator {
+class CamTranslation : public CameraDecorator {
+protected:
+	glm::vec3 pos;
 public:
 	CamTranslation() :
-		CameraDecorator() {}
+		pos(0.0f) {}
+	CamTranslation(const glm::vec3 &pos) :
+		pos(pos) {}
+
 	virtual glm::mat4 generateViewMatrix();
+
+	inline glm::vec3 getPosition() {
+		return pos;
+	}
+	inline void setPosition(const glm::vec3 &pos) {
+		this->pos = pos;
+	}
 };

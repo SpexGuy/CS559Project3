@@ -1,44 +1,77 @@
 #pragma once
 #include <glm/glm.hpp>
-#include "Transformer.h"
 #include "Drawable.h"
 #include "Camera.h"
-
-/**
- * An interface for something that can be rotated
- */
-class Rotatable : public Transformer {
-public:
-	virtual void setRotation(const glm::vec3 &axis, const float &angle) = 0;
-};
+#include "Function.h"
 
 /**
  * A mixin class to facilitate implementation of the Rotatable interface
  */
 //@Deprecated
-class RotatableMixin : public Rotatable {
+
+class Rotation : public DrawableDecorator {
+private:
+	Rotation();
 protected:
 	float angle;
 	glm::vec3 axis;
-	virtual void transform(glm::mat4 & context) const;
-
 public:
-	/* initializes angle to 0 and axis to (0, 1, 0) */
-	RotatableMixin();
-	virtual void setRotation(const glm::vec3 &axis, const float &angle);
+	Rotation(float angle, const glm::vec3 &axis) :
+		angle(angle), axis(axis) {}
+
+	virtual void draw(const glm::mat4 &model);
+
+	inline void setAngle(float angle) {
+		this->angle = angle;
+	}
+	inline void setAxis(const glm::vec3 &axis) {
+		this->axis = axis;
+	}
 };
 
-class Rotation : public RotatableMixin, public DrawableDecorator {
+class RotationAnimation : public DrawableDecorator {
+private:
+	RotationAnimation();
+protected:
+	glm::vec3 axis;
+	TimeFunction<float> *angle;
 public:
-	Rotation() :
-		DrawableDecorator() {}
+	RotationAnimation(const glm::vec3 &axis, TimeFunction<float> *angle) :
+		axis(axis), angle(angle) {}
+
 	virtual void draw(const glm::mat4 &model);
 };
 
-class CamRotation : public RotatableMixin, public CameraDecorator {
+class CamRotation : public CameraDecorator {
+private:
+	CamRotation();
+protected:
+	float angle;
+	glm::vec3 axis;
 public:
-	CamRotation() :
-		CameraDecorator() {}
+	CamRotation(float angle, const glm::vec3 &axis) :
+		angle(angle), axis(axis) {}
+
+	virtual glm::mat4 generateViewMatrix();
+
+	inline void setAngle(float angle) {
+		this->angle = angle;
+	}
+	inline void setAxis(const glm::vec3 &axis) {
+		this->axis = axis;
+	}
+};
+
+class CamRotationAnimation : public CameraDecorator {
+private:
+	CamRotationAnimation();
+protected:
+	glm::vec3 axis;
+	TimeFunction<float> *angle;
+public:
+	CamRotationAnimation(const glm::vec3 &axis, TimeFunction<float> *angle) :
+		axis(axis), angle(angle) {}
+
 	virtual glm::mat4 generateViewMatrix();
 };
 
@@ -46,6 +79,7 @@ public:
  * A mixin which gives data members and modifying functions
  * to represent a spherical coordinate system
  */
+//@Deprecated
 class SphericalAngleMixin {
 protected:
 	float angle;
@@ -78,6 +112,7 @@ public:
 	}
 };
 
+//@Deprecated
 class SphericalCoordinateMixin : public SphericalAngleMixin {
 protected:
 	float radius;
@@ -99,13 +134,15 @@ public:
  * A Transformer mixin which implements rotation using
  * a spherical coordinate system
  */
-class SphericalRotationMixin : public Transformer, public SphericalAngleMixin {
+//@Deprecated
+class SphericalRotationMixin : public SphericalAngleMixin {
 protected:
 	virtual void transform(glm::mat4 & context) const;
 
 };
 
-class SphericalPositionMixin : public Transformer, public SphericalCoordinateMixin {
+//@Deprecated
+class SphericalPositionMixin : public SphericalCoordinateMixin {
 protected:
 	virtual void transform(glm::mat4 & context) const;
 };

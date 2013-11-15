@@ -25,27 +25,19 @@ Drawable *Drawable::store(Drawable *&bucket) {
 
 //		----- Decorator Convenience Functions ------
 Drawable *Drawable::rotated(const vec3 &axis, const float &angle) {
-	Rotation *d = new Rotation();
-	d->setRotation(axis, angle);
-	return pushDecorator(d);
+	return pushDecorator(new Rotation(angle, axis));
 }
 
 Drawable *Drawable::translated(const vec3 &position) {
-	Translation *d = new Translation();
-	d->position(position);
-	return pushDecorator(d);
+	return pushDecorator(new Translation(position));
 }
 
 Drawable *Drawable::scaled(const vec3 &scale) {
-	Scale *d = new Scale();
-	d->scale(scale);
-	return pushDecorator(d);
+	return pushDecorator(new Scale(scale));
 }
 
-Drawable *Drawable::animateRotation(AnimationGroup *ag, TimeFunction<glm::vec3> *axis, TimeFunction<float> *angle) {
-	Rotation *d = new Rotation();
-	ag->addAnimation(new RotationAnimation(d, axis, angle));
-	return pushDecorator(d);
+Drawable *Drawable::animateRotation(const vec3 &axis, TimeFunction<float> *angle) {
+	return pushDecorator(new RotationAnimation(axis, angle));
 }
 
 Drawable *Drawable::disableDepthTest() {

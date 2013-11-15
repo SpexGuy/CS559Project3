@@ -1,10 +1,10 @@
 #pragma once
-#include "Transformable.h"
 #include <vector>
+#include "Drawable.h"
 #include "Mesh.h"
 #include "SplineEditor.h"
 
-class Rocket: public TransformableGroup
+class Rocket : public DrawableGroup
 {
 public:
 	/**

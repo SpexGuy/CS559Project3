@@ -1,43 +1,45 @@
 #pragma once
-#include "Transformer.h"
 #include "Drawable.h"
 #include "Camera.h"
 #include <glm/glm.hpp>
 
-/**
- * An interface for a transformer which can be scaled
- */
-class Scaleable : public Transformer {
-public:
-	virtual void scale(glm::vec3 scale) = 0;
-	virtual glm::vec3 getScale() const = 0;
-};
 
-/**
- * A mixin to facilitate implementation of the Scaleable interface
- */
-class ScaleableMixin : public Scaleable {
-public:
-	/* initializes the scale to (1, 1, 1) */
-	ScaleableMixin();
-	virtual void scale(glm::vec3 scale);
-	virtual glm::vec3 getScale() const;
+
+class Scale : public DrawableDecorator {
 protected:
 	glm::vec3 scaleVec;
-	virtual void transform(glm::mat4 & context) const;
-};
-
-class Scale : public ScaleableMixin, public DrawableDecorator {
 public:
 	Scale() :
-		DrawableDecorator() {}
+		scaleVec(1.0f) {}
+	Scale(const glm::vec3 &scale) :
+		scaleVec(scale) {}
+
 	virtual void draw(const glm::mat4 &model);
+	
+	inline void setScale(const glm::vec3 &scale) {
+		this->scaleVec = scale;
+	}
+	inline glm::vec3 getScale() const {
+		return scaleVec;
+	}
 };
 
-class CamScale : public ScaleableMixin, public CameraDecorator {
+class CamScale : public CameraDecorator {
+protected:
+	glm::vec3 scaleVec;
 public:
 	CamScale() :
-		CameraDecorator() {}
+		scaleVec(1.0f) {}
+	CamScale(const glm::vec3 &scale) :
+		scaleVec(scale) {}
+
 	virtual glm::mat4 generateViewMatrix();
+
+	inline void setScale(const glm::vec3 &scale) {
+		this->scaleVec = scale;
+	}
+	inline glm::vec3 getScale() const {
+		return scaleVec;
+	}
 };
 

@@ -35,7 +35,7 @@ void Animation::play() {
 	willPause = false;
 }
 
-void Animation:: reset() {
+void Animation::reset() {
 	//trigger a positive edge
 	paused = true;
 	/* upon positive edge,
@@ -95,9 +95,3 @@ AnimationGroup::~AnimationGroup() {
 	}
 }
 
-
-//--------------- RotationAnimation ---------------
-
-void RotationAnimation::doUpdate(int time) {
-	obj->setRotation(axis->evaluate(time), angle->evaluate(time));
-}

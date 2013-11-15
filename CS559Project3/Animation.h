@@ -63,19 +63,3 @@ public:
 	/* also deletes children */
 	virtual ~AnimationGroup();
 };
-
-/** An animation to be applied to a Rotatable.
- * It uses TimeFunctions to define the path of motion. */
-class RotationAnimation : public Animation {
-private:
-	RotationAnimation();
-protected:
-	Rotatable *obj;
-	TimeFunction<glm::vec3> *axis;
-	TimeFunction<float> *angle;
-public:
-	RotationAnimation(Rotatable *r, TimeFunction<glm::vec3> *axis, TimeFunction<float> *angle)
-		: obj(r), axis(axis), angle(angle) {}
-
-	virtual void doUpdate(int time);
-};
