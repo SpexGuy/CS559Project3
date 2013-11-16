@@ -127,13 +127,14 @@ void DrawableGroup::draw(const mat4 &model) {
 		list<Drawable *>::const_iterator
 			iterator = elements.begin(),
 			end = elements.end();
-		iterator != end;
-		++iterator)
+		iterator != end;)
 	{
 		(*iterator)->draw(model);
 		if ((*iterator)->isObselete()) {
 			delete *iterator;
-			elements.erase(iterator);
+			iterator = elements.erase(iterator);
+		} else {
+			++iterator;
 		}
 	}
 }
