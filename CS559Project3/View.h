@@ -2,7 +2,7 @@
 #include <vector>
 #include "Camera.h"
 #include "Projection.h"
-#include "Model.h"
+#include "Drawable.h"
 #include "Graphics.h"
 
 class ViewOverlay;
@@ -19,16 +19,16 @@ protected:
 	ViewOverlay *overlay;
 	Projection *proj;
 	Camera *camera;
-	Model *model;
+	Drawable *model;
 public:
-	View(Projection *p, Camera *camera, Model *model, ViewOverlay *o);
+	View(Projection *p, Camera *camera, Drawable *model, ViewOverlay *o);
 	
 	virtual void render();
 	
 	inline Camera *getCamera() {
 		return camera;
 	}
-	inline Model *getModel() {
+	inline Drawable *getModel() {
 		return model;
 	}
 	inline void setOverlay(ViewOverlay *o) {
@@ -37,7 +37,7 @@ public:
 	inline void setCamera(Camera *c) {
 		this->camera = c;
 	}
-	inline void setModel(Model *m) {
+	inline void setModel(Drawable *m) {
 		this->model = m;
 	}
 };

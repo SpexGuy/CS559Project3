@@ -1,7 +1,7 @@
 #include <iostream>
 #include "View.h"
 #include "Camera.h"
-#include "Model.h"
+#include "Drawable.h"
 #include "Graphics.h"
 #include <glm/glm.hpp>
 #include <GL/freeglut.h>
@@ -12,7 +12,7 @@ using namespace glm;
 using namespace std;
 
 
-View::View(Projection *p, Camera *c, Model *m, ViewOverlay *o) {
+View::View(Projection *p, Camera *c, Drawable *m, ViewOverlay *o) {
 	proj = p;
 	camera = c;
 	model = m;

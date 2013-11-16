@@ -43,7 +43,7 @@ public:
 
 	SpheroidLight *light;
 
-	Model *model;
+	DrawableGroup *model;
 
 	int period;
 	bool wireframe;
@@ -66,8 +66,7 @@ bool Globals::initialize() {
 	proj->setPlanes(0.01f, 100.0f);
 
 	//Creates the models with will hold the meshes for a given Scene.
-	model = new Model();
-	Model* modelMars = new Model();
+	model = new DrawableGroup();
 
 	light = new SpheroidLight();
 
