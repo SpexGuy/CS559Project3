@@ -38,6 +38,8 @@ private:
 
 	int texIndex;
 
+	float timeScale;
+	int lastTrueTime;
 	int time;
 
 	Shader *solidShader;
@@ -158,8 +160,16 @@ public:
 	inline void setModelviewMode(int mode) {
 		modelviewMode = mode;
 	}
-	inline void setTime(int time) {
-		this->time = time;
+	inline void update() {
+		int newTime = glutGet(GLUT_ELAPSED_TIME);
+		time = int(timeScale * (newTime - lastTrueTime));
+		lastTrueTime = newTime;
+	}
+	inline void resetTime() {
+		this->time = 0;
+	}
+	inline void setTimeScale(float timeScale) {
+		this->timeScale = timeScale;
 	}
 	inline void setTexture(int texIndex) {
 		this->texIndex = texIndex;
@@ -197,6 +207,9 @@ public:
 	}
 	inline int getTime() const {
 		return time;
+	}
+	inline float getTimeScale() {
+		return timeScale;
 	}
 	inline int getTexture() const {
 		return texIndex;

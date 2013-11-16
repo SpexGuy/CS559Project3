@@ -268,7 +268,7 @@ void SpecialFunc(int c, int x, int y) {
 void TimerFunc(int value) {
 	if (!globals.window->isClosed()) {
 		//keep state in Graphics
-		Graphics::inst()->setTime(glutGet(GLUT_ELAPSED_TIME));
+		Graphics::inst()->update();
 		//request next call
 		glutTimerFunc(globals.period, TimerFunc, value);
 		//redraw window

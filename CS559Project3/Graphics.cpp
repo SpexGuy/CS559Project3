@@ -33,6 +33,8 @@ Graphics::Graphics() {
 	this->shininess = 1;
 	this->modelviewMode = MV_FULL;
 	this->texIndex = 0;
+	this->timeScale = 1;
+	this->lastTrueTime = 0;
 	this->time = 0;
 
 	circleCH = circleVH = 
