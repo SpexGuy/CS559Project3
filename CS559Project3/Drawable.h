@@ -16,11 +16,12 @@ public:
 	 * Returns whether it was successful*/
 	virtual bool initialize() = 0;
 
-	/* Draws the object. */
-	virtual void draw(const glm::mat4 &model) = 0;
+	/* Draws the object.
+	 * Returns true iff the Drawable is obselete and
+	 * should be deleted by its containing group*/
+	virtual bool draw(const glm::mat4 &model) = 0;
 
-	/* returns true iff the Drawable is obselete and
-	 * should be deleted by its containing group. */
+	/*. */
 	virtual bool isObselete();
 
 	/* frees any GL handles still active */
@@ -126,9 +127,6 @@ public:
 	/* {@InheritDoc} */
 	virtual Drawable *store(Drawable *&bucket);
 
-	/* {@InheritDoc} */
-	virtual bool isObselete();
-
 	/* propagates initialization down the stack */
 	virtual bool initialize();
 	
@@ -157,7 +155,7 @@ public:
 	virtual bool initialize();
 
 	/* draws all drawables in the list */
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 
 	/* takes down all children */
 	virtual void takeDown();
@@ -186,7 +184,7 @@ class DisableDepthTest : public DrawableDecorator {
 public:
 	DisableDepthTest() {}
 	
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 };
 
 /** Sets the color on the way down the decorator stack.
@@ -202,7 +200,7 @@ public:
 		color(color)
 	{}
 	
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 };
 
 /** Sets the material on the way down the decorator stack.
@@ -221,7 +219,7 @@ public:
 		specularColor(specularColor)
 	{}
 	
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 };
 
 /** Saves the color on the way down the stack, and restores
@@ -230,7 +228,7 @@ class ColorReset : public DrawableDecorator {
 public:
 	ColorReset() {}
 	
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 };
 
 /** Saves the material on the way down the stack, and restores
@@ -239,7 +237,7 @@ class MaterialReset : public DrawableDecorator {
 public:
 	MaterialReset() {}
 	
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 };
 
 /** Creates a transformation which makes the object billboard
@@ -254,7 +252,7 @@ public:
 		axis(glm::normalize(axis))
 	{}
 
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 };
 
 /** Changes the modelview mode on the way down the stack
@@ -269,19 +267,14 @@ public:
 		mode(mode)
 	{}
 
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 };
 
 class OffscreenObselescence : public DrawableDecorator {
-protected:
-	bool obselete;
 public:
-	OffscreenObselescence() :
-		obselete(false) {}
+	OffscreenObselescence() {}
 
-	virtual void draw(const glm::mat4 &model);
-
-	virtual bool isObselete();
+	virtual bool draw(const glm::mat4 &model);
 };
 
 

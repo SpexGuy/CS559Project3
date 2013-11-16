@@ -19,7 +19,7 @@ public:
 	Rotation(float angle, const glm::vec3 &axis) :
 		angle(angle), axis(axis) {}
 
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 
 	inline void setAngle(float angle) {
 		this->angle = angle;
@@ -39,7 +39,7 @@ public:
 	RotationAnimation(const glm::vec3 &axis, TimeFunction<float> *angle) :
 		axis(axis), angle(angle) {}
 
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 };
 
 class CamRotation : public CameraDecorator {

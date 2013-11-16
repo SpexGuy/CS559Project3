@@ -6,8 +6,8 @@ using namespace glm;
 
 
 
-void Scale::draw(const mat4 &model) {
-	child->draw(scale(model, scaleVec));
+bool Scale::draw(const mat4 &model) {
+	return child->draw(scale(model, scaleVec));
 }
 
 

@@ -40,7 +40,7 @@ public:
 	/** {@InheritDoc} */
 	virtual bool initialize();
 	/** {@InheritDoc} */
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 	/** {@InheritDoc} */
 	virtual void takeDown();
 

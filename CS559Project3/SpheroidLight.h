@@ -5,6 +5,6 @@
 class SpheroidLight : public Drawable, public SphericalPositionMixin {
 public:
 	virtual bool initialize();
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 	virtual void takeDown();
 };

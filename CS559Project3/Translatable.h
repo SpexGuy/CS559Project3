@@ -13,7 +13,7 @@ public:
 	Translation(const glm::vec3 &pos) :
 		pos(pos) {}
 
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 
 	inline glm::vec3 getPosition() {
 		return pos;

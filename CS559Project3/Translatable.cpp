@@ -5,8 +5,8 @@
 using namespace glm;
 
 
-void Translation::draw(const mat4 &model) {
-	child->draw(translate(model, pos));
+bool Translation::draw(const mat4 &model) {
+	return child->draw(translate(model, pos));
 }
 
 

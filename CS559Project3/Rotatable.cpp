@@ -10,14 +10,14 @@ using namespace std;
 
 
 
-void Rotation::draw(const mat4 &model) {
-	child->draw(rotate(model, angle, axis));
+bool Rotation::draw(const mat4 &model) {
+	return child->draw(rotate(model, angle, axis));
 }
 
 
 
-void RotationAnimation::draw(const mat4 &model) {
-	child->draw(rotate(model, angle->evaluate(Graphics::inst()->getTime()), axis));
+bool RotationAnimation::draw(const mat4 &model) {
+	return child->draw(rotate(model, angle->evaluate(Graphics::inst()->getTime()), axis));
 }
 
 

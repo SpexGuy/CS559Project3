@@ -82,7 +82,7 @@ bool Rocket::initialize()
 	return true;
 }
 
-void Rocket::draw(const mat4 &model) {
+bool Rocket::draw(const mat4 &model) {
 	mat4 m = model;
 
 	head->draw(m);
@@ -94,6 +94,7 @@ void Rocket::draw(const mat4 &model) {
 	if (editMode) {
 		spline->draw(m);
 	}
+	return true;
 }
 
 void Rocket::replaceHead() {

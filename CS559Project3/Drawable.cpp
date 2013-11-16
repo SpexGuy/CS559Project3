@@ -98,10 +98,6 @@ Drawable *DrawableDecorator::store(Drawable *&bucket) {
 	return this;
 }
 
-bool DrawableDecorator::isObselete() {
-	return child->isObselete();
-}
-
 bool DrawableDecorator::initialize() {
 	return child->initialize();
 }
@@ -122,21 +118,21 @@ DrawableGroup::DrawableGroup() {
 	elements = list<Drawable*>();
 }
 
-void DrawableGroup::draw(const mat4 &model) {
+bool DrawableGroup::draw(const mat4 &model) {
 	for (
 		list<Drawable *>::const_iterator
 			iterator = elements.begin(),
 			end = elements.end();
 		iterator != end;)
 	{
-		(*iterator)->draw(model);
-		if ((*iterator)->isObselete()) {
+		if (!(*iterator)->draw(model)) {
 			delete *iterator;
 			iterator = elements.erase(iterator);
 		} else {
 			++iterator;
 		}
 	}
+	return true;
 }
 
 bool DrawableGroup::initialize() {
@@ -184,46 +180,49 @@ list<Drawable *> *DrawableGroup::getElements() {
 
 //------------ Decorator Implementations ---------------
 
-void DisableDepthTest::draw(const mat4 &model) {
+bool DisableDepthTest::draw(const mat4 &model) {
 	glDisable(GL_DEPTH_TEST);
-	child->draw(model);
+	bool ret = child->draw(model);
 	glEnable(GL_DEPTH_TEST);
+	return ret;
 }
 
-void Color::draw(const mat4 &model) {
+bool Color::draw(const mat4 &model) {
 	Graphics::inst()->setColor(color);
-	child->draw(model);
+	return child->draw(model);
 }
 
-void Material::draw(const mat4 &model) {
+bool Material::draw(const mat4 &model) {
 	Graphics::inst()->setMaterial(ambient, specularColor, shininess);
-	child->draw(model);
+	return child->draw(model);
 }
 
-void ColorReset::draw(const mat4 &model) {
+bool ColorReset::draw(const mat4 &model) {
 	//save the old color
 	vec4 color = Graphics::inst()->getColor();
 	//continue down the stack
-	child->draw(model);
+	bool ret = child->draw(model);
 	//restore the old color
 	Graphics::inst()->setColor(color);
+	return ret;
 }
 
-void MaterialReset::draw(const mat4 &model) {
+bool MaterialReset::draw(const mat4 &model) {
 	//save the old material
 	float a = Graphics::inst()->getAmbient();
 	vec4 spec = Graphics::inst()->getSpecularColor();
 	float shiny = Graphics::inst()->getShininess();
 	//continue down the stack
-	child->draw(model);
+	bool ret = child->draw(model);
 	//restore the old material
 	Graphics::inst()->setMaterial(a, spec, shiny);
+	return ret;
 }
 
 /** this algorithm is adapted from
  * http://nehe.gamedev.net/article/billboarding_how_to/18011/
  */
-void BillboardTransform::draw(const mat4 &model) {
+bool BillboardTransform::draw(const mat4 &model) {
 	//convert camera position to local coordinate space
 	vec4 cameraPos = inverse(Graphics::inst()->getView() * model) * vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	
@@ -242,24 +241,20 @@ void BillboardTransform::draw(const mat4 &model) {
 	transform[3] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	
 	//convert back to modelspace
-	child->draw(model * transform);
+	return child->draw(model * transform);
 }
 
-void ModelviewMode::draw(const mat4 &model) {
+bool ModelviewMode::draw(const mat4 &model) {
 	int oldMode = Graphics::inst()->getModelviewMode();
 	Graphics::inst()->setModelviewMode(mode);
 
-	child->draw(model);
+	bool ret = child->draw(model);
 	
 	Graphics::inst()->setModelviewMode(oldMode);
+	return ret;
 }
 
-void OffscreenObselescence::draw(const glm::mat4 &model) {
+bool OffscreenObselescence::draw(const glm::mat4 &model) {
 	vec4 eyePos = (Graphics::inst()->getView() * model) * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	obselete = eyePos.z < 0;
-	child->draw(model);
-}
-
-bool OffscreenObselescence::isObselete() {
-	return obselete;
+	return (eyePos.z >= 0 && child->draw(model));
 }

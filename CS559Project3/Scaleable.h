@@ -14,7 +14,7 @@ public:
 	Scale(const glm::vec3 &scale) :
 		scaleVec(scale) {}
 
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 	
 	inline void setScale(const glm::vec3 &scale) {
 		this->scaleVec = scale;

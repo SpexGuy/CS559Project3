@@ -38,7 +38,7 @@ public:
 
 	virtual bool initialize();
 	
-	virtual void draw(const glm::mat4 &modelview);
+	virtual bool draw(const glm::mat4 &modelview);
 
 	virtual void takeDown();
 
@@ -124,6 +124,6 @@ public:
 
 	virtual bool initialize();
 	
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 
 };

@@ -323,9 +323,9 @@ bool Mesh::initialize() {
 	return true;
 }
 
-void Mesh::draw(const mat4 &model) {
+bool Mesh::draw(const mat4 &model) {
 	if (checkError("Mesh::Draw - on entry"))
-		return;
+		return true;
 
 	mat4 m = model;
 
@@ -334,8 +334,10 @@ void Mesh::draw(const mat4 &model) {
 	if(drawNormals) {
 		Graphics::inst()->drawLines(normSegs, normal_array_handle, solidShader, m);
 		if (checkError("Mesh::draw - on exit"))
-			return;
+			return true;
 	}
+
+	return true;
 }
 
 /*	Notice the destructor in this case asserts that all resources
@@ -374,9 +376,9 @@ bool TexturedMesh::initialize() {
 	return Mesh::initialize();
 }
 
-void TexturedMesh::draw(const mat4 &model) {
+bool TexturedMesh::draw(const mat4 &model) {
 	if (checkError("TexturedMesh::Draw - on entry"))
-		return;
+		return true;
 
 	mat4 m = model;
 
@@ -386,7 +388,9 @@ void TexturedMesh::draw(const mat4 &model) {
 	if(drawNormals) {
 		Graphics::inst()->drawLines(normSegs, normal_array_handle, solidShader, m);
 		if (checkError("TexturedMesh::draw - on exit"))
-			return;
+			return true;
 	}
+
+	return true;
 }
 

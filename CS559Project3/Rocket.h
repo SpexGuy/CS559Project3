@@ -20,7 +20,7 @@ public:
 	/**
 	 * Draws the rocket based on the model matrix.
 	 */
-	virtual void draw(const glm::mat4 &model);
+	virtual bool draw(const glm::mat4 &model);
 
 	/**
 	 * Frees GL resources.

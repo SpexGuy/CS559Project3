@@ -35,11 +35,12 @@ bool SplineEditor::initialize() {
 	return true;
 }
 
-void SplineEditor::draw(const mat4 &model) {
+bool SplineEditor::draw(const mat4 &model) {
 	for (unsigned int c = 0; c < points.size(); c++) {
 		drawSplinePoint(model, c);
 	}
 	drawSpline(model);
+	return true;
 }
 
 void SplineEditor::takeDown() {

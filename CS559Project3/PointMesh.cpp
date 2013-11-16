@@ -31,7 +31,7 @@ bool PointMesh::initialize() {
 	return true;
 }
 
-void PointMesh::draw(const mat4 &model) {
+bool PointMesh::draw(const mat4 &model) {
 
 	Graphics::inst()->drawPoints(
 		indexMask,
@@ -39,6 +39,7 @@ void PointMesh::draw(const mat4 &model) {
 		starShader,
 		model);
 
+	return true;
 }
 
 void PointMesh::takeDown() {
