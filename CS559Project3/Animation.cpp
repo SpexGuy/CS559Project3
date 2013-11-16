@@ -1,5 +1,4 @@
 /* See Animation.h for architecture comments */
-#include <list>
 #include "Animation.h"
 
 using namespace std;
@@ -45,53 +44,3 @@ void Animation::reset() {
 	 * effectively resetting the system. */
 	timeSpentPaused = timePauseStarted;
 }
-
-
-//-------------- AnimationGroup ---------------
-
-void AnimationGroup::reset(){
-	Animation::reset();
-	for (
-		list<Animation *>::const_iterator
-			iterator = elements.begin(),
-			end = elements.end();
-		iterator != end;
-		++iterator)
-	{
-		(*iterator)->reset();
-	}
-}
-
-void AnimationGroup::doUpdate(int time) {
-	for (
-		list<Animation *>::const_iterator
-			iterator = elements.begin(),
-			end = elements.end();
-		iterator != end;
-		++iterator)
-	{
-		(*iterator)->update(time);
-	}
-}
-
-AnimationGroup *AnimationGroup::addAnimation(Animation *el) {
-	elements.push_back(el);
-	return this;
-}
-
-void AnimationGroup::clearAnimations() {
-	elements.clear();
-}
-
-AnimationGroup::~AnimationGroup() {
-	for (
-		list<Animation *>::const_iterator
-			iterator = elements.begin(),
-			end = elements.end();
-		iterator != end;
-		++iterator)
-	{
-		delete *iterator;
-	}
-}
-

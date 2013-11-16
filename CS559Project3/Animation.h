@@ -1,7 +1,4 @@
 #pragma once
-#include <list>
-#include "Function.h"
-#include "Rotatable.h"
 
 /** a base class for an animation.
  * it encapsulates the pause functionality. */
@@ -33,33 +30,4 @@ public:
 	virtual ~Animation() {}
 
 	inline bool isPaused() { return paused; }
-};
-
-/**
- * An Animation which aggregates Animations
- */
-class AnimationGroup : public Animation {
-private:
-	std::list<Animation *> elements;
-protected:
-	/* updates all animations in the list */
-	virtual void doUpdate(int time);
-
-public:
-	/* adds a drawable to the end of the list */
-	AnimationGroup *addAnimation(Animation *a);
-
-	/* recursively resets children */
-	virtual void reset();
-
-	/* clears the list */
-	void clearAnimations();
-
-	/* returns a pointer to the list */
-	inline std::list<Animation *> *getAnimations() {
-		return &elements;
-	}
-	
-	/* also deletes children */
-	virtual ~AnimationGroup();
 };

@@ -3,5 +3,5 @@
 #include "Drawable.h"
 
 //@Deprecated
-class Model : public DrawableGroup, public AnimationGroup {
+class Model : public DrawableGroup {
 };

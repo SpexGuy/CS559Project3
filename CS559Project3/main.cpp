@@ -202,23 +202,10 @@ void PassiveMotionFunc(int x, int y) {
 void KeyboardFunc(unsigned char c, int x, int y) {
 
 	switch (c) {
-	//reset animations
-	case 'r':
-		globals.model->reset();
-		break;
-
 	//toggle wireframe
 	case 'w':
 		globals.wireframe = !globals.wireframe;
 		glPolygonMode(GL_FRONT_AND_BACK, globals.wireframe ? GL_LINE : GL_FILL);
-		break;
-
-	//toggle pause
-	case 'p':
-		if (globals.model->isPaused())
-			globals.model->play();
-		else
-			globals.model->pause();
 		break;
 
 	//light controls
@@ -280,12 +267,8 @@ void SpecialFunc(int c, int x, int y) {
 
 void TimerFunc(int value) {
 	if (!globals.window->isClosed()) {
-		//update elapsed time
-		int time = glutGet(GLUT_ELAPSED_TIME);
 		//keep state in Graphics
-		Graphics::inst()->setTime(time);
-		//update animations
-		globals.model->update(time);
+		Graphics::inst()->setTime(glutGet(GLUT_ELAPSED_TIME));
 		//request next call
 		glutTimerFunc(globals.period, TimerFunc, value);
 		//redraw window
