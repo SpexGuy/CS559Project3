@@ -19,6 +19,10 @@ public:
 	/* Draws the object. */
 	virtual void draw(const glm::mat4 &model) = 0;
 
+	/* returns true iff the Drawable is obselete and
+	 * should be deleted by its containing group. */
+	virtual bool isObselete();
+
 	/* frees any GL handles still active */
 	virtual void takeDown() = 0;
 
@@ -84,6 +88,10 @@ public:
 	 * Returns a pointer to the base of the stack */
 	Drawable *useMVMode(int mode);
 	
+	/* pushes an OffscreenObselescence onto the decorator stack
+	 * Returns a pointer to the base of the stack */
+	Drawable *obselesceOffscreen();
+
 };
 
 /**
@@ -117,6 +125,9 @@ public:
 
 	/* {@InheritDoc} */
 	virtual Drawable *store(Drawable *&bucket);
+
+	/* {@InheritDoc} */
+	virtual bool isObselete();
 
 	/* propagates initialization down the stack */
 	virtual bool initialize();
@@ -173,8 +184,7 @@ private:
  */
 class DisableDepthTest : public DrawableDecorator {
 public:
-	DisableDepthTest() :
-		DrawableDecorator() {}
+	DisableDepthTest() {}
 	
 	virtual void draw(const glm::mat4 &model);
 };
@@ -189,7 +199,6 @@ protected:
 	glm::vec4 color;
 public:
 	Color(const glm::vec4 &color) :
-		DrawableDecorator(),
 		color(color)
 	{}
 	
@@ -207,7 +216,6 @@ protected:
 	glm::vec4 specularColor;
 public:
 	Material(const float &ambient, const glm::vec4 &specularColor, const float &shininess) :
-		DrawableDecorator(),
 		ambient(ambient),
 		shininess(shininess),
 		specularColor(specularColor)
@@ -220,9 +228,7 @@ public:
  * it on the way back up. */
 class ColorReset : public DrawableDecorator {
 public:
-	ColorReset() :
-		DrawableDecorator()
-	{}
+	ColorReset() {}
 	
 	virtual void draw(const glm::mat4 &model);
 };
@@ -231,9 +237,7 @@ public:
  * it on the way back up. */
 class MaterialReset : public DrawableDecorator {
 public:
-	MaterialReset() :
-		DrawableDecorator()
-	{}
+	MaterialReset() {}
 	
 	virtual void draw(const glm::mat4 &model);
 };
@@ -247,7 +251,6 @@ protected:
 	glm::vec3 axis;
 public:
 	BillboardTransform(const glm::vec3 &axis) :
-		DrawableDecorator(),
 		axis(glm::normalize(axis))
 	{}
 
@@ -263,9 +266,22 @@ protected:
 	int mode;
 public:
 	ModelviewMode(const int &mode) :
-		DrawableDecorator(),
 		mode(mode)
 	{}
 
 	virtual void draw(const glm::mat4 &model);
 };
+
+class OffscreenObselescence : public DrawableDecorator {
+protected:
+	bool obselete;
+public:
+	OffscreenObselescence() :
+		obselete(false) {}
+
+	virtual void draw(const glm::mat4 &model);
+
+	virtual bool isObselete();
+};
+
+

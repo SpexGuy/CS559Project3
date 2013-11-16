@@ -18,6 +18,10 @@ Drawable *Drawable::pushDecorator(DrawableDecorator *d) {
 	return d;
 }
 
+bool Drawable::isObselete() {
+	return false;
+}
+
 Drawable *Drawable::store(Drawable *&bucket) {
 	bucket = this;
 	return this;
@@ -68,6 +72,10 @@ Drawable *Drawable::useMVMode(int mode) {
 	return pushDecorator(new ModelviewMode(mode));
 }
 
+Drawable *Drawable::obselesceOffscreen() {
+	return pushDecorator(new OffscreenObselescence());
+}
+
 
 
 //---------------- DrawableDecorator ---------------
@@ -88,6 +96,10 @@ Drawable *DrawableDecorator::store(Drawable *&bucket) {
 		child->store(bucket);
 	}
 	return this;
+}
+
+bool DrawableDecorator::isObselete() {
+	return child->isObselete();
 }
 
 bool DrawableDecorator::initialize() {
@@ -112,13 +124,17 @@ DrawableGroup::DrawableGroup() {
 
 void DrawableGroup::draw(const mat4 &model) {
 	for (
-		list<Drawable*>::const_iterator
+		list<Drawable *>::const_iterator
 			iterator = elements.begin(),
 			end = elements.end();
 		iterator != end;
 		++iterator)
 	{
 		(*iterator)->draw(model);
+		if ((*iterator)->isObselete()) {
+			delete *iterator;
+			elements.erase(iterator);
+		}
 	}
 }
 
@@ -235,4 +251,14 @@ void ModelviewMode::draw(const mat4 &model) {
 	child->draw(model);
 	
 	Graphics::inst()->setModelviewMode(oldMode);
+}
+
+void OffscreenObselescence::draw(const glm::mat4 &model) {
+	vec4 eyePos = (Graphics::inst()->getView() * model) * vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	obselete = eyePos.z < 0;
+	child->draw(model);
+}
+
+bool OffscreenObselescence::isObselete() {
+	return obselete;
 }
