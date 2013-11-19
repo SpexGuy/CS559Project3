@@ -76,6 +76,10 @@ Drawable *Drawable::obselesceOffscreen() {
 	return pushDecorator(new OffscreenObselescence());
 }
 
+Drawable *Drawable::breakDelete() {
+	return pushDecorator(new NoDeletion());
+}
+
 
 
 //---------------- DrawableDecorator ---------------
@@ -100,6 +104,10 @@ Drawable *DrawableDecorator::store(Drawable *&bucket) {
 
 bool DrawableDecorator::initialize() {
 	return child->initialize();
+}
+
+bool DrawableDecorator::draw(const mat4 &model) {
+	return child->draw(model);
 }
 
 void DrawableDecorator::takeDown() {
@@ -258,3 +266,13 @@ bool OffscreenObselescence::draw(const glm::mat4 &model) {
 	vec4 eyePos = (Graphics::inst()->getView() * model) * vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	return (eyePos.z >= 0 && child->draw(model));
 }
+
+NoDeletion::~NoDeletion() {
+	//Since this runs before ~DrawableDecorator,
+	//setting the child to null prevents it from
+	//being deleted, and therefore terminates the
+	//deletion chain
+	this->child = NULL;
+}
+
+

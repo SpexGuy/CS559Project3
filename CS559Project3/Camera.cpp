@@ -73,3 +73,12 @@ void CameraDecorator::moveUp(float offset){
 	next->moveUp(offset);
 }
 
+
+//---------------- FixedCamera ---------------
+
+FixedCamera::FixedCamera() :
+	view(lookAt(vec3(0.0f),
+		vec3(0.0f, 0.0f, 1.0f),
+		vec3(0.0f, 1.0f, 0.0f)))
+{}
+

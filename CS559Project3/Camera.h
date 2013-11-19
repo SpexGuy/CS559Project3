@@ -2,7 +2,6 @@
 #include <glm/glm.hpp>
 #include "Function.h"
 
-class AnimationGroup;
 class CameraDecorator;
 
 /** 
@@ -105,4 +104,28 @@ public:
 	/* propagates the call down the stack */
 	virtual void moveUp(float offset);
 
+};
+
+class FixedCamera : public Camera {
+protected:
+	glm::mat4 view;
+public:
+	FixedCamera();
+
+	FixedCamera(const glm::mat4 &view) :
+		view(view) {}
+
+	FixedCamera(Camera *c) :
+		view(c->generateViewMatrix()) {}
+
+	inline virtual glm::mat4 generateViewMatrix() {
+		return view;
+	}
+	
+	//@Deprecated
+	inline virtual void moveForward(float offset) {}
+	//@Deprecated
+	inline virtual void moveRight(float offset) {}
+	//@Deprecated
+	inline virtual void moveUp(float offset) {}
 };

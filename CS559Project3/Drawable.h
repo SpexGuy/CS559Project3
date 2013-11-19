@@ -4,7 +4,6 @@
 #include "Function.h"
 #include <glm/glm.hpp>
 
-class AnimationGroup;
 class DrawableDecorator;
 
 /**
@@ -93,6 +92,10 @@ public:
 	 * Returns a pointer to the base of the stack */
 	Drawable *obselesceOffscreen();
 
+	/* pushes a NoDeletion onto the decorator stack
+	 * Returns a pointer to the base of the stack */
+	Drawable *breakDelete();
+
 };
 
 /**
@@ -129,6 +132,9 @@ public:
 
 	/* propagates initialization down the stack */
 	virtual bool initialize();
+
+	/* propagates drawing down the stack */
+	virtual bool draw(const glm::mat4 &model);
 	
 	/* propagates takeDown down the stack */
 	virtual void takeDown();
@@ -275,6 +281,11 @@ public:
 	OffscreenObselescence() {}
 
 	virtual bool draw(const glm::mat4 &model);
+};
+
+class NoDeletion : public DrawableDecorator {
+public:
+	virtual ~NoDeletion();
 };
 
 

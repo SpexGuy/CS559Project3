@@ -1,12 +1,11 @@
 /* This class was written by Perry Kivolowitz */
 #include <assert.h>
-#include "ilcontainer.h"
+#include "ILContainer.h"
 
 //a static counter to assign unique indexes
 int ILContainer::nextIndex = 0;
 
-bool ILContainer::initialize(const char * file_name)
-{
+bool ILContainer::initialize(const char * file_name) {
 	// We are asserting that we have not initialized this object before.
 	assert(this->il_handle == BAD_IL_VALUE);
 
@@ -26,8 +25,7 @@ bool ILContainer::initialize(const char * file_name)
 	return true;
 }
 
-void ILContainer::bind()
-{
+void ILContainer::bind() {
 	// We are asserting that we have initialized this object before.
 	assert(this->il_handle != BAD_IL_VALUE);
 
@@ -35,8 +33,7 @@ void ILContainer::bind()
 	glBindTexture(GL_TEXTURE_2D, this->il_texture_handle);
 }
 
-void ILContainer::takeDown()
-{
+void ILContainer::takeDown() {
 	//free resources
 	if (this->il_texture_handle != BAD_GL_VALUE)
 		glDeleteTextures(1, &this->il_texture_handle);
