@@ -1,18 +1,19 @@
 /* This class was written by Perry Kivolowitz */
 #include <assert.h>
 #include "ILContainer.h"
+#include "Graphics.h"
 
 //a static counter to assign unique indexes
 int ILContainer::nextIndex = 0;
 
-bool ILContainer::initialize(const char * file_name) {
+bool ILContainer::initialize() {
 	// We are asserting that we have not initialized this object before.
 	assert(this->il_handle == BAD_IL_VALUE);
 
 	if ((this->il_handle = ilGenImage()) == BAD_IL_VALUE)
 		return false;
 	ilBindImage(this->il_handle);
-	if (!ilLoadImage(file_name))
+	if (!ilLoadImage(filename))
 		return false;
 
 	glGenTextures(1, &this->il_texture_handle);
@@ -31,6 +32,7 @@ void ILContainer::bind() {
 
 	glActiveTexture(GL_TEXTURE0 + index);
 	glBindTexture(GL_TEXTURE_2D, this->il_texture_handle);
+	Graphics::inst()->setTexture(index);
 }
 
 void ILContainer::takeDown() {

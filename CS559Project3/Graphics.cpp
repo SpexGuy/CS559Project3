@@ -251,6 +251,27 @@ void Graphics::setupShader(const Shader *s, const mat4 &model) const {
 	checkError("Graphics::setupShader - after commonSetup");
 }
 
+vec3 Graphics::getLightPos() {
+	return vec3(view * vec4(light,1.0f));
+}
+
+mat4 Graphics::getModelview(const mat4 &model) {
+	mat4 modelview = view * model;
+
+	if (modelviewMode == MV_ROTATION) {
+		//remove the translations from the modelview
+		modelview[3][0] = 0.0f;
+		modelview[3][1] = 0.0f;
+		modelview[3][2] = 0.0f;
+	}
+
+	return modelview;
+}
+
+mat3 Graphics::getNormalMatrix(const mat4 &mv) {
+	return inverse(transpose(mat3(mv)));
+}
+
 
 void Graphics::takeDown() {
 	//delete the 2D geometry buffers

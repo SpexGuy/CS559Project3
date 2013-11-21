@@ -3,7 +3,7 @@
 #include "Shader.h"
 #include "Vertex.h"
 #include "Drawable.h"
-#include "ilcontainer.h"
+#include "Texture.h"
 #include <glm/glm.hpp>
 
 class Mesh : public Drawable {
@@ -65,7 +65,7 @@ public:
 	 * by tabs.
 	 * Returns */
 	static Mesh *newMars(float radius, float radScale,
-		char *filename, ILContainer *texture,
+		char *filename, Texture *texture,
 		bool crosshatch = false);
 
 	/** creates a spherical mesh with the radius at point i,j
@@ -73,7 +73,7 @@ public:
 	 */
 	static Mesh *newMars(float radius, float radScale,
 		const std::vector<std::vector<float>> &radii,
-		ILContainer *texture,
+		Texture *texture,
 		bool crosshatch = false);
 
 	/** creates a cylinder mesh with a certain number of stacks and slices,
@@ -110,13 +110,13 @@ class TexturedMesh : public Mesh {
 private:
 	TexturedMesh();
 protected:
-	ILContainer *texture;
+	Texture *texture;
 	Shader *textureShader;
 public:
 	TexturedMesh(const std::vector<glm::vec3> &points,
 				 const std::vector<glm::vec2> &texCoords,
 				 const std::vector<glm::ivec3> &trigs,
-				 ILContainer *texture) :
+				 Texture *texture) :
 		
 		Mesh(points, texCoords, trigs),
 		texture(texture)

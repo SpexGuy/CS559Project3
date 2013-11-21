@@ -17,7 +17,7 @@ using namespace glm;
 //#define DEBUG
 
 Mesh *Mesh::newMars(float radius, float radScale, char *filename,
-					ILContainer *texture, bool crosshatch) {
+					Texture *texture, bool crosshatch) {
 
 	ifstream inFile(filename);
 	if (inFile.is_open()) {
@@ -49,7 +49,7 @@ Mesh *Mesh::newMars(float radius, float radScale, char *filename,
 
 Mesh *Mesh::newMars(float radius, float radScale,
 					const vector<vector<float>> &radii,
-					ILContainer *texture,
+					Texture *texture,
 					bool crosshatch)
 {
 	//Assumes that the 2D has the same amount of slices for each stack
@@ -382,7 +382,7 @@ bool TexturedMesh::draw(const mat4 &model) {
 
 	mat4 m = model;
 
-	Graphics::inst()->setTexture(texture->index);
+	texture->bind();
 	Graphics::inst()->drawTriangles(trigs, vertex_array_handle, textureShader, m);
 
 	if(drawNormals) {

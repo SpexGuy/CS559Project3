@@ -214,4 +214,13 @@ public:
 	inline int getTexture() const {
 		return texIndex;
 	}
+	inline glm::vec3 getAmbientVec() {
+		return glm::vec3(ambient);
+	}
+	inline glm::vec3 getDiffuseVec() {
+		return glm::vec3(getDiffuse());
+	}
+	glm::vec3 getLightPos();
+	glm::mat4 getModelview(const glm::mat4 &model);
+	glm::mat3 getNormalMatrix(const glm::mat4 &mv);
 };

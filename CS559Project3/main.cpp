@@ -1,8 +1,4 @@
 #include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <IL/il.h>
-#include <IL/ilu.h>
-#include <IL/ilut.h>
 #include "Window.h"
 #include "View.h"
 #include "Camera.h"
@@ -13,6 +9,10 @@
 #include "Mesh.h"
 #include "Rocket.h"
 #include "PointMesh.h"
+#include <GL/freeglut.h>
+#include <IL/il.h>
+#include <IL/ilu.h>
+#include <IL/ilut.h>
 
 
 using namespace std;
