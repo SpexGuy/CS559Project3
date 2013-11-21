@@ -44,6 +44,7 @@ public:
 	SpheroidLight *light;
 
 	DrawableGroup *model;
+	Drawable * sphere;
 
 	int period;
 	bool wireframe;
@@ -67,7 +68,9 @@ bool Globals::initialize() {
 
 	//Creates the models with will hold the meshes for a given Scene.
 	model = new DrawableGroup();
-
+	sphere = Mesh::newSphere(10,10,1.0f)
+		->inColor(RED)
+		->pushDecorator(new ShaderUse(SHADER_SOLID));
 	light = new SpheroidLight();
 
 	light->setAngle(90);
@@ -76,7 +79,7 @@ bool Globals::initialize() {
 
 	//Building the models
 	model->addLight(light);
-
+	model->addElement(sphere);
 	//Building the cameras
 	cam = new SpheroidCamera();
 	cam->setRadius(3.0f);
@@ -130,6 +133,8 @@ bool Globals::initialize() {
 		return false;
 	if (!light->initialize())
 		return false;
+
+	sphere->initialize();
 
 	return true;
 }
@@ -265,6 +270,8 @@ void SpecialFunc(int c, int x, int y) {
 }
 
 void TimerFunc(int value) {
+
+
 	if (!globals.window->isClosed()) {
 		//keep state in Graphics
 		Graphics::inst()->update();

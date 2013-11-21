@@ -4,6 +4,7 @@
 #include "Drawable.h"
 #include "glslprogram.h"
 #include "TexLightShader.h"
+#include "SolidShader.h"
 #include <assert.h>
 
 using namespace std;
@@ -29,6 +30,11 @@ bool ShaderFlyweight::initialize() {
 	texlightshader->link();
 	addShader(SHADER_TEXTURE, texlightshader);
 
+	GLSLProgram * solidshader = new SolidShader();
+	solidshader->compileShader("solid_shader.frag", GLSLShader::FRAGMENT);
+	solidshader->compileShader("solid_shader.vert", GLSLShader::VERTEX);
+	solidshader->link();
+	addShader(SHADER_SOLID, solidshader);
 	return true;
 }
 

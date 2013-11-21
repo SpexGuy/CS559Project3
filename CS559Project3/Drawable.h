@@ -292,11 +292,12 @@ class ShaderUse : public DrawableDecorator {
 private:
 	ShaderUse();
 protected:
+	int shaderName;
 	GLSLProgram * shader;
 public:
-	ShaderUse(GLSLProgram *s) :
-		shader(s) {}
-
+	ShaderUse(int shadername) :
+		shaderName(shadername), shader(NULL) {}
+	virtual bool initialize();
 	virtual bool draw(const glm::mat4 &model);
 };
 

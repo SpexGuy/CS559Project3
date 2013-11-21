@@ -277,8 +277,13 @@ NoDeletion::~NoDeletion() {
 
 bool ShaderUse::draw(const mat4 &model)
 {
-	shader->use();
+	shader->bind(model);
 	bool ret = child->draw(model);
 	glUseProgram(0);
 	return ret;
+}
+
+bool ShaderUse::initialize() {
+	shader = ShaderFlyweight::inst()->getShader(shaderName);
+	return DrawableDecorator::initialize();
 }
