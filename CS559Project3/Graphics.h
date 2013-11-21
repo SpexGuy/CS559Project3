@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Shader.h"
+#include "Shaders.h"
 #include <GL/freeglut.h>
 #include <glm/glm.hpp>
 
@@ -42,8 +42,6 @@ private:
 	int lastTrueTime;
 	int time;
 
-	Shader *solidShader;
-
 	std::vector<glm::ivec3> circleTrigs;
 	std::vector<glm::ivec3> squareTrigs;
 	std::vector<glm::ivec2> lineSegs;
@@ -62,9 +60,6 @@ private:
 	inline void setSize(const glm::ivec2 &size) {
 		this->size = size;
 	}
-
-	/* configures the shader with the accumulated state */
-	void setupShader(const Shader *s, const glm::mat4 &model) const;
 
 public:
 	/* Graphics is a Singleton */
@@ -105,7 +100,6 @@ public:
 	 * using the given model space */
 	void drawTriangles(const std::vector<glm::ivec3> &trigs,
 					   const GLuint &vertexArrayHandle,
-					   const Shader *s,
 					   const glm::mat4 &model)
 				const;
 
@@ -113,7 +107,6 @@ public:
 	 * using the given model space */
 	void drawLines(const std::vector<glm::ivec2> &segs,
 				   const GLuint &vertexArrayHandle,
-				   const Shader *s,
 				   const glm::mat4 &model)
 				const;
 
@@ -121,7 +114,6 @@ public:
 	 * using the given model space */
 	void drawPoints(const std::vector<int> &points,
 					const GLuint &vertexArrayHandle,
-					const Shader *s,
 					const glm::mat4 &model)
 				const;
 

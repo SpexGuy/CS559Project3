@@ -26,8 +26,6 @@ bool PointMesh::initialize() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	this->starShader = ShaderFlyweight::inst()->getShader(SHADER_STAR);
-
 	return true;
 }
 
@@ -36,7 +34,6 @@ bool PointMesh::draw(const mat4 &model) {
 	Graphics::inst()->drawPoints(
 		indexMask,
 		vertex_array_handle,
-		starShader,
 		model);
 
 	return true;

@@ -288,4 +288,15 @@ public:
 	virtual ~NoDeletion();
 };
 
+class ShaderUse : public DrawableDecorator {
+private:
+	ShaderUse();
+protected:
+	GLSLProgram * shader;
+public:
+	ShaderUse(GLSLProgram *s) :
+		shader(s) {}
+
+	virtual bool draw(const glm::mat4 &model);
+};
 

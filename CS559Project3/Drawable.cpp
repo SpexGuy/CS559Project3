@@ -275,4 +275,10 @@ NoDeletion::~NoDeletion() {
 	this->child = NULL;
 }
 
-
+bool ShaderUse::draw(const mat4 &model)
+{
+	shader->use();
+	bool ret = child->draw(model);
+	glUseProgram(0);
+	return ret;
+}

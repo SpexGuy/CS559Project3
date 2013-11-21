@@ -7,7 +7,7 @@
 #include <vector>
 #include "ErrorCheck.h"
 #include "Mesh.h"
-#include "Shader.h"
+#include "Shaders.h"
 #include "Vertex.h"
 #include <glm/glm.hpp>
 
@@ -317,9 +317,6 @@ bool Mesh::initialize() {
 		glBindVertexArray(0);
 	}
 
-	this->solidShader = ShaderFlyweight::inst()->getShader(SHADER_SOLID);
-	this->shader = ShaderFlyweight::inst()->getShader(SHADER_ADS);
-
 	return true;
 }
 
@@ -329,10 +326,10 @@ bool Mesh::draw(const mat4 &model) {
 
 	mat4 m = model;
 
-	Graphics::inst()->drawTriangles(trigs, vertex_array_handle, shader, m);
+	Graphics::inst()->drawTriangles(trigs, vertex_array_handle, m);
 
 	if(drawNormals) {
-		Graphics::inst()->drawLines(normSegs, normal_array_handle, solidShader, m);
+		Graphics::inst()->drawLines(normSegs, normal_array_handle, m);
 		if (checkError("Mesh::draw - on exit"))
 			return true;
 	}
@@ -372,7 +369,6 @@ void Mesh::takeDown() {
 }
 
 bool TexturedMesh::initialize() {
-	textureShader = ShaderFlyweight::inst()->getShader(SHADER_TEXTURE);
 	return Mesh::initialize();
 }
 
@@ -383,10 +379,10 @@ bool TexturedMesh::draw(const mat4 &model) {
 	mat4 m = model;
 
 	texture->bind();
-	Graphics::inst()->drawTriangles(trigs, vertex_array_handle, textureShader, m);
+	Graphics::inst()->drawTriangles(trigs, vertex_array_handle, m);
 
 	if(drawNormals) {
-		Graphics::inst()->drawLines(normSegs, normal_array_handle, solidShader, m);
+		Graphics::inst()->drawLines(normSegs, normal_array_handle, m);
 		if (checkError("TexturedMesh::draw - on exit"))
 			return true;
 	}

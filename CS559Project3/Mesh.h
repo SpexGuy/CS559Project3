@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Shader.h"
+#include "Shaders.h"
 #include "Vertex.h"
 #include "Drawable.h"
 #include "Texture.h"
@@ -17,8 +17,6 @@ protected:
 	GLuint normal_coordinate_handle;
 	GLuint normal_array_handle;
 
-	Shader *shader;
-	Shader *solidShader;
 	std::vector<VertexPNT> points;
 	std::vector<glm::ivec3> trigs;
 	std::vector<glm::vec3> normPoints;
@@ -111,7 +109,6 @@ private:
 	TexturedMesh();
 protected:
 	Texture *texture;
-	Shader *textureShader;
 public:
 	TexturedMesh(const std::vector<glm::vec3> &points,
 				 const std::vector<glm::vec2> &texCoords,

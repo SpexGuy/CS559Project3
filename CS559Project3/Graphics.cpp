@@ -43,7 +43,6 @@ Graphics::Graphics() {
 }
 
 bool Graphics::initialize() {
-	solidShader = ShaderFlyweight::inst()->getShader(SHADER_SOLID);
 
 	//initialize the points for drawCircle2D, drawLine2D, and drawRect2D.
 	vector<vec3> circlePoints(17);
@@ -126,14 +125,12 @@ void Graphics::drawText2D(const mat4 &base, float x, float y, char *str, float s
 	pos = scale(pos, vec3(scaleFactor, scaleFactor, 1.0f));
 	//iterate through the string
 	while(*str != '\0') {
-		setupShader(solidShader, pos);
 		glutStrokeCharacter(GLUT_STROKE_ROMAN, *str);
 		//translate past the character we just drew
 		pos = translate(pos, vec3(glutStrokeWidth(GLUT_STROKE_ROMAN, *str), 0.0f, 0.0f));
 		str++;
 	}
-	//unbind the shader
-	glUseProgram(0);
+
 }
 
 void Graphics::drawRect2D(const mat4 &base, vec2 blPoint, vec2 trPoint) const {
@@ -147,7 +144,7 @@ void Graphics::drawRect2D(const mat4 &base, float x, float y, float width, float
 	//scale the square to be the correct rectangle
 	pos = scale(pos, vec3(width, height, 1));
 	//draw it
-	drawTriangles(squareTrigs, squareVH, solidShader, pos);
+	drawTriangles(squareTrigs, squareVH, pos);
 }
 
 void Graphics::drawCircle2D(const mat4 &base, vec2 center, float radius) const {
@@ -160,7 +157,7 @@ void Graphics::drawCircle2D(const mat4 &base, float x, float y, float radius) co
 	//scale the circle to the correct size
 	pos = scale(pos, vec3(radius, radius, 1));
 	//draw it
-	drawTriangles(circleTrigs, circleVH, solidShader, pos);
+	drawTriangles(circleTrigs, circleVH, pos);
 }
 
 void Graphics::drawLine2D(const mat4 &base, vec2 tlPoint, vec2 brPoint) const {
@@ -169,13 +166,13 @@ void Graphics::drawLine2D(const mat4 &base, vec2 tlPoint, vec2 brPoint) const {
 	//the line is diagonal, so scale it to meet the bottom point
 	pos = glm::scale(pos, vec3(brPoint - tlPoint, 1.0f));
 	//draw it
-	drawLines(lineSegs, lineVH, solidShader, pos);
+	drawLines(lineSegs, lineVH, pos);
 }
 
 void Graphics::drawTriangles(const vector<ivec3> &trigs, const GLuint &vertexArrayHandle,
-							 const Shader *s, const mat4 &model) const {
+							 const mat4 &model) const {
 
-	setupShader(s, model);
+
 	glBindVertexArray(vertexArrayHandle);
 
 	glDrawElements(
@@ -185,13 +182,13 @@ void Graphics::drawTriangles(const vector<ivec3> &trigs, const GLuint &vertexArr
 		&trigs[0]);
 
 	glBindVertexArray(0);
-	glUseProgram(0);
+
 }
 
 void Graphics::drawLines(const vector<ivec2> &segs, const GLuint &vertexArrayHandle,
-						 const Shader *s, const mat4 &model) const {
+						 const mat4 &model) const {
 
-	setupShader(s, model);
+
 	glBindVertexArray(vertexArrayHandle);
 
 	glDrawElements(
@@ -201,15 +198,14 @@ void Graphics::drawLines(const vector<ivec2> &segs, const GLuint &vertexArrayHan
 		&segs[0]);
 
 	glBindVertexArray(0);
-	glUseProgram(0);
 
 	checkError("Graphics::draw - after drawLines");
 }
 
 void Graphics::drawPoints(const vector<int> &points, const GLuint &vertexArrayHandle,
-						 const Shader *s, const mat4 &model) const {
+						 const mat4 &model) const {
 
-	setupShader(s, model);
+
 	glBindVertexArray(vertexArrayHandle);
 
 	glDrawElements(
@@ -219,37 +215,10 @@ void Graphics::drawPoints(const vector<int> &points, const GLuint &vertexArrayHa
 		&points[0]);
 
 	glBindVertexArray(0);
-	glUseProgram(0);
+
 	checkError("Graphics::draw - after draw points");
 }
 
-void Graphics::setupShader(const Shader *s, const mat4 &model) const {
-
-	mat4 modelview = view * model;
-
-	if (modelviewMode == MV_ROTATION) {
-		//remove the translations from the modelview
-		modelview[3][0] = 0.0f;
-		modelview[3][1] = 0.0f;
-		modelview[3][2] = 0.0f;
-	}
-
-	vec3 light_pos = vec3(view * vec4(light,1.0f));
-	mat4 mvp = projection * modelview;
-	mat3 nm = inverse(transpose(mat3(modelview)));
-
-	s->use();
-
-	checkError("Graphics::setupShader - after use");
-
-	s->commonSetup(time, value_ptr(size), value_ptr(projection),
-		value_ptr(modelview), value_ptr(mvp), value_ptr(nm),
-		value_ptr(light_pos), value_ptr(color),
-		value_ptr(vec3(ambient)), value_ptr(vec3(1-ambient)),
-		value_ptr(specularColor), shininess, texIndex);
-
-	checkError("Graphics::setupShader - after commonSetup");
-}
 
 vec3 Graphics::getLightPos() {
 	return vec3(view * vec4(light,1.0f));
