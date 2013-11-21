@@ -26,7 +26,7 @@ bool ILContainer::initialize() {
 	return true;
 }
 
-void ILContainer::bind() {
+void ILContainer::bindTexture() {
 	// We are asserting that we have initialized this object before.
 	assert(this->il_handle != BAD_IL_VALUE);
 

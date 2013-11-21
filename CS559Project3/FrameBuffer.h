@@ -27,8 +27,9 @@ public:
 		assert(color_buffer_index <= this->number_of_color_attachments);
 		this->color_buffer_index = color_buffer_index;
 	}
-	virtual void bind();
-	virtual void unbind();
+	virtual void bindTexture();
+	virtual void bindDraw();
+	virtual void unbindDraw();
 	virtual bool initialize();
 	virtual void takeDown();
 	virtual ~FrameBufferObject();

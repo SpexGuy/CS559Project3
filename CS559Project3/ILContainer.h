@@ -40,7 +40,7 @@ public:
 	/* loads the texture and registers it with GL */
 	virtual bool initialize();
 	/* binds the texture to its index */
-	virtual void bind();
+	virtual void bindTexture();
 	/* releases any GL resources */
 	virtual void takeDown();
 

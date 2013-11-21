@@ -58,13 +58,17 @@ bool FrameBufferObject::initialize() {
 	return true;
 }
 
-void FrameBufferObject::bind() {
+void FrameBufferObject::bindTexture() {
+	glBindTexture(GL_TEXTURE_2D, texture_handles[color_buffer_index]);
+}
+
+void FrameBufferObject::bindDraw() {
 	assert(this->framebuffer_handle != GLuint(-1));
 	glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer_handle);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + color_buffer_index);
 }
 
-void FrameBufferObject::unbind() {
+void FrameBufferObject::unbindDraw() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

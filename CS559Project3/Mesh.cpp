@@ -378,7 +378,7 @@ bool TexturedMesh::draw(const mat4 &model) {
 
 	mat4 m = model;
 
-	texture->bind();
+	texture->bindTexture();
 	Graphics::inst()->drawTriangles(trigs, vertex_array_handle, m);
 
 	if(drawNormals) {
