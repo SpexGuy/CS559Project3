@@ -23,6 +23,7 @@ void SolidShader::bind(const mat4 &model)
 	this->setUniform("mvp", mvp);
 	this->setUniform("color", g->getColor());
 	this->setUniform("wireframe", g->isWireframe());
+	this->setUniform("ViewportMatrix", g->getViewportMatrix());
 }
 
 SolidShader::~SolidShader(void)

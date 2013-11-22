@@ -26,6 +26,8 @@ private:
 
 	glm::mat4 projection;
 	glm::mat4 view;
+
+	glm::mat4 viewportmat;
 	
 	glm::ivec2 size;
 	glm::vec3 light;
@@ -219,6 +221,9 @@ public:
 	}
 	inline void setWireframe(bool wf) {
 		wireframe = wf;
+	}
+	inline glm::mat4 getViewportMatrix() {
+		return viewportmat;
 	}
 	glm::vec3 getLightPos();
 	glm::mat4 getModelview(const glm::mat4 &model);

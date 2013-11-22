@@ -33,6 +33,7 @@ bool ShaderFlyweight::initialize() {
 	GLSLProgram * solidshader = new SolidShader();
 	solidshader->compileShader("solid_shader.frag", GLSLShader::FRAGMENT);
 	solidshader->compileShader("solid_shader.vert", GLSLShader::VERTEX);
+	solidshader->compileShader("wireframe_solid.geom", GLSLShader::GEOMETRY);
 	solidshader->link();
 	addShader(SHADER_SOLID, solidshader);
 	return true;

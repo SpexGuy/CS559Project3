@@ -117,6 +117,10 @@ void Graphics::drawWireCube() const {
 
 void Graphics::viewport(int x, int y, int width, int height) {
 	this->setSize(ivec2(width, height));
+	mat4 vp = mat4(1.0f);
+	vp = translate(vp, vec3(1.0f, 1.0f, 0.0f));
+	vp = scale(vp, vec3(size, 1.0f));
+	this->viewportmat = vp;
 	glViewport(x, y, width, height);
 }
 

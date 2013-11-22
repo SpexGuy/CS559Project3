@@ -3,7 +3,9 @@
 layout( triangles ) in;
 layout( triangle_strip, max_vertices = 3 ) out;
 out vec3 GPosition;
+flat out vec4 GColor;
 noperspective out vec3 GEdgeDistance;
+flat in vec4 VColor[];
 in vec3 VPosition[];
 uniform mat4 ViewportMatrix; // Viewport matrix
 void main()
@@ -29,16 +31,19 @@ void main()
 	// Send the triangle along with the edge distances
 	GEdgeDistance = vec3( ha, 0, 0 );
 	GPosition = VPosition[0];
+	GColor = VColor[0];
 	gl_Position = gl_in[0].gl_Position;
 	EmitVertex();
 
 	GEdgeDistance = vec3( 0, hb, 0 );
 	GPosition = VPosition[1];
+	GColor = VColor[1];
 	gl_Position = gl_in[1].gl_Position;
 	EmitVertex();
 
 	GEdgeDistance = vec3( 0, 0, hc );
 	GPosition = VPosition[2];
+	GColor = VColor[2];
 	gl_Position = gl_in[2].gl_Position;
 	EmitVertex();
 

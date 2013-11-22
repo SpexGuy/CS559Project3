@@ -3,8 +3,8 @@
 #version 400
 
 layout (location = 0) out vec4 FragColor;
-in vec3 GEdgeDistance;
-flat in vec4 fragColor;
+noperspective in vec3 GEdgeDistance;
+flat in vec4 GColor;
 uniform bool wireframe = true;
 
 void main() {
@@ -13,10 +13,10 @@ void main() {
 	float mixval = smoothstep(0,2,d);
 	if(wireframe)
 	{
-	FragColor = mix(vec4(0.0f,1.0f,0.0f,1.0f),fragColor, mixval);
+	FragColor = mix(vec4(0.0f,1.0f,0.0f,1.0f),GColor, mixval);
 	}
 	else
 	{
-	FragColor = fragColor;
+	FragColor = GColor;
 	}
 }
