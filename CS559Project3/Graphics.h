@@ -42,6 +42,8 @@ private:
 	int lastTrueTime;
 	int time;
 
+	bool wireframe;
+
 	std::vector<glm::ivec3> circleTrigs;
 	std::vector<glm::ivec3> squareTrigs;
 	std::vector<glm::ivec2> lineSegs;
@@ -211,6 +213,12 @@ public:
 	}
 	inline glm::vec3 getDiffuseVec() {
 		return glm::vec3(getDiffuse());
+	}
+	inline bool isWireframe() {
+		return wireframe;
+	}
+	inline void setWireframe(bool wf) {
+		wireframe = wf;
 	}
 	glm::vec3 getLightPos();
 	glm::mat4 getModelview(const glm::mat4 &model);

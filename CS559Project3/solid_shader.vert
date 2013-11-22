@@ -7,8 +7,11 @@ uniform mat4 mvp;
 uniform vec4 color;
 
 flat out vec4 fragColor;
+out vec3 VPosition;
+
 
 void main() {
 	gl_Position = mvp * vec4(vertex_position, 1.0);
+	VPosition = vec3(gl_Position);
 	fragColor = color;
 }

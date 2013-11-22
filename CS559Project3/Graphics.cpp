@@ -36,6 +36,7 @@ Graphics::Graphics() {
 	this->timeScale = 1;
 	this->lastTrueTime = 0;
 	this->time = 0;
+	this->wireframe = false;
 
 	circleCH = circleVH = 
 	squareCH = squareVH =

@@ -209,7 +209,7 @@ void KeyboardFunc(unsigned char c, int x, int y) {
 	//toggle wireframe
 	case 'w':
 		globals.wireframe = !globals.wireframe;
-		glPolygonMode(GL_FRONT_AND_BACK, globals.wireframe ? GL_LINE : GL_FILL);
+		Graphics::inst()->setWireframe(!Graphics::inst()->isWireframe());
 		break;
 
 	//light controls
