@@ -1,6 +1,7 @@
 //Taken from GLSL Cookbook github at https://github.com/daw42/glslcookbook
 #include <GL\glew.h>
 #include "glslprogram.h"
+#include "ErrorCheck.h"
 
 
 #include <fstream>
@@ -228,9 +229,11 @@ void GLSLProgram::link() throw(GLSLProgramException)
 
 void GLSLProgram::use() throw(GLSLProgramException)
 {
+	checkError("before use()");
     if( handle <= 0 || (! linked) ) 
     	throw GLSLProgramException("Shader has not been linked");
     glUseProgram( handle );
+	checkError("after use()");
 }
 
 int GLSLProgram::getHandle()

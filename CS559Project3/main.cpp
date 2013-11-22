@@ -137,6 +137,7 @@ bool Globals::initialize() {
 		return false;
 
 	sphere->initialize();
+	mainOverlay->initialize();
 
 	return true;
 }

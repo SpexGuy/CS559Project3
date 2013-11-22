@@ -7,14 +7,8 @@ TexLightShader::TexLightShader(void)
 {
 }
 
-void TexLightShader::bind(const mat4 &model)
+void TexLightShader::setup(const mat4 &model)
 {
-	/*
-	What to do here!
-	Get state from Graphics and load into the uniforms!
-	Equip/use the shader.
-	*/
-	use();
 	/*
 	Our uniforms are:
 	mvp/modelview/normal matrices, and textureIndex and the light info.
@@ -32,11 +26,6 @@ void TexLightShader::bind(const mat4 &model)
 	this->setUniform("ambientScale", g->getAmbientVec());
 	this->setUniform("diffuseScale", g->getDiffuseVec());
 	this->setUniform("specularColor", g->getSpecularColor());
-
-
-
-
-
 }
 
 TexLightShader::~TexLightShader(void)

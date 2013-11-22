@@ -6,6 +6,7 @@
 #include "Scaleable.h"
 #include "Translatable.h"
 #include "Animation.h"
+#include "ErrorCheck.h"
 #include <glm/glm.hpp>
 
 using namespace glm;
@@ -277,9 +278,11 @@ NoDeletion::~NoDeletion() {
 
 bool ShaderUse::draw(const mat4 &model)
 {
-	shader->bind(model);
+	checkError("Before ShaderUse");
+	Graphics::inst()->setShader(shader);
 	bool ret = child->draw(model);
 	glUseProgram(0);
+	checkError("After ShaderUse");
 	return ret;
 }
 

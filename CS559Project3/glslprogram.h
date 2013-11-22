@@ -56,7 +56,9 @@ public:
     void   link() throw (GLSLProgramException);
     void   validate() throw(GLSLProgramException);
     void   use() throw (GLSLProgramException);
-	virtual void bind(const glm::mat4 &model) = 0;
+
+	//@Precondition - the shader must be in use
+	virtual void setup(const glm::mat4 &model) = 0;
 
     int    getHandle();
     bool   isLinked();

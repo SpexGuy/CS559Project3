@@ -6,6 +6,6 @@ class TexLightShader :
 public:
 	TexLightShader(void);
 	virtual ~TexLightShader(void);
-	virtual void bind(const glm::mat4 &model);
+	virtual void setup(const glm::mat4 &model);
 };
 

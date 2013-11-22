@@ -6,6 +6,6 @@ class SolidShader :
 public:
 	SolidShader(void);
 	virtual ~SolidShader(void);
-	virtual void bind(const glm::mat4 &model);
+	virtual void setup(const glm::mat4 &model);
 };
 

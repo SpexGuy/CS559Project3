@@ -24,6 +24,8 @@
 class Graphics {
 private:
 
+	GLSLProgram *currShader;
+
 	glm::mat4 projection;
 	glm::mat4 view;
 
@@ -224,6 +226,10 @@ public:
 	}
 	inline glm::mat4 getViewportMatrix() {
 		return viewportmat;
+	}
+	inline void setShader(GLSLProgram *shader) {
+		currShader = shader;
+		currShader->use();
 	}
 	glm::vec3 getLightPos();
 	glm::mat4 getModelview(const glm::mat4 &model);
