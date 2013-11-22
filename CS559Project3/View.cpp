@@ -12,14 +12,8 @@ using namespace glm;
 using namespace std;
 
 
-View::View(Projection *p, Camera *c, Drawable *m, ViewOverlay *o) {
-	proj = p;
-	camera = c;
-	model = m;
-	overlay = o;
-}
-
-View::View(){};
+View::View(Projection *p, Camera *c, Drawable *model, Drawable *overlay) :
+	proj(p), camera(c), model(model), overlay(overlay) {}
 
 void View::render() {
 	this->setupCamera();
@@ -29,21 +23,12 @@ void View::render() {
 	model->draw(context);
 
 	glDisable(GL_DEPTH_TEST);
-	overlay->draw();
+	overlay->draw(context);
 }
 
 void View::setupCamera() {
 	Graphics::inst()->setProjection(proj->generateProjectionMatrix());
 	Graphics::inst()->setView(camera->generateViewMatrix());
-}
-
-
-ViewOverlay::ViewOverlay() {
-
-}
-
-mat4 ViewOverlay::draw() {
-	return mat4(1.0f);
 }
 
 void ViewOverlay::setupCamera() const {
@@ -57,23 +42,18 @@ void ViewOverlay::setupCamera() const {
 				   vec3(0.0f, 1.0f, 0.0f)));
 }
 
-HudOverlay::HudOverlay(vector<char*> text)
-{
-	this->text = text;
-}
 
-mat4 HudOverlay::draw()
+
+bool HudOverlay::draw(const glm::mat4 &model)
 {
 	setupCamera();
 	Graphics::inst()->setColor(vec4(1.0f,1.0f,1.0f,1.0f));
-	mat4 base = mat4(1.0f);
 	float lines = (float)text.size();
 	float size = 10.0f;
 
-	for(uint i = 0; i < text.size(); i++)
-	{
-		Graphics::inst()->drawText2D(base, 5.0f, 2.1f*size*(float)(i) + 10.0f , text[i], size);
+	for(uint i = 0; i < text.size(); i++) {
+		Graphics::inst()->drawText2D(model, 5.0f, 2.1f*size*(float)(i) + 10.0f , text[i], size);
 	}
-	return base;
 
+	return true;
 }

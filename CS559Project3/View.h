@@ -16,12 +16,12 @@ private:
 	View(); //force use of constructor with arguments
 	void setupCamera();
 protected:
-	ViewOverlay *overlay;
+	Drawable *overlay;
 	Projection *proj;
 	Camera *camera;
 	Drawable *model;
 public:
-	View(Projection *p, Camera *camera, Drawable *model, ViewOverlay *o);
+	View(Projection *proj, Camera *camera, Drawable *model, Drawable *overlay);
 	
 	virtual void render();
 	
@@ -31,7 +31,7 @@ public:
 	inline Drawable *getModel() {
 		return model;
 	}
-	inline void setOverlay(ViewOverlay *o) {
+	inline void setOverlay(Drawable *o) {
 		this->overlay = o;
 	}
 	inline void setCamera(Camera *c) {
@@ -43,11 +43,7 @@ public:
 };
 
 /** An abstract representation of a 2D overlay to be drawn on a view */
-class ViewOverlay {
-public:
-	ViewOverlay();
-	/* renders the overlay. Returns the rendering context for the overlay. */
-	virtual glm::mat4 draw();
+class ViewOverlay : public Drawable {
 protected:
 	/* sets up an orthographic projection matrix with the bottom left corner
 	 * at (0, 0) and the top right at (size.x, size.y), the near plane at
@@ -64,12 +60,16 @@ protected:
  */
 class HudOverlay : public ViewOverlay{
 public:
-	virtual glm::mat4 draw();
+	/* Creates a HudOverlay with a vector of strings. */
+	HudOverlay(const std::vector<char*> &text) :
+		text(text) {}
 
-	/*
-	 * Creates a HudOverlay with a vector of strings.
-	 */
-	HudOverlay(std::vector<char*> text);
+	virtual inline bool initialize()
+		{return true;}
+
+	virtual bool draw(const glm::mat4 &model);
+
+	virtual void takeDown() {}
 
 protected:
 	//The vector of shrings of the HudOverlay.
