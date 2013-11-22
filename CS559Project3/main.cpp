@@ -35,7 +35,7 @@ public:
 	Window *window;
 	View *view;
 
-	HudOverlay *mainOverlay;
+	Drawable *mainOverlay;
 
 	PerspectiveProjection *proj;
 
@@ -99,7 +99,9 @@ bool Globals::initialize() {
 	text.push_back("");
 	text.push_back("MARS MODE");
 
-	mainOverlay = new HudOverlay(text);
+	mainOverlay = (new HudOverlay(text))
+		->inColor(WHITE)
+		->pushDecorator(new ShaderUse(SHADER_SOLID));
 
 	view = new View(proj, cam, model, mainOverlay);
 

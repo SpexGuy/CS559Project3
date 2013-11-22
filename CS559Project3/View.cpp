@@ -47,8 +47,6 @@ void ViewOverlay::setupCamera() const {
 bool HudOverlay::draw(const glm::mat4 &model)
 {
 	setupCamera();
-	Graphics::inst()->setColor(vec4(1.0f,1.0f,1.0f,1.0f));
-	float lines = (float)text.size();
 	float size = 10.0f;
 
 	for(uint i = 0; i < text.size(); i++) {
