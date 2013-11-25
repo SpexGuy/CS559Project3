@@ -26,6 +26,8 @@ void TexLightShader::setup(const mat4 &model)
 	this->setUniform("ambientScale", g->getAmbientVec());
 	this->setUniform("diffuseScale", g->getDiffuseVec());
 	this->setUniform("specularColor", g->getSpecularColor());
+	this->setUniform("wireframe", g->isWireframe());
+	this->setUniform("ViewportMatrix", g->getViewportMatrix());
 }
 
 TexLightShader::~TexLightShader(void)

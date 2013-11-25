@@ -70,7 +70,7 @@ bool Globals::initialize() {
 	model = new DrawableGroup();
 	sphere = Mesh::newSphere(10,10,1.0f)
 		->inColor(RED)
-		->pushDecorator(new ShaderUse(SHADER_SOLID));
+		->pushDecorator(new ShaderUse(SHADER_TEXTURE));
 	light = new SpheroidLight();
 
 	light->setAngle(90);

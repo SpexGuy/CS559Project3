@@ -5,7 +5,7 @@
 layout (location = 0) out vec4 FragColor;
 noperspective in vec3 GEdgeDistance;
 flat in vec4 GColor;
-uniform bool wireframe = true;
+uniform bool wireframe;
 
 void main() {
 	float d = min(GEdgeDistance.x, GEdgeDistance.y);

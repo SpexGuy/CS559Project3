@@ -11,18 +11,18 @@ layout(location = 1) in vec3 vertex_normal;
 layout(location = 2) in vec2 vertex_tex;
  
 // Output data ; will be interpolated for each fragment.
-out vec2 UV;
-out vec3 normal;
-out vec3 position;
+out vec2 VUV;
+out vec3 VNormal;
+out vec3 VPosition;
 
  
 void main(){
- 	normal = normalize(normal_matrix * vertex_normal);
+ 	VNormal = normalize(normal_matrix * vertex_normal);
 
 	//Position is the vertex position in eye space.
-	position = vec3(modelview_matrix * vec4(vertex_position,1.0));
+	VPosition = vec3(modelview_matrix * vec4(vertex_position,1.0));
 	//position in space
 	gl_Position = mvp * vec4(vertex_position, 1.0);
 
-    UV = vertex_tex;
+	VUV = vertex_tex;
 }

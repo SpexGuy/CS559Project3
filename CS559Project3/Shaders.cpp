@@ -27,8 +27,16 @@ bool ShaderFlyweight::initialize() {
 	GLSLProgram * texlightshader = new TexLightShader();
 	texlightshader->compileShader("texture_shader.frag", GLSLShader::FRAGMENT);
 	texlightshader->compileShader("texture_shader.vert", GLSLShader::VERTEX);
+	texlightshader->compileShader("wireframe_texture.geom", GLSLShader::GEOMETRY);
 	texlightshader->link();
 	addShader(SHADER_TEXTURE, texlightshader);
+
+	GLSLProgram * adsshader = new TexLightShader();
+	adsshader->compileShader("ads_shader.frag", GLSLShader::FRAGMENT);
+	adsshader->compileShader("ads_shader.vert", GLSLShader::VERTEX);
+	adsshader->compileShader("wireframe_ads.geom", GLSLShader::GEOMETRY);
+	adsshader->link();
+	addShader(SHADER_ADS, adsshader);
 
 	GLSLProgram * solidshader = new SolidShader();
 	solidshader->compileShader("solid_shader.frag", GLSLShader::FRAGMENT);
