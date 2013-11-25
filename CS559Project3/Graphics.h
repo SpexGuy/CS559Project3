@@ -22,6 +22,17 @@
  * It also serves to accumulate state for the shaders.
  */
 class Graphics {
+
+	//Not sure on the style of this, but should this struct be public/somewhere else?
+	//I'm assuming you want to stick with the Graphics holding all of the light info?
+public:
+	/*Look ma! a struct! (so we can have an array of lights!*/
+	struct lightInfo{
+		vec3 position;
+		vec4 specular_color;
+		float ambient, diffuse, shininess;
+	};
+
 private:
 
 	GLSLProgram *currShader;
@@ -32,11 +43,15 @@ private:
 	glm::mat4 viewportmat;
 	
 	glm::ivec2 size;
-	glm::vec3 light;
+
 	glm::vec4 color;
 	
+	//This stuff needs to be replaced with references to our array of lightInfos!
+	glm::vec3 light;
 	glm::vec4 specularColor;
 	float ambient, diffuse, shininess;
+
+	lightInfo lights[5]; //we'll do 5 lights now!
 	
 	int modelviewMode;
 
@@ -143,11 +158,12 @@ public:
 	inline void setView(const glm::mat4 &view) {
 		this->view = view;
 	}
-	inline void setLight(const glm::vec3 &light) {
-		this->light = light;
-	}
 	inline void setColor(const glm::vec4 &color) {
 		this->color = color;
+	}
+	//For the setLight/setMaterial stuff, now we need to specify an index into the array! i'll do that later.
+	inline void setLight(const glm::vec3 &light) {
+		this->light = light;
 	}
 	inline void setMaterial(const float &a, const glm::vec4 &s, const float &shiny) {
 		assert(a <= 1);
@@ -234,4 +250,5 @@ public:
 	glm::vec3 getLightPos();
 	glm::mat4 getModelview(const glm::mat4 &model);
 	glm::mat3 getNormalMatrix(const glm::mat4 &mv);
+
 };
