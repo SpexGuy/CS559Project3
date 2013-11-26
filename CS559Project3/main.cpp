@@ -10,6 +10,7 @@
 #include "Rocket.h"
 #include "PointMesh.h"
 #include "ILContainer.h"
+#include "FrameBuffer.h"
 #include <GL/freeglut.h>
 #include <IL/il.h>
 #include <IL/ilu.h>
@@ -46,8 +47,11 @@ public:
 
 	DrawableGroup *model;
 	Drawable * sphere;
+	Drawable * virtualSphere;
 
 	Texture *marsTexture;
+
+	FrameBufferObject *genTexture;
 
 	TimeFunction<float> *sphereRotation;
 
@@ -72,18 +76,27 @@ bool Globals::initialize() {
 	proj->setPlanes(0.01f, 100.0f);
 
 	marsTexture = new ILContainer("earth_texture.jpg");
+	genTexture = new FrameBufferObject(ivec2(1024, 1024), 1, true);
 
-	//Creates the models with will hold the meshes for a given Scene.
+	//Creates the models which will hold the meshes for a given Scene.
 	model = new DrawableGroup();
 
 	sphereRotation = new LinearTimeFunction(16.0f/1000.0f, 0);
 
-	sphere = Mesh::newSphere(10, 10, 1.0f, marsTexture)
+	virtualSphere = Mesh::newSphere(10, 10, 1.0f, marsTexture)
+		//->rotated(vec3(1,0,1), 15)
+		//->animateRotation(vec3(0, 1, 0), sphereRotation)
+		//->inColor(RED)
+		->inMaterial(0.3f, vec4(1.0f), 50)
+		->pushDecorator(new ShaderUse(SHADER_TEXTURE));
+
+	sphere = Mesh::newSphere(10, 10, 1.0f, genTexture)
 		->rotated(vec3(1,0,1), 15)
 		->animateRotation(vec3(0, 1, 0), sphereRotation)
 		->inColor(RED)
 		->inMaterial(0.3f, vec4(1.0f), 50)
 		->pushDecorator(new ShaderUse(SHADER_TEXTURE));
+	
 	light = new SpheroidLight();
 
 	light->setAngle(90);
@@ -150,8 +163,19 @@ bool Globals::initialize() {
 		return false;
 
 	sphere->initialize();
+	virtualSphere->initialize();
 	mainOverlay->initialize();
 	marsTexture->initialize();
+	genTexture->initialize();
+
+	genTexture->bindDraw();
+	Graphics::inst()->setProjection(proj->generateProjectionMatrix());
+	Graphics::inst()->setView(cam->generateViewMatrix());
+	Graphics::inst()->setWireframe(true);
+	light->draw(mat4(1.0f));
+	virtualSphere->draw(mat4(1.0f));
+	genTexture->unbindDraw();
+	Graphics::inst()->setWireframe(false);
 
 	return true;
 }
