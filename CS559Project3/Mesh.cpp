@@ -107,7 +107,7 @@ Mesh *Mesh::newMars(float radius, float radScale,
 	return new TexturedMesh(points, tex, trigs, texture);
 }
 
-Mesh *Mesh::newSphere(int stacks, int slices, float radius, bool crosshatch)
+Mesh *Mesh::newSphere(int stacks, int slices, float radius, Texture *tx, bool crosshatch)
 {
 	//Assumes that the 2D has the same amount of slices for each stack
 	//Slices are the columns of the mesh
@@ -120,10 +120,13 @@ Mesh *Mesh::newSphere(int stacks, int slices, float radius, bool crosshatch)
 	
 	vector<vec2> tex;
 	vector<vec3> points;
+	vector<vec3> norms;
 	for(int i = 0; i< height; i++) {
-		for( int j = 0; j < width; j++) {
-			float theta = float(2*M_PI * float(j) / float(width));
-			float phi = float(M_PI * float(i+1) / float(height+1));
+		for( int j = 0; j <= width; j++) {
+			float tScale = float(j) / float(width);
+			float pScale = float(i+1) / float(height+1);
+			float theta = float(2*M_PI * tScale);
+			float phi = float(M_PI * pScale);
 
 			float x = radius*sin(theta)*sin(phi);
 			float z = radius*cos(theta)*sin(phi);
@@ -133,7 +136,9 @@ Mesh *Mesh::newSphere(int stacks, int slices, float radius, bool crosshatch)
 			if(i < 1 && j < 10)
 				cout << "( " << x << ", " << y << "," << z << " )" <<endl;
 #endif
+			tex.push_back(vec2(tScale, pScale));
 			points.push_back(vec3(x,y,z));
+			norms.push_back(normalize(vec3(x, y, z)));
 		}
 	}
 #ifdef DEBUG
@@ -142,11 +147,18 @@ Mesh *Mesh::newSphere(int stacks, int slices, float radius, bool crosshatch)
 #endif
 	
 	points.push_back(vec3(0, radius, 0));
+	tex.push_back(vec2(0.5, 0));
+	norms.push_back(vec3(0,1,0));
+
 	points.push_back(vec3(0, -radius, 0));
+	tex.push_back(vec2(0.5, 1));
+	norms.push_back(vec3(0,-1,0));
 
-	vector<ivec3> trigs = generateTrigs(points, width, height, true, true, crosshatch);
+	vector<ivec3> trigs = generateTrigs(points, width+1, height, true, false, crosshatch);
 
-	return new Mesh(points, tex, trigs);
+	if (tx == NULL)
+		return new Mesh(points, tex, trigs, norms);
+	return new TexturedMesh(points, tex, trigs, norms, tx);
 }
 
 Mesh *Mesh::newCylinder(int stacks, int slices, float topRadius, float botRadius, bool crosshatch)
@@ -291,6 +303,28 @@ Mesh::Mesh(const vector<vec3> &ppoints,
 		normSegs.push_back(ivec2(2*c, 2*c+1));
 	}
 }
+
+Mesh::Mesh(const vector<vec3> &ppoints,
+		   const vector<vec2> &texCoords,
+		   const vector<ivec3> &trigs,
+		   const vector<vec3> &norms) {
+
+	assert(ppoints.size() == norms.size());
+	assert(texCoords.size() == 0 || texCoords.size() == ppoints.size());
+	points = vector<VertexPNT>(ppoints.size());
+	for (int c = 0; c < points.size(); c++) {
+		points[c].normal = norms[c];
+		points[c].texture = (texCoords.size() == 0 ? vec2(0,0) : texCoords[c]);
+		points[c].position = ppoints[c];
+	}
+
+	this->trigs = trigs;
+	
+	this->drawNormals = false;
+	this->vertex_array_handle = this->vertex_coordinate_handle = GLuint(-1);
+
+}
+
 
 bool Mesh::initialize() {
 	if (!Graphics::inst()->loadBuffer(&this->vertex_array_handle, &this->vertex_coordinate_handle, this->points.size() * sizeof(VertexPNT), &this->points[0]))

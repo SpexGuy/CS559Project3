@@ -9,6 +9,7 @@
 #include "Mesh.h"
 #include "Rocket.h"
 #include "PointMesh.h"
+#include "ILContainer.h"
 #include <GL/freeglut.h>
 #include <IL/il.h>
 #include <IL/ilu.h>
@@ -46,6 +47,10 @@ public:
 	DrawableGroup *model;
 	Drawable * sphere;
 
+	Texture *marsTexture;
+
+	TimeFunction<float> *sphereRotation;
+
 	int period;
 	bool wireframe;
 
@@ -66,10 +71,18 @@ bool Globals::initialize() {
 	proj = new PerspectiveProjection(45.0f);
 	proj->setPlanes(0.01f, 100.0f);
 
+	marsTexture = new ILContainer("earth_texture.jpg");
+
 	//Creates the models with will hold the meshes for a given Scene.
 	model = new DrawableGroup();
-	sphere = Mesh::newSphere(10,10,1.0f)
+
+	sphereRotation = new LinearTimeFunction(16.0f/1000.0f, 0);
+
+	sphere = Mesh::newSphere(10, 10, 1.0f, marsTexture)
+		->rotated(vec3(1,0,1), 15)
+		->animateRotation(vec3(0, 1, 0), sphereRotation)
 		->inColor(RED)
+		->inMaterial(0.3f, vec4(1.0f), 50)
 		->pushDecorator(new ShaderUse(SHADER_TEXTURE));
 	light = new SpheroidLight();
 
@@ -138,6 +151,7 @@ bool Globals::initialize() {
 
 	sphere->initialize();
 	mainOverlay->initialize();
+	marsTexture->initialize();
 
 	return true;
 }
@@ -229,6 +243,13 @@ void KeyboardFunc(unsigned char c, int x, int y) {
 		globals.light->addAxisAngle(1);
 		break;
 
+	case '+':
+		Graphics::inst()->setTimeScale(Graphics::inst()->getTimeScale() + 0.5f);
+		break;
+	case '-':
+		Graphics::inst()->setTimeScale(Graphics::inst()->getTimeScale() - 0.5f);
+		break;
+
 	//quit
 	case 'x':
 	case 27:
@@ -273,8 +294,6 @@ void SpecialFunc(int c, int x, int y) {
 }
 
 void TimerFunc(int value) {
-
-
 	if (!globals.window->isClosed()) {
 		//keep state in Graphics
 		Graphics::inst()->update();

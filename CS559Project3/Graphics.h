@@ -176,7 +176,7 @@ public:
 	}
 	inline void update() {
 		int newTime = glutGet(GLUT_ELAPSED_TIME);
-		time = int(timeScale * (newTime - lastTrueTime));
+		time += int(timeScale * (newTime - lastTrueTime));
 		lastTrueTime = newTime;
 	}
 	inline void resetTime() {

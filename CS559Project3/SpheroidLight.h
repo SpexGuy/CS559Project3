@@ -7,5 +7,4 @@ public:
 	virtual bool initialize();
 	virtual bool draw(const glm::mat4 &model);
 	virtual void takeDown();
-
 };

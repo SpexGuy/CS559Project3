@@ -28,14 +28,14 @@ bool Rocket::initialize()
 	float strutRadiusInHead = smallRadius*1.25f;
 
 	//Draws the head
-	headMesh = Mesh::newSphere(stacks, slices, HEAD_RADIUS, true);
+	headMesh = Mesh::newSphere(stacks, slices, HEAD_RADIUS, NULL, true);
 	head = headMesh
 				->scaled(vec3(1.0f, HEAD_HEIGHT, 1.0f));
 	if (!head->initialize())
 		return false;
 
 	//top sphere
-	Drawable* tmp = Mesh::newSphere(stacks, slices, smallRadius, true)
+	Drawable* tmp = Mesh::newSphere(stacks, slices, smallRadius, NULL, true)
 				->translated(vec3(headToLeg, topOfLeg, 0.0f));
 	if (!tmp->initialize())
 		return false;
@@ -51,7 +51,7 @@ bool Rocket::initialize()
 	addElement(tmp);
 
 	//bottom sphere
-	tmp = Mesh::newSphere(stacks, slices, smallRadius,true)
+	tmp = Mesh::newSphere(stacks, slices, smallRadius, NULL, true)
 				->translated(vec3(headToLeg, topOfLeg-cylinderHeight, 0.0f))
 				->scaled(vec3(1.0f,cylinderHeight, 1.0f))
 				->resetColor()->resetMaterial()
@@ -142,7 +142,7 @@ void Rocket::revertHead()
 {
 	head->takeDown();
 	delete head;
-	Mesh* newHead = Mesh::newSphere(stacks, slices, HEAD_RADIUS, true);
+	Mesh* newHead = Mesh::newSphere(stacks, slices, HEAD_RADIUS, NULL, true);
 	head = newHead
 				->scaled(vec3(1.0f, HEAD_HEIGHT, 1.0f));
 	head->initialize();
