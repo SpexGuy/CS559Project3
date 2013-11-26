@@ -229,11 +229,11 @@ void GLSLProgram::link() throw(GLSLProgramException)
 
 void GLSLProgram::use() throw(GLSLProgramException)
 {
-	checkError("before use()");
+	//checkError("before use()");
     if( handle <= 0 || (! linked) ) 
     	throw GLSLProgramException("Shader has not been linked");
     glUseProgram( handle );
-	checkError("after use()");
+	//checkError("after use()");
 }
 
 int GLSLProgram::getHandle()

@@ -125,20 +125,20 @@ void Graphics::viewport(int x, int y, int width, int height) {
 }
 
 void Graphics::drawText2D(const mat4 &base, float x, float y, char *str, float size) const {
-	checkError("Before drawText");
-	mat4 pos = translate(base, vec3(x, y, 0));
-	float scaleFactor = size/72.0f;
-	pos = scale(pos, vec3(scaleFactor, scaleFactor, 1.0f));
-	//iterate through the string
-	while(*str != '\0') {
-		checkError("Gotcha");
-		currShader->setup(pos);
-		//glutStrokeCharacter(GLUT_STROKE_ROMAN, *str);
-		//translate past the character we just drew
-		pos = translate(pos, vec3(glutStrokeWidth(GLUT_STROKE_ROMAN, *str), 0.0f, 0.0f));
-		str++;
-	}
-	checkError("After drawText");
+	////checkError("Before drawText");
+	//mat4 pos = translate(base, vec3(x, y, 0));
+	//float scaleFactor = size/72.0f;
+	//pos = scale(pos, vec3(scaleFactor, scaleFactor, 1.0f));
+	////iterate through the string
+	//while(*str != '\0') {
+	//	//checkError("before stroke character");
+	//	currShader->setup(pos);
+	//	//glutStrokeCharacter(GLUT_STROKE_ROMAN, *str);
+	//	//translate past the character we just drew
+	//	pos = translate(pos, vec3(glutStrokeWidth(GLUT_STROKE_ROMAN, *str), 0.0f, 0.0f));
+	//	str++;
+	//}
+	//checkError("After drawText");
 }
 
 void Graphics::drawRect2D(const mat4 &base, vec2 blPoint, vec2 trPoint) const {
@@ -180,7 +180,7 @@ void Graphics::drawLine2D(const mat4 &base, vec2 tlPoint, vec2 brPoint) const {
 void Graphics::drawTriangles(const vector<ivec3> &trigs, const GLuint &vertexArrayHandle,
 							 const mat4 &model) const {
 
-	checkError("Before drawTriangles");
+	//checkError("Before drawTriangles");
 
 	glBindVertexArray(vertexArrayHandle);
 
@@ -193,7 +193,7 @@ void Graphics::drawTriangles(const vector<ivec3> &trigs, const GLuint &vertexArr
 		&trigs[0]);
 
 	glBindVertexArray(0);
-	checkError("After drawTriangles");
+	//checkError("After drawTriangles");
 
 }
 
@@ -213,7 +213,7 @@ void Graphics::drawLines(const vector<ivec2> &segs, const GLuint &vertexArrayHan
 
 	glBindVertexArray(0);
 
-	checkError("Graphics::draw - after drawLines");
+	//checkError("Graphics::draw - after drawLines");
 }
 
 void Graphics::drawPoints(const vector<int> &points, const GLuint &vertexArrayHandle,
@@ -232,7 +232,7 @@ void Graphics::drawPoints(const vector<int> &points, const GLuint &vertexArrayHa
 
 	glBindVertexArray(0);
 
-	checkError("Graphics::draw - after draw points");
+	//checkError("Graphics::draw - after draw points");
 }
 
 
