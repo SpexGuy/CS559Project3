@@ -53,7 +53,7 @@ void main() {
 	float d = min(GEdgeDistance.x, GEdgeDistance.y);
 	d = min(d, GEdgeDistance.z);
 	float mixval = smoothstep(0,2,d);
-	if(wireframe && mixval < .99)
+	if(wireframe)
 	{
 	FragColor = mix(vec4(0.0f,1.0f,0.0f,1.0f), ads(), mixval);
 	}

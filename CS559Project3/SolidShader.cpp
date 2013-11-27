@@ -8,7 +8,7 @@ SolidShader::SolidShader(void)
 
 void SolidShader::setup(const mat4 &model)
 {
-	checkError("Before SolidShader Setup");
+	//checkError("Before SolidShader Setup");
 	/*
 	Our uniforms are:
 	mvp/modelview/normal matrices, and textureIndex and the light info.
@@ -20,7 +20,7 @@ void SolidShader::setup(const mat4 &model)
 	this->setUniform("color", g->getColor());
 	this->setUniform("wireframe", g->isWireframe());
 	this->setUniform("ViewportMatrix", g->getViewportMatrix());
-	checkError("After SolidShader Setup");
+	//checkError("After SolidShader Setup");
 }
 
 SolidShader::~SolidShader(void)

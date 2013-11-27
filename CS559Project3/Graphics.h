@@ -68,9 +68,6 @@ private:
 	/* creates a Graphics instance but DOES NOT INITIALIZE IT */
 	Graphics();
 
-	inline void setSize(const glm::ivec2 &size) {
-		this->size = size;
-	}
 
 public:
 	/* Graphics is a Singleton */
@@ -166,7 +163,7 @@ public:
 	}
 	inline void update() {
 		int newTime = glutGet(GLUT_ELAPSED_TIME);
-		time = int(timeScale * (newTime - lastTrueTime));
+		time += int(timeScale * (newTime - lastTrueTime));
 		lastTrueTime = newTime;
 	}
 	inline void resetTime() {
@@ -178,6 +175,7 @@ public:
 	inline void setTexture(int texIndex) {
 		this->texIndex = texIndex;
 	}
+	void setSize(const glm::ivec2 &size);
 
 	inline glm::mat4 getProjection() const {
 		return projection;

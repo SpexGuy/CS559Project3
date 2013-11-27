@@ -34,6 +34,11 @@ public:
 		 const std::vector<glm::vec2> &texCoords,
 		 const std::vector<glm::ivec3> &trigs);
 
+	Mesh(const std::vector<glm::vec3> &points,
+		 const std::vector<glm::vec2> &texCoords,
+		 const std::vector<glm::ivec3> &trigs,
+		 const std::vector<glm::vec3> &norms);
+
 	virtual bool initialize();
 	
 	virtual bool draw(const glm::mat4 &modelview);
@@ -86,7 +91,8 @@ public:
 	 * along with a radius. The origin of the sphere is center of the sphere.
 	 */
 	static Mesh *newSphere(int stacks, int slices,
-		float radius, bool crosshatch = false);
+		float radius, Texture *tx = NULL,
+		bool crosshatch = false);
 
 	/** creates a surface of rotation mesh with a certain number of slices,
 	 * the stacks are that are is based off the points passed in.  
@@ -114,8 +120,16 @@ public:
 				 const std::vector<glm::vec2> &texCoords,
 				 const std::vector<glm::ivec3> &trigs,
 				 Texture *texture) :
-		
 		Mesh(points, texCoords, trigs),
+		texture(texture)
+	{}
+
+	TexturedMesh(const std::vector<glm::vec3> &points,
+				 const std::vector<glm::vec2> &texCoords,
+				 const std::vector<glm::ivec3> &trigs,
+				 const std::vector<glm::vec3> &norms,
+				 Texture *texture) :
+		Mesh(points, texCoords, trigs, norms),
 		texture(texture)
 	{}
 

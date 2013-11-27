@@ -2,6 +2,7 @@
 #include <sstream>
 #include "FrameBuffer.h"
 #include "ErrorCheck.h"
+#include "Graphics.h"
 
 using namespace std;
 
@@ -12,13 +13,13 @@ using namespace std;
 */
 
 bool FrameBufferObject::initialize() {
-	if (!checkError("FrameBufferObject::Initialize - purging errors prior to initializing frame buffer object."))
+	if (checkError("FrameBufferObject::Initialize - purging errors prior to initializing frame buffer object."))
 		return false;
 
 	glGenFramebuffers(1, &this->framebuffer_handle);
 	glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer_handle);
 
-	if (!checkError("FrameBufferObject::Initialize - purging errors prior to initializing textures."))
+	if (checkError("FrameBufferObject::Initialize - purging errors prior to initializing textures."))
 		return false;
 
 	glGenTextures(number_of_color_attachments, this->texture_handles);
@@ -66,6 +67,7 @@ void FrameBufferObject::bindDraw() {
 	assert(this->framebuffer_handle != GLuint(-1));
 	glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer_handle);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + color_buffer_index);
+	Graphics::inst()->setSize(this->size);
 }
 
 void FrameBufferObject::unbindDraw() {

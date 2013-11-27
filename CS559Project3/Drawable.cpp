@@ -277,11 +277,11 @@ NoDeletion::~NoDeletion() {
 
 bool ShaderUse::draw(const mat4 &model)
 {
-	checkError("Before ShaderUse");
+	//checkError("Before ShaderUse");
 	Graphics::inst()->setShader(shader);
 	bool ret = child->draw(model);
 	glUseProgram(0);
-	checkError("After ShaderUse");
+	//checkError("After ShaderUse");
 	return ret;
 }
 
