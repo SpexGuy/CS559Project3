@@ -67,7 +67,7 @@ void FrameBufferObject::bindDraw() {
 	assert(this->framebuffer_handle != GLuint(-1));
 	glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer_handle);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + color_buffer_index);
-	Graphics::inst()->setSize(this->size);
+	Graphics::inst()->viewport(0,0,size.x,size.y);
 }
 
 void FrameBufferObject::unbindDraw() {

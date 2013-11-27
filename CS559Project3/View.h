@@ -40,6 +40,8 @@ public:
 	inline void setModel(Drawable *m) {
 		this->model = m;
 	}
+
+	virtual ~View() {}
 };
 
 /** An abstract representation of a 2D overlay to be drawn on a view */

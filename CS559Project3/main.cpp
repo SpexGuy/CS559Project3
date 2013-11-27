@@ -11,6 +11,7 @@
 #include "PointMesh.h"
 #include "ILContainer.h"
 #include "FrameBuffer.h"
+#include "Frame.h"
 #include <GL/freeglut.h>
 #include <IL/il.h>
 #include <IL/ilu.h>
@@ -46,12 +47,15 @@ public:
 	SpheroidLight *light[NUM_LIGHTS];
 
 	DrawableGroup *model;
+	DrawableGroup *vmodel;
 	Drawable * sphere;
 	Drawable * virtualSphere;
 
 	Texture *marsTexture;
 
 	FrameBufferObject *genTexture;
+
+	vector<Frame *> frames;
 
 	TimeFunction<float> *sphereRotation;
 
@@ -81,23 +85,24 @@ bool Globals::initialize() {
 
 	//Creates the models which will hold the meshes for a given Scene.
 	model = new DrawableGroup();
+	vmodel = new DrawableGroup();
 
 	sphereRotation = new LinearTimeFunction(16.0f/1000.0f, 0);
 
 	virtualSphere = Mesh::newSphere(10, 10, 1.0f, marsTexture)
-		//->rotated(vec3(1,0,1), 15)
-		//->animateRotation(vec3(0, 1, 0), sphereRotation)
-		//->inColor(RED)
-		->inMaterial(0.3f, vec4(1.0f), 50)
-		->pushDecorator(new ShaderUse(SHADER_TEXTURE));
-
-	sphere = Mesh::newSphere(10, 10, 1.0f, genTexture)
 		->rotated(vec3(1,0,1), 15)
 		->animateRotation(vec3(0, 1, 0), sphereRotation)
 		->inColor(RED)	
 		->inMaterial(0.3f, vec4(1.0f), 50)
 		->pushDecorator(new ShaderUse(SHADER_TEXTURE));
 
+	sphere = Mesh::newSphere(30, 30, 1.0f, genTexture)
+		//->rotated(vec3(1,0,1), 15)
+		//->animateRotation(vec3(0, 1, 0), sphereRotation)
+		//->inColor(RED)
+		->inMaterial(0.3f, vec4(1.0f), 50)
+		->pushDecorator(new ShaderUse(SHADER_TEXTURE));
+	
 	light[0] = new SpheroidLight(0, WHITE);
 	light[0]->setAngle(90);
 	light[0]->setAxisAngle(90);
@@ -116,6 +121,8 @@ bool Globals::initialize() {
 	model->addLight(light[0]);
 	model->addLight(light[1]);
 	model->addElement(sphere);
+	vmodel->addLight(light[0]);
+	vmodel->addElement(virtualSphere);
 	//Building the cameras
 	cam = new SpheroidCamera();
 	cam->setRadius(3.0f);
@@ -158,7 +165,7 @@ bool Globals::initialize() {
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_CULL_FACE);
-	glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	
 	if (glewInit() != GLEW_OK) {
 		cerr << "GLEW failed to initialize." << endl;
@@ -180,17 +187,8 @@ bool Globals::initialize() {
 	marsTexture->initialize();
 	genTexture->initialize();
 
-	genTexture->bindDraw();
-	Graphics::inst()->setProjection(proj->generateProjectionMatrix());
-	Graphics::inst()->setView(cam->generateViewMatrix());
-	Graphics::inst()->setWireframe(true);
-	for(int i = 0; i < NUM_LIGHTS; i++){
-		if(light[i] != NULL)
-			light[i]->draw(mat4(1.0f));
-	}
-	virtualSphere->draw(mat4(1.0f));
-	genTexture->unbindDraw();
-	Graphics::inst()->setWireframe(false);
+	Frame *f = new Frame(genTexture, proj, cam, vmodel, mainOverlay);
+	frames.push_back(f);
 
 	return true;
 }
@@ -373,6 +371,9 @@ void windowClose() {
 	CloseFunc();
 }
 void windowDisplay() {
+	for (int c = 0; c < globals.frames.size(); c++) {
+		globals.frames[c]->render();
+	}
 	globals.window->render();
 }
 
