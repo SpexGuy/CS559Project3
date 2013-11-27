@@ -17,21 +17,13 @@
 #define MV_FULL 7
 #define MV_ROTATION 2
 
+// number of lights!
+#define NUM_LIGHTS 5
 /**
  * The Graphics class encapsulates all logic related to drawing 3D shapes
  * It also serves to accumulate state for the shaders.
  */
 class Graphics {
-
-	//Not sure on the style of this, but should this struct be public/somewhere else?
-	//I'm assuming you want to stick with the Graphics holding all of the light info?
-public:
-	/*Look ma! a struct! (so we can have an array of lights!*/
-	struct lightInfo{
-		vec3 position;
-		vec4 specular_color;
-		float ambient, diffuse, shininess;
-	};
 
 private:
 
@@ -46,13 +38,11 @@ private:
 
 	glm::vec4 color;
 	
-	//This stuff needs to be replaced with references to our array of lightInfos!
-	glm::vec3 light;
-	glm::vec4 specularColor;
+	//meh. now these are arrays.
+	glm::vec3 light[NUM_LIGHTS];
+	glm::vec4 specularColor[NUM_LIGHTS];
 	float ambient, diffuse, shininess;
 
-	lightInfo lights[5]; //we'll do 5 lights now!
-	
 	int modelviewMode;
 
 	int texIndex;
@@ -162,13 +152,13 @@ public:
 		this->color = color;
 	}
 	//For the setLight/setMaterial stuff, now we need to specify an index into the array! i'll do that later.
-	inline void setLight(const glm::vec3 &light) {
-		this->light = light;
+	inline void setLight(int index, const glm::vec3 &light, const glm::vec4 &s) {
+		this->light[index] = light;
+		this->specularColor[index] = s;
 	}
-	inline void setMaterial(const float &a, const glm::vec4 &s, const float &shiny) {
+	inline void setMaterial(const float &a, const float &shiny) {
 		assert(a <= 1);
 		this->ambient = a;
-		this->specularColor = s;
 		this->shininess = shiny;
 	}
 	inline void setModelviewMode(int mode) {
@@ -198,20 +188,21 @@ public:
 	inline glm::ivec2 getSize() const {
 		return size;
 	}
-	inline glm::vec3 getLight() const {
-		return light;
-	}
 	inline glm::vec4 getColor() const {
 		return color;
 	}
+	inline glm::vec3 getLight(int index) const {
+		return light[index];
+	}
+
 	inline float getAmbient() const {
 		return ambient;
 	}
 	inline float getDiffuse() const {
 		return 1-ambient;
 	}
-	inline glm::vec4 getSpecularColor() const {
-		return specularColor;
+	inline glm::vec4 getSpecularColor(int index) const {
+		return specularColor[index];
 	}
 	inline float getShininess() const {
 		return shininess;
@@ -229,7 +220,7 @@ public:
 		return texIndex;
 	}
 	inline glm::vec3 getAmbientVec() {
-		return glm::vec3(ambient);
+		return glm::vec3(getAmbient());
 	}
 	inline glm::vec3 getDiffuseVec() {
 		return glm::vec3(getDiffuse());
@@ -247,7 +238,18 @@ public:
 		currShader = shader;
 		currShader->use();
 	}
-	glm::vec3 getLightPos();
+	
+	inline glm::vec4 * getSpecularColorArray() {
+		return specularColor;
+	}
+
+	inline glm::vec3 * getLightArray() {
+		return light;
+	}
+
+
+
+	glm::vec3 getLightPos(int index);
 	glm::mat4 getModelview(const glm::mat4 &model);
 	glm::mat3 getNormalMatrix(const glm::mat4 &mv);
 

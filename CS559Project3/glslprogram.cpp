@@ -333,6 +333,30 @@ void GLSLProgram::setUniform( const char *name, bool val )
     } 
 }
 
+void GLSLProgram::setUniform( const char *name, int size, vec3 * array )
+{
+    int loc = getUniformLocation(name);
+    if( loc >= 0 ) {
+        glUniform3fv(loc, size, &array[0].x);
+    } 
+}
+void GLSLProgram::setUniform( const char *name, int size, vec4 * array )
+{
+    int loc = getUniformLocation(name);
+    if( loc >= 0 ) {
+        glUniform4fv(loc, size, &array[0].x);
+    } 
+}
+
+void GLSLProgram::setUniform( const char *name, int size, float * array )
+{
+    int loc = getUniformLocation(name);
+    if( loc >= 0 ) {
+        glUniform1fv(loc, size, array);
+    } 
+}
+
+
 void GLSLProgram::printActiveUniforms() {
 	GLint numUniforms = 0;
 	glGetProgramInterfaceiv( handle, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numUniforms);

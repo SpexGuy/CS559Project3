@@ -77,6 +77,12 @@ public:
     void   setUniform( const char *name, bool val );
     void   setUniform( const char *name, GLuint val );
 
+	// Extra setUniform functions for setting arrays!
+	void   setUniform( const char * name, int size, vec3 * array);
+	void   setUniform( const char * name, int size, vec4 * array);
+	void   setUniform( const char * name, int size, float * array);
+
+
     void   printActiveUniforms();
     void   printActiveUniformBlocks();
     void   printActiveAttribs();

@@ -202,7 +202,7 @@ bool Color::draw(const mat4 &model) {
 }
 
 bool Material::draw(const mat4 &model) {
-	Graphics::inst()->setMaterial(ambient, specularColor, shininess);
+	Graphics::inst()->setMaterial(ambient, shininess);
 	return child->draw(model);
 }
 
@@ -219,12 +219,11 @@ bool ColorReset::draw(const mat4 &model) {
 bool MaterialReset::draw(const mat4 &model) {
 	//save the old material
 	float a = Graphics::inst()->getAmbient();
-	vec4 spec = Graphics::inst()->getSpecularColor();
 	float shiny = Graphics::inst()->getShininess();
 	//continue down the stack
 	bool ret = child->draw(model);
 	//restore the old material
-	Graphics::inst()->setMaterial(a, spec, shiny);
+	Graphics::inst()->setMaterial(a, shiny);
 	return ret;
 }
 

@@ -24,10 +24,10 @@ Graphics *Graphics::inst() {
 Graphics::Graphics() {
 	this->projection = mat4(1.0f);
 	this->view = mat4(1.0f);
-	this->light = vec3(0.0f);
+	this->light[0] = vec3(0.0f);
 	this->size = ivec2(1);
 	this->color = BLACK;
-	this->specularColor = WHITE;
+	this->specularColor[0] = WHITE;
 	this->ambient = 1;
 	this->diffuse = 0;
 	this->shininess = 1;
@@ -236,8 +236,8 @@ void Graphics::drawPoints(const vector<int> &points, const GLuint &vertexArrayHa
 }
 
 
-vec3 Graphics::getLightPos() {
-	return vec3(view * vec4(light,1.0f));
+vec3 Graphics::getLightPos(int index) {
+	return vec3(view * vec4(light[index],1.0f));
 }
 
 mat4 Graphics::getModelview(const mat4 &model) {

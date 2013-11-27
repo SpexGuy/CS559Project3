@@ -21,11 +21,11 @@ void TexLightShader::setup(const mat4 &model)
 	this->setUniform("modelview_matrix", mv);
 	this->setUniform("normal_matrix", nm);
 	this->setUniform("textureIndex", g->getTexture());
-	this->setUniform("light_position", g->getLightPos());
+	this->setUniform("light_position", NUM_LIGHTS, g->getLightArray());
 	this->setUniform("shininess", g->getShininess());
 	this->setUniform("ambientScale", g->getAmbientVec());
 	this->setUniform("diffuseScale", g->getDiffuseVec());
-	this->setUniform("specularColor", g->getSpecularColor());
+	this->setUniform("specularColor", NUM_LIGHTS, g->getSpecularColorArray());
 	this->setUniform("wireframe", g->isWireframe());
 	this->setUniform("ViewportMatrix", g->getViewportMatrix());
 }

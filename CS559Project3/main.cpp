@@ -41,13 +41,14 @@ public:
 
 	SpheroidCamera *cam;
 
-	SpheroidLight *light;
+	SpheroidLight *light[NUM_LIGHTS];
 
 	DrawableGroup *model;
 	Drawable * sphere;
 
 	int period;
 	bool wireframe;
+	int curr_light;
 
 	Globals();
 	bool initialize();
@@ -70,15 +71,25 @@ bool Globals::initialize() {
 	model = new DrawableGroup();
 	sphere = Mesh::newSphere(10,10,1.0f)
 		->inColor(RED)
-		->pushDecorator(new ShaderUse(SHADER_TEXTURE));
-	light = new SpheroidLight();
+		->pushDecorator(new ShaderUse(SHADER_ADS));
+	
+	light[0] = new SpheroidLight(0, WHITE);
+	light[0]->setAngle(90);
+	light[0]->setAxisAngle(90);
+	light[0]->setRadius(15);
 
-	light->setAngle(90);
-	light->setAxisAngle(90);
-	light->setRadius(15);	
+	light[1] = new SpheroidLight(1, RED);
+	light[1]->setAngle(0);
+	light[1]->setAxisAngle(90);
+	light[1]->setRadius(15);
+
+	//clear out the lights we don't use
+	for(int i = 2; i < NUM_LIGHTS; i++)
+		light[i] = NULL;
 
 	//Building the models
-	model->addLight(light);
+	model->addLight(light[0]);
+	model->addLight(light[1]);
 	model->addElement(sphere);
 	//Building the cameras
 	cam = new SpheroidCamera();
@@ -133,9 +144,11 @@ bool Globals::initialize() {
 		return false;
 	if (!Graphics::inst()->initialize())
 		return false;
-	if (!light->initialize())
-		return false;
-
+	for(int i = 0; i < NUM_LIGHTS; i++)
+	{
+		if (light[i] != NULL && !light[i]->initialize())
+			return false;
+	}
 	sphere->initialize();
 	mainOverlay->initialize();
 
@@ -143,7 +156,10 @@ bool Globals::initialize() {
 }
 
 void Globals::takeDown() {
-	light->takeDown();
+	for(int i = 0; i < NUM_LIGHTS; i++){
+		if(light[i] != NULL)
+			light[i]->takeDown();
+	}
 	Graphics::inst()->takeDown();
 	ShaderFlyweight::inst()->takeDown();
 }
@@ -217,18 +233,36 @@ void KeyboardFunc(unsigned char c, int x, int y) {
 
 	//light controls
 	case ';':
-		globals.light->addAngle(1);
+		if(globals.light[globals.curr_light] != NULL)
+		globals.light[globals.curr_light]->addAngle(1);
 		break;
 	case 'k':
-		globals.light->addAngle(-1);
+		if(globals.light[globals.curr_light] != NULL)
+		globals.light[globals.curr_light]->addAngle(-1);
 		break;
 	case 'o':
-		globals.light->addAxisAngle(-1);
+		if(globals.light[globals.curr_light] != NULL)
+		globals.light[globals.curr_light]->addAxisAngle(-1);
 		break;
 	case 'l':
-		globals.light->addAxisAngle(1);
+		if(globals.light[globals.curr_light] != NULL)
+		globals.light[globals.curr_light]->addAxisAngle(1);
 		break;
-
+	case '1':
+		globals.curr_light = 0;
+		break;
+	case '2':
+		globals.curr_light = 1;
+		break;
+	case '3':
+		globals.curr_light = 2;
+		break;
+	case '4':
+		globals.curr_light = 3;
+		break;
+	case '5':
+		globals.curr_light = 4;
+		break;
 	//quit
 	case 'x':
 	case 27:
