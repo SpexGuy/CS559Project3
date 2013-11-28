@@ -4,7 +4,7 @@
 void LinearPathSpawner::update() {
 	int time = Graphics::inst()->getTime();
 	if (time > lastSpawnTime + minSpawnTime &&
-			float(rand())/RAND_MAX >= probability) {
+			float(rand())/RAND_MAX <= probability) {
 		spawn();
 	}
 }

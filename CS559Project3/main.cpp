@@ -105,7 +105,7 @@ bool Globals::initialize() {
 		->translated(vec3(2.0f, 0.0f, 0.0f))
 		->breakDelete();
 
-	spawner = new LinearPathSpawner(sphere, 2.0f/1000.0f, 2.0f, -3.0f, 0.1f, model);
+	spawner = new LinearPathSpawner(sphere, 2.0f/1000.0f, 2.0f, -10.0f, 0.25f/period, model);
 	
 	light[0] = new SpheroidLight(0, WHITE);
 	light[0]->setAngle(90);
@@ -123,7 +123,7 @@ bool Globals::initialize() {
 
 	//Building the models
 	model->addLight(light[0]);
-	model->addElement(sphere);
+//	model->addElement(sphere);
 //	model->addElement(sphereCopy);
 	vmodel->addLight(light[0]);
 	vmodel->addElement(virtualSphere);
@@ -390,6 +390,7 @@ void windowDisplay() {
 	for (uint c = 0; c < globals.frames.size(); c++) {
 		globals.frames[c]->render();
 	}
+	globals.spawner->update();
 	globals.window->render();
 }
 
