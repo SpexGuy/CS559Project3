@@ -24,6 +24,24 @@ public:
 	}
 };
 
+class TranslationAnimation : public DrawableDecorator {
+private:
+	TranslationAnimation();
+protected:
+	TimeFunction<vec3> *pos;
+public:
+	TranslationAnimation(TimeFunction<vec3> *pos) :
+		pos(pos) {}
+
+	virtual bool draw(const glm::mat4 &model);
+
+	virtual Drawable *copyStack();
+
+	virtual ~TranslationAnimation() {
+		delete pos;
+	}
+};
+
 class CamTranslation : public CameraDecorator {
 protected:
 	glm::vec3 pos;

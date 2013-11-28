@@ -14,3 +14,8 @@ vec3 Vec3TimeFunction::evaluate(int time) {
 				f2->evaluate(time),
 				f3->evaluate(time));
 }
+Vec3TimeFunction::~Vec3TimeFunction() {
+	delete f1;
+	delete f2;
+	delete f3;
+}

@@ -57,12 +57,15 @@ public:
 	 * Returns a pointer to the base of the stack */
 	Drawable *billboard(const glm::vec3 &axis);
 
-	/* pushes a Rotation onto the decorator stack, then adds
-	 * an animation to the given group
+	/* pushes a RotationAnimation onto the decorator stack
 	 * Returns a pointer to the base of the stack */
 	Drawable *animateRotation(
 				const glm::vec3 &axis,
 				TimeFunction<float> *angle);
+
+	/* pushes a TranslationAnimation onto the decorator stack
+	 * Returns a pointer to the base of the stack */
+	Drawable *animateTranslation(TimeFunction<glm::vec3> *pos);
 	
 	/* pushes a DisableDepthTest onto the decorator stack
 	 * Returns a pointer to the base of the stack */
@@ -292,6 +295,7 @@ public:
 	OffscreenObselescence() {}
 
 	virtual bool draw(const glm::mat4 &model);
+	virtual void takeDown();
 	virtual Drawable *copyStack();
 };
 

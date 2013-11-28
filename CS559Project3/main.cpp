@@ -12,6 +12,7 @@
 #include "ILContainer.h"
 #include "FrameBuffer.h"
 #include "Frame.h"
+#include "LinearPathSpawner.h"
 #include <GL/freeglut.h>
 #include <IL/il.h>
 #include <IL/ilu.h>
@@ -51,14 +52,13 @@ public:
 	Drawable * sphere;
 	Drawable * sphereCopy;
 	Drawable * virtualSphere;
+	LinearPathSpawner *spawner;
 
 	Texture *marsTexture;
 
 	FrameBufferObject *genTexture;
 
 	vector<Frame *> frames;
-
-	TimeFunction<float> *sphereRotation;
 
 	int period;
 	bool wireframe;
@@ -88,23 +88,24 @@ bool Globals::initialize() {
 	model = new DrawableGroup();
 	vmodel = new DrawableGroup();
 
-	sphereRotation = new LinearTimeFunction(16.0f/1000.0f, 0);
-
 	virtualSphere = Mesh::newSphere(10, 10, 1.0f, marsTexture)
-		->rotated(vec3(1,0,1), 15)
-		->animateRotation(vec3(0, 1, 0), sphereRotation)
+		->rotated(vec3(1,0,0), 15)
+		->animateRotation(vec3(0, 1, 0),
+			new LinearTimeFunction(16.0f/1000.0f, 0))
 		->inColor(RED)
 		->inMaterial(1.0f, 0.0f, 50)
 		->useShader(SHADER_TEXTURE);
 
 	sphere = Mesh::newSphere(30, 30, 1.0f, genTexture)
-		->translated(vec3(-1.0f, 0.0f, 0.0f))
+		//->translated(vec3(-1.0f, 0.0f, 0.0f))
 		->inMaterial(0.3f, 1.0f, 50)
 		->useShader(SHADER_TEXTURE);
 	sphereCopy = sphere
 		->copyStack()
 		->translated(vec3(2.0f, 0.0f, 0.0f))
 		->breakDelete();
+
+	spawner = new LinearPathSpawner(sphere, 2.0f/1000.0f, 2.0f, -3.0f, 0.1f, model);
 	
 	light[0] = new SpheroidLight(0, WHITE);
 	light[0]->setAngle(90);
@@ -123,7 +124,7 @@ bool Globals::initialize() {
 	//Building the models
 	model->addLight(light[0]);
 	model->addElement(sphere);
-	model->addElement(sphereCopy);
+//	model->addElement(sphereCopy);
 	vmodel->addLight(light[0]);
 	vmodel->addElement(virtualSphere);
 	//Building the cameras
@@ -317,6 +318,10 @@ void KeyboardFunc(unsigned char c, int x, int y) {
 		break;
 	case '-':
 		Graphics::inst()->setTimeScale(Graphics::inst()->getTimeScale() - 0.5f);
+		break;
+
+	case 's':
+		globals.spawner->spawn();
 		break;
 
 	//quit

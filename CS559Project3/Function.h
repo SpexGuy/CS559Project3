@@ -8,6 +8,7 @@ template<typename P, typename R>
 class Function {
 public:
 	virtual R evaluate(P param) = 0;
+	virtual ~Function() {}
 };
 
 /** A TimeFunction takes an integer value meant to be
@@ -58,4 +59,6 @@ public:
 	}
 
 	virtual glm::vec3 evaluate(int time);
+
+	virtual ~Vec3TimeFunction();
 };

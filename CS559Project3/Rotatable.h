@@ -44,6 +44,10 @@ public:
 	virtual bool draw(const glm::mat4 &model);
 
 	virtual Drawable *copyStack();
+
+	virtual ~RotationAnimation() {
+		delete angle;
+	}
 };
 
 class CamRotation : public CameraDecorator {
@@ -77,6 +81,10 @@ public:
 		axis(axis), angle(angle) {}
 
 	virtual glm::mat4 generateViewMatrix();
+
+	virtual ~CamRotationAnimation() {
+		delete angle;
+	}
 };
 
 /**

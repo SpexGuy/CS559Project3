@@ -15,6 +15,15 @@ Drawable *Translation::copyStack() {
 }
 
 
+bool TranslationAnimation::draw(const mat4 &model) {
+	return child->draw(translate(model, pos->evaluate(Graphics::inst()->getTime())));
+}
+Drawable *TranslationAnimation::copyStack() {
+	TranslationAnimation *copy = new TranslationAnimation(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
+
 
 
 mat4 CamTranslation::generateViewMatrix() {

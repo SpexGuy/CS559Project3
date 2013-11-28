@@ -45,6 +45,10 @@ Drawable *Drawable::animateRotation(const vec3 &axis, TimeFunction<float> *angle
 	return pushDecorator(new RotationAnimation(axis, angle));
 }
 
+Drawable *Drawable::animateTranslation(TimeFunction<vec3> *pos) {
+	return pushDecorator(new TranslationAnimation(pos));
+}
+
 Drawable *Drawable::disableDepthTest() {
 	return pushDecorator(new DisableDepthTest());
 }
@@ -305,8 +309,9 @@ Drawable *ModelviewMode::copyStack() {
 
 bool OffscreenObselescence::draw(const glm::mat4 &model) {
 	vec4 eyePos = (Graphics::inst()->getView() * model) * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	return (eyePos.z >= 0 && child->draw(model));
+	return (eyePos.z <= 0 && child->draw(model));
 }
+void OffscreenObselescence::takeDown() {}
 Drawable *OffscreenObselescence::copyStack() {
 	OffscreenObselescence *copy = new OffscreenObselescence(*this);
 	copy->setChild(child->copyStack());
