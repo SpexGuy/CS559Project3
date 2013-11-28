@@ -27,9 +27,11 @@ Graphics::Graphics() {
 	this->light[0] = vec3(0.0f);
 	this->size = ivec2(1);
 	this->color = BLACK;
-	this->specularColor[0] = WHITE;
+	for (int c = 0; c < NUM_LIGHTS; c++)
+		this->lightColor[c] = vec4(0.0f);
 	this->ambient = 1;
 	this->diffuse = 0;
+	this->specular = 1;
 	this->shininess = 1;
 	this->modelviewMode = MV_FULL;
 	this->texIndex = 0;
@@ -237,6 +239,13 @@ void Graphics::drawPoints(const vector<int> &points, const GLuint &vertexArrayHa
 	glBindVertexArray(0);
 
 	//checkError("Graphics::draw - after draw points");
+}
+
+
+void Graphics::clearLights() {
+	for (int c = 0; c < NUM_LIGHTS; c++) {
+		lightColor[c].w = 0;
+	}
 }
 
 

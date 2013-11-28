@@ -61,6 +61,7 @@ bool FrameBufferObject::initialize() {
 
 void FrameBufferObject::bindTexture() {
 	glBindTexture(GL_TEXTURE_2D, texture_handles[color_buffer_index]);
+	Graphics::inst()->setFlipU(true);
 }
 
 void FrameBufferObject::bindDraw() {

@@ -38,10 +38,9 @@ private:
 
 	glm::vec4 color;
 	
-	//meh. now these are arrays.
 	glm::vec3 light[NUM_LIGHTS];
-	glm::vec4 specularColor[NUM_LIGHTS];
-	float ambient, diffuse, shininess;
+	glm::vec4 lightColor[NUM_LIGHTS];
+	float ambient, diffuse, specular, shininess;
 
 	int modelviewMode;
 
@@ -52,6 +51,7 @@ private:
 	int time;
 
 	bool wireframe;
+	bool flipUCoords;
 
 	std::vector<glm::ivec3> circleTrigs;
 	std::vector<glm::ivec3> squareTrigs;
@@ -150,12 +150,14 @@ public:
 	}
 	//For the setLight/setMaterial stuff, now we need to specify an index into the array! i'll do that later.
 	inline void setLight(int index, const glm::vec3 &light, const glm::vec4 &s) {
-		this->light[index] = light;
-		this->specularColor[index] = s;
+		this->light[index] = vec3(view * vec4(light, 1.0f));
+		this->lightColor[index] = s;
 	}
-	inline void setMaterial(const float &a, const float &shiny) {
+	inline void setMaterial(const float &a, const float &s, const float &shiny) {
 		assert(a <= 1);
 		this->ambient = a;
+		this->diffuse = 1-a;
+		this->specular = s;
 		this->shininess = shiny;
 	}
 	inline void setModelviewMode(int mode) {
@@ -175,8 +177,17 @@ public:
 	inline void setTexture(int texIndex) {
 		this->texIndex = texIndex;
 	}
+	inline void setFlipU(bool flipU) {
+		flipUCoords = flipU;
+	}
 	void setSize(const glm::ivec2 &size);
+	void clearLights();
 
+
+
+	inline bool isFlipU() const {
+		return flipUCoords;
+	}
 	inline glm::mat4 getProjection() const {
 		return projection;
 	}
@@ -192,18 +203,20 @@ public:
 	inline glm::vec3 getLight(int index) const {
 		return light[index];
 	}
-
 	inline float getAmbient() const {
 		return ambient;
 	}
 	inline float getDiffuse() const {
 		return 1-ambient;
 	}
-	inline glm::vec4 getSpecularColor(int index) const {
-		return specularColor[index];
+	inline float getSpecular() const {
+		return specular;
 	}
 	inline float getShininess() const {
 		return shininess;
+	}
+	inline glm::vec4 getLightColor(int index) const {
+		return lightColor[index];
 	}
 	inline int getModelviewMode() const {
 		return modelviewMode;
@@ -223,6 +236,9 @@ public:
 	inline glm::vec3 getDiffuseVec() {
 		return glm::vec3(getDiffuse());
 	}
+	inline glm::vec3 getSpecularVec() {
+		return glm::vec3(getSpecular());
+	}
 	inline bool isWireframe() {
 		return wireframe;
 	}
@@ -237,10 +253,9 @@ public:
 		currShader->use();
 	}
 	
-	inline glm::vec4 * getSpecularColorArray() {
-		return specularColor;
+	inline glm::vec4 * getLightColorArray() {
+		return lightColor;
 	}
-
 	inline glm::vec3 * getLightArray() {
 		return light;
 	}

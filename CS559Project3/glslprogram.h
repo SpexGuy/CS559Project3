@@ -48,14 +48,14 @@ public:
     GLSLProgram();
     virtual ~GLSLProgram();
 
-	void   compileShader( const char *fileName ) throw (GLSLProgramException);
-    void   compileShader( const char * fileName, GLSLShader::GLSLShaderType type ) throw (GLSLProgramException);
+	void   compileShader( const char *fileName );
+    void   compileShader( const char * fileName, GLSLShader::GLSLShaderType type );
     void   compileShader( const string & source, GLSLShader::GLSLShaderType type, 
-                          const char *fileName = NULL ) throw (GLSLProgramException);
+                          const char *fileName = NULL );
                           
-    void   link() throw (GLSLProgramException);
-    void   validate() throw(GLSLProgramException);
-    void   use() throw (GLSLProgramException);
+    void   link();
+    void   validate();
+    void   use();
 
 	//@Precondition - the shader must be in use
 	virtual void setup(const glm::mat4 &model) = 0;

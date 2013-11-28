@@ -25,7 +25,9 @@ void TexLightShader::setup(const mat4 &model)
 	this->setUniform("shininess", g->getShininess());
 	this->setUniform("ambientScale", g->getAmbientVec());
 	this->setUniform("diffuseScale", g->getDiffuseVec());
-	this->setUniform("specularColor", NUM_LIGHTS, g->getSpecularColorArray());
+	this->setUniform("specularScale", g->getSpecularVec());
+	this->setUniform("lightColor", NUM_LIGHTS, g->getLightColorArray());
+	this->setUniform("flipUCoord", g->isFlipU());
 	this->setUniform("wireframe", g->isWireframe());
 	this->setUniform("ViewportMatrix", g->getViewportMatrix());
 }

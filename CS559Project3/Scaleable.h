@@ -15,6 +15,7 @@ public:
 		scaleVec(scale) {}
 
 	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 	
 	inline void setScale(const glm::vec3 &scale) {
 		this->scaleVec = scale;

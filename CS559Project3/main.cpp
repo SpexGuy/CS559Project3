@@ -42,13 +42,14 @@ public:
 
 	PerspectiveProjection *proj;
 
-	SpheroidCamera *cam;
+	SpheroidCamera *cam, *vcam;
 
 	SpheroidLight *light[NUM_LIGHTS];
 
 	DrawableGroup *model;
 	DrawableGroup *vmodel;
 	Drawable * sphere;
+	Drawable * sphereCopy;
 	Drawable * virtualSphere;
 
 	Texture *marsTexture;
@@ -92,16 +93,18 @@ bool Globals::initialize() {
 	virtualSphere = Mesh::newSphere(10, 10, 1.0f, marsTexture)
 		->rotated(vec3(1,0,1), 15)
 		->animateRotation(vec3(0, 1, 0), sphereRotation)
-		->inColor(RED)	
-		->inMaterial(0.3f, vec4(1.0f), 50)
-		->pushDecorator(new ShaderUse(SHADER_TEXTURE));
+		->inColor(RED)
+		->inMaterial(1.0f, 0.0f, 50)
+		->useShader(SHADER_TEXTURE);
 
 	sphere = Mesh::newSphere(30, 30, 1.0f, genTexture)
-		//->rotated(vec3(1,0,1), 15)
-		//->animateRotation(vec3(0, 1, 0), sphereRotation)
-		//->inColor(RED)
-		->inMaterial(0.3f, vec4(1.0f), 50)
-		->pushDecorator(new ShaderUse(SHADER_TEXTURE));
+		->translated(vec3(-1.0f, 0.0f, 0.0f))
+		->inMaterial(0.3f, 1.0f, 50)
+		->useShader(SHADER_TEXTURE);
+	sphereCopy = sphere
+		->copyStack()
+		->translated(vec3(2.0f, 0.0f, 0.0f))
+		->breakDelete();
 	
 	light[0] = new SpheroidLight(0, WHITE);
 	light[0]->setAngle(90);
@@ -119,13 +122,15 @@ bool Globals::initialize() {
 
 	//Building the models
 	model->addLight(light[0]);
-	model->addLight(light[1]);
 	model->addElement(sphere);
+	model->addElement(sphereCopy);
 	vmodel->addLight(light[0]);
 	vmodel->addElement(virtualSphere);
 	//Building the cameras
 	cam = new SpheroidCamera();
 	cam->setRadius(3.0f);
+	vcam = new SpheroidCamera();
+	vcam->setRadius(3.0f);
 
 	//Building the overlays
 	//Setting the hud overlays to display the associated text.
@@ -176,18 +181,24 @@ bool Globals::initialize() {
 		return false;
 	if (!Graphics::inst()->initialize())
 		return false;
-	for(int i = 0; i < NUM_LIGHTS; i++)
-	{
+	for(int i = 0; i < NUM_LIGHTS; i++) {
 		if (light[i] != NULL && !light[i]->initialize())
 			return false;
 	}
-	sphere->initialize();
-	virtualSphere->initialize();
-	mainOverlay->initialize();
-	marsTexture->initialize();
-	genTexture->initialize();
+	if (!sphere->initialize())
+		return false;
+	if (!sphereCopy->initialize())
+		return false;
+	if (!virtualSphere->initialize())
+		return false;
+	if (!mainOverlay->initialize())
+		return false;
+	if (!marsTexture->initialize())
+		return false;
+	if (!genTexture->initialize())
+		return false;
 
-	Frame *f = new Frame(genTexture, proj, cam, vmodel, mainOverlay);
+	Frame *f = new Frame(genTexture, proj, vcam, vmodel, mainOverlay);
 	frames.push_back(f);
 
 	return true;
@@ -371,7 +382,7 @@ void windowClose() {
 	CloseFunc();
 }
 void windowDisplay() {
-	for (int c = 0; c < globals.frames.size(); c++) {
+	for (uint c = 0; c < globals.frames.size(); c++) {
 		globals.frames[c]->render();
 	}
 	globals.window->render();

@@ -9,6 +9,11 @@ using namespace glm;
 bool Scale::draw(const mat4 &model) {
 	return child->draw(scale(model, scaleVec));
 }
+Drawable *Scale::copyStack() {
+	Scale *copy = new Scale(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
 
 
 

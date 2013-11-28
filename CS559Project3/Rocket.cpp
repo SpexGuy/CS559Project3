@@ -56,7 +56,7 @@ bool Rocket::initialize()
 				->scaled(vec3(1.0f,cylinderHeight, 1.0f))
 				->resetColor()->resetMaterial()
 				->inColor(vec4(1.0f, 1.0f, 0.0f, 1.0f))
-				->inMaterial(1.0f, vec4(0.0f), 1.0f);
+				->inMaterial(1.0f, 1.0f, 1.0f);
 	if (!tmp->initialize())
 		return false;
 	addElement(tmp);

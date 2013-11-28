@@ -13,13 +13,21 @@ using namespace std;
 bool Rotation::draw(const mat4 &model) {
 	return child->draw(rotate(model, angle, axis));
 }
-
+Drawable *Rotation::copyStack() {
+	Rotation *copy = new Rotation(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
 
 
 bool RotationAnimation::draw(const mat4 &model) {
 	return child->draw(rotate(model, angle->evaluate(Graphics::inst()->getTime()), axis));
 }
-
+Drawable *RotationAnimation::copyStack() {
+	RotationAnimation *copy = new RotationAnimation(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
 
 
 mat4 CamRotation::generateViewMatrix() {

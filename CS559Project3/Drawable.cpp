@@ -19,12 +19,12 @@ Drawable *Drawable::pushDecorator(DrawableDecorator *d) {
 	return d;
 }
 
-bool Drawable::isObselete() {
-	return false;
-}
-
 Drawable *Drawable::store(Drawable *&bucket) {
 	bucket = this;
+	return this;
+}
+
+Drawable *Drawable::copyStack() {
 	return this;
 }
 
@@ -53,7 +53,7 @@ Drawable *Drawable::inColor(vec4 color) {
 	return pushDecorator(new Color(color));
 }
 
-Drawable *Drawable::inMaterial(const float &a, const vec4 &s, const float &shiny) {
+Drawable *Drawable::inMaterial(const float &a, const float &s, const float &shiny) {
 	return pushDecorator(new Material(a, s, shiny));
 }
 
@@ -79,6 +79,10 @@ Drawable *Drawable::obselesceOffscreen() {
 
 Drawable *Drawable::breakDelete() {
 	return pushDecorator(new NoDeletion());
+}
+
+Drawable *Drawable::useShader(int name) {
+	return pushDecorator(new ShaderUse(name));
 }
 
 
@@ -135,6 +139,7 @@ bool DrawableGroup::draw(const mat4 &model) {
 		iterator != end;)
 	{
 		if (!(*iterator)->draw(model)) {
+			(*iterator)->takeDown();
 			delete *iterator;
 			iterator = elements.erase(iterator);
 		} else {
@@ -195,15 +200,30 @@ bool DisableDepthTest::draw(const mat4 &model) {
 	glEnable(GL_DEPTH_TEST);
 	return ret;
 }
+Drawable *DisableDepthTest::copyStack() {
+	DisableDepthTest *copy = new DisableDepthTest(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
 
 bool Color::draw(const mat4 &model) {
 	Graphics::inst()->setColor(color);
 	return child->draw(model);
 }
+Drawable *Color::copyStack() {
+	Color *copy = new Color(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
 
 bool Material::draw(const mat4 &model) {
-	Graphics::inst()->setMaterial(ambient, shininess);
+	Graphics::inst()->setMaterial(ambient, specular, shininess);
 	return child->draw(model);
+}
+Drawable *Material::copyStack() {
+	Material *copy = new Material(*this);
+	copy->setChild(child->copyStack());
+	return copy;
 }
 
 bool ColorReset::draw(const mat4 &model) {
@@ -215,16 +235,27 @@ bool ColorReset::draw(const mat4 &model) {
 	Graphics::inst()->setColor(color);
 	return ret;
 }
+Drawable *ColorReset::copyStack() {
+	ColorReset *copy = new ColorReset(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
 
 bool MaterialReset::draw(const mat4 &model) {
 	//save the old material
 	float a = Graphics::inst()->getAmbient();
+	float s = Graphics::inst()->getSpecular();
 	float shiny = Graphics::inst()->getShininess();
 	//continue down the stack
 	bool ret = child->draw(model);
 	//restore the old material
-	Graphics::inst()->setMaterial(a, shiny);
+	Graphics::inst()->setMaterial(a, s, shiny);
 	return ret;
+}
+Drawable *MaterialReset::copyStack() {
+	MaterialReset *copy = new MaterialReset(*this);
+	copy->setChild(child->copyStack());
+	return copy;
 }
 
 /** this algorithm is adapted from
@@ -251,6 +282,11 @@ bool BillboardTransform::draw(const mat4 &model) {
 	//convert back to modelspace
 	return child->draw(model * transform);
 }
+Drawable *BillboardTransform::copyStack() {
+	BillboardTransform *copy = new BillboardTransform(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
 
 bool ModelviewMode::draw(const mat4 &model) {
 	int oldMode = Graphics::inst()->getModelviewMode();
@@ -261,10 +297,20 @@ bool ModelviewMode::draw(const mat4 &model) {
 	Graphics::inst()->setModelviewMode(oldMode);
 	return ret;
 }
+Drawable *ModelviewMode::copyStack() {
+	ModelviewMode *copy = new ModelviewMode(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
 
 bool OffscreenObselescence::draw(const glm::mat4 &model) {
 	vec4 eyePos = (Graphics::inst()->getView() * model) * vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	return (eyePos.z >= 0 && child->draw(model));
+}
+Drawable *OffscreenObselescence::copyStack() {
+	OffscreenObselescence *copy = new OffscreenObselescence(*this);
+	copy->setChild(child->copyStack());
+	return copy;
 }
 
 NoDeletion::~NoDeletion() {
@@ -274,9 +320,17 @@ NoDeletion::~NoDeletion() {
 	//deletion chain
 	this->child = NULL;
 }
+Drawable *NoDeletion::copyStack() {
+	NoDeletion *copy = new NoDeletion(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
 
-bool ShaderUse::draw(const mat4 &model)
-{
+bool ShaderUse::initialize() {
+	shader = ShaderFlyweight::inst()->getShader(shaderName);
+	return DrawableDecorator::initialize();
+}
+bool ShaderUse::draw(const mat4 &model) {
 	//checkError("Before ShaderUse");
 	Graphics::inst()->setShader(shader);
 	bool ret = child->draw(model);
@@ -284,8 +338,8 @@ bool ShaderUse::draw(const mat4 &model)
 	//checkError("After ShaderUse");
 	return ret;
 }
-
-bool ShaderUse::initialize() {
-	shader = ShaderFlyweight::inst()->getShader(shaderName);
-	return DrawableDecorator::initialize();
+Drawable *ShaderUse::copyStack() {
+	ShaderUse *copy = new ShaderUse(*this);
+	copy->setChild(child->copyStack());
+	return copy;
 }

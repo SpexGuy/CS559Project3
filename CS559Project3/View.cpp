@@ -17,6 +17,7 @@ View::View(Projection *p, Camera *c, Drawable *model, Drawable *overlay) :
 
 void View::render() {
 	this->setupCamera();
+	Graphics::inst()->clearLights();
 	mat4 context = mat4(1.0f);
 
 	glEnable(GL_DEPTH_TEST);

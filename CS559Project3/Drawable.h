@@ -16,12 +16,13 @@ public:
 	virtual bool initialize() = 0;
 
 	/* Draws the object.
-	 * Returns true iff the Drawable is obselete and
+	 * Returns false iff the Drawable is obselete and
 	 * should be deleted by its containing group*/
 	virtual bool draw(const glm::mat4 &model) = 0;
-
-	/*. */
-	virtual bool isObselete();
+	
+	/* creates a deep copy of the stack, with the same
+	 * underlying Drawable at the end. */
+	virtual Drawable *copyStack();
 
 	/* frees any GL handles still active */
 	virtual void takeDown() = 0;
@@ -74,7 +75,7 @@ public:
 	/* pushes a Material onto the decorator stack
 	 * Returns a pointer to the base of the stack */
 	Drawable *inMaterial(const float &ambient,
-		const glm::vec4 &specular, const float &shininess);
+		const float &specular, const float &shininess);
 	
 	/* pushes a ColorReset onto the decorator stack
 	 * Returns a pointer to the base of the stack */
@@ -95,6 +96,10 @@ public:
 	/* pushes a NoDeletion onto the decorator stack
 	 * Returns a pointer to the base of the stack */
 	Drawable *breakDelete();
+
+	/* pushes a ShaderUse onto the decorator stack
+	 * Returns a pointer to the base of the stack */
+	Drawable *useShader(int name);
 
 };
 
@@ -191,6 +196,7 @@ public:
 	DisableDepthTest() {}
 	
 	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 };
 
 /** Sets the color on the way down the decorator stack.
@@ -207,6 +213,7 @@ public:
 	{}
 	
 	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 };
 
 /** Sets the material on the way down the decorator stack.
@@ -216,16 +223,16 @@ class Material : public DrawableDecorator {
 private:
 	Material();
 protected:
-	float ambient, shininess;
-	glm::vec4 specularColor;
+	float ambient, specular, shininess;
 public:
-	Material(const float &ambient, const glm::vec4 &specularColor, const float &shininess) :
+	Material(const float &ambient, const float &specular, const float &shininess) :
 		ambient(ambient),
-		shininess(shininess),
-		specularColor(specularColor)
+		specular(specular),
+		shininess(shininess)
 	{}
 	
 	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 };
 
 /** Saves the color on the way down the stack, and restores
@@ -235,6 +242,7 @@ public:
 	ColorReset() {}
 	
 	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 };
 
 /** Saves the material on the way down the stack, and restores
@@ -244,6 +252,7 @@ public:
 	MaterialReset() {}
 	
 	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 };
 
 /** Creates a transformation which makes the object billboard
@@ -259,6 +268,7 @@ public:
 	{}
 
 	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 };
 
 /** Changes the modelview mode on the way down the stack
@@ -274,6 +284,7 @@ public:
 	{}
 
 	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 };
 
 class OffscreenObselescence : public DrawableDecorator {
@@ -281,11 +292,13 @@ public:
 	OffscreenObselescence() {}
 
 	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 };
 
 class NoDeletion : public DrawableDecorator {
 public:
 	virtual ~NoDeletion();
+	virtual Drawable *copyStack();
 };
 
 class ShaderUse : public DrawableDecorator {
@@ -299,5 +312,6 @@ public:
 		shaderName(shadername), shader(NULL) {}
 	virtual bool initialize();
 	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 };
 

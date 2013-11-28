@@ -14,6 +14,7 @@ public:
 		pos(pos) {}
 
 	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 
 	inline glm::vec3 getPosition() {
 		return pos;

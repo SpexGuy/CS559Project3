@@ -33,6 +33,7 @@ void ILContainer::bindTexture() {
 	glActiveTexture(GL_TEXTURE0 + index);
 	glBindTexture(GL_TEXTURE_2D, this->il_texture_handle);
 	Graphics::inst()->setTexture(index);
+	Graphics::inst()->setFlipU(false);
 }
 
 void ILContainer::takeDown() {

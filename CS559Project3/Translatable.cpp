@@ -8,6 +8,12 @@ using namespace glm;
 bool Translation::draw(const mat4 &model) {
 	return child->draw(translate(model, pos));
 }
+Drawable *Translation::copyStack() {
+	Translation *copy = new Translation(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
+
 
 
 

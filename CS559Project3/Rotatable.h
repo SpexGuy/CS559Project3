@@ -21,6 +21,8 @@ public:
 
 	virtual bool draw(const glm::mat4 &model);
 
+	virtual Drawable *copyStack();
+
 	inline void setAngle(float angle) {
 		this->angle = angle;
 	}
@@ -40,6 +42,8 @@ public:
 		axis(axis), angle(angle) {}
 
 	virtual bool draw(const glm::mat4 &model);
+
+	virtual Drawable *copyStack();
 };
 
 class CamRotation : public CameraDecorator {
