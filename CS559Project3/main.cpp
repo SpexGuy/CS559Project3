@@ -47,8 +47,7 @@ public:
 
 	SpheroidLight *light[NUM_LIGHTS];
 
-	DrawableGroup *model;
-	DrawableGroup *vmodel;
+	DrawableGroup *model, *vmodel;
 	Drawable * sphere;
 	Drawable * sphereCopy;
 	Drawable * virtualSphere;
@@ -106,7 +105,7 @@ bool Globals::initialize() {
 		->breakDelete();
 
 	spawner = new LinearPathSpawner(sphere, 2.0f/1000.0f, 2.0f, -10.0f, 0.25f/period, model);
-	
+
 	light[0] = new SpheroidLight(0, WHITE);
 	light[0]->setAngle(90);
 	light[0]->setAxisAngle(90);
@@ -157,7 +156,7 @@ bool Globals::initialize() {
 	window = new SingleViewportWindow(view);
 
 	wireframe = false;
-	
+
 	//setup GL
 	if (!window->initialize("Project 3"))
 		return false;
@@ -172,7 +171,7 @@ bool Globals::initialize() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_CULL_FACE);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-	
+
 	if (glewInit() != GLEW_OK) {
 		cerr << "GLEW failed to initialize." << endl;
 		return false;

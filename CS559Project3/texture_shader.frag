@@ -45,13 +45,13 @@ vec4 ads() {
 				diffuseScale*lightColor[i].xyz*color*s_dot_n +
 				specularScale*specular;
 		}
-  }
+	}
 
-  return vec4(return_color, 1.0f);
+	return vec4(return_color, 1.0f);
 }
 
 void main(){
-    // Output color = color of the texture at the specified UV
+	// Output color = color of the texture at the specified UV
 	float d = min(GEdgeDistance.x, GEdgeDistance.y);
 	d = min(d, GEdgeDistance.z);
 	float mixval = smoothstep(0,2,d);
