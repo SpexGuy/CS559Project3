@@ -10,6 +10,9 @@
 #include "Shaders.h"
 #include "Vertex.h"
 #include <glm/glm.hpp>
+#include <assimp\Importer.hpp>
+#include <assimp\scene.h>
+#include <assimp\mesh.h>
 
 using namespace std;
 using namespace glm;
@@ -325,6 +328,27 @@ Mesh::Mesh(const vector<vec3> &ppoints,
 
 }
 
+Mesh::Mesh(const string filename)
+{
+	Assimp::Importer importer;
+	const aiScene * ourMesh;
+	importer = Assimp::Importer::Importer();
+
+	//read in the file!
+	ourMesh = importer.ReadFile(filename, 0); //might need to change the pFlags???
+
+	//get the vertices!
+	for(int i = 0; i < ourMesh->mNumMeshes; i++)
+	{
+		for(int j = 0; j < ourMesh->mMeshes[i]->mNumVertices)
+		{
+			aiVector3D temp = ourMesh->mMeshes[i]->mVertices[i];
+			//points.push_back(vec3(temp.x, temp.y, temp.z));
+		}
+	}
+	
+
+}
 
 bool Mesh::initialize() {
 	if (!Graphics::inst()->loadBuffer(&this->vertex_array_handle, &this->vertex_coordinate_handle, this->points.size() * sizeof(VertexPNT), &this->points[0]))

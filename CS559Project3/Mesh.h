@@ -39,6 +39,9 @@ public:
 		 const std::vector<glm::ivec3> &trigs,
 		 const std::vector<glm::vec3> &norms);
 
+	// Generates a mesh from a file using Open Asset Importer.
+	Mesh(const string filename);
+
 	virtual bool initialize();
 	
 	virtual bool draw(const glm::mat4 &modelview);
@@ -130,6 +133,10 @@ public:
 				 const std::vector<glm::vec3> &norms,
 				 Texture *texture) :
 		Mesh(points, texCoords, trigs, norms),
+		texture(texture)
+	{}
+	TexturedMesh(const string filename, Texture *texture) :
+		Mesh(filename),
 		texture(texture)
 	{}
 
