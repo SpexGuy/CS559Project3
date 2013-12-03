@@ -53,6 +53,8 @@ public:
 	Drawable * virtualSphere;
 	LinearPathSpawner *spawner;
 
+	Drawable * testMesh;
+
 	Texture *marsTexture;
 
 	FrameBufferObject *genTexture;
@@ -104,6 +106,12 @@ bool Globals::initialize() {
 		->translated(vec3(2.0f, 0.0f, 0.0f))
 		->breakDelete();
 
+// Not working.
+//	testMesh = new Mesh("L:\\Desktop\\test.obj");
+//	testMesh->inColor(RED)
+//			->inMaterial(0.7f, 0.3f, 20)
+//			->useShader(SHADER_ADS);
+
 	spawner = new LinearPathSpawner(sphere, 2.0f/1000.0f, 2.0f, -10.0f, 0.25f/period, model);
 
 	light[0] = new SpheroidLight(0, WHITE);
@@ -124,6 +132,7 @@ bool Globals::initialize() {
 	model->addLight(light[0]);
 //	model->addElement(sphere);
 //	model->addElement(sphereCopy);
+//	model->addElement(testMesh);
 	vmodel->addLight(light[0]);
 	vmodel->addElement(virtualSphere);
 	//Building the cameras

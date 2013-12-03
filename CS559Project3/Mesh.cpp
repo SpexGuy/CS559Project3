@@ -13,7 +13,7 @@
 #include <assimp\Importer.hpp>
 #include <assimp\scene.h>
 #include <assimp\mesh.h>
-
+#include <assimp\postprocess.h>
 using namespace std;
 using namespace glm;
 
@@ -330,37 +330,38 @@ Mesh::Mesh(const vector<vec3> &ppoints,
 
 Mesh::Mesh(const string filename)
 {
-	Assimp::Importer importer;
-	const aiScene * ourMesh;
-	importer = Assimp::Importer::Importer();
+	//Assimp::Importer importer;
+	//const aiScene * ourMesh;
+	//importer = Assimp::Importer::Importer();
 
-	//read in the file!
-	ourMesh = importer.ReadFile(filename, 0); //might need to change the pFlags???
-
-	//get the vertices!
-	for(int i = 0; i < (int)ourMesh->mNumMeshes; i++)
-	{
-		for(int j = 0; j < (int)ourMesh->mMeshes[i]->mNumVertices; j++)
-		{
-			//grab the data to make points!
-			aiVector3D tempV = ourMesh->mMeshes[i]->mVertices[j];
-			aiVector3D tempN = ourMesh->mMeshes[i]->mNormals[j];
-			aiVector3D tempT = ourMesh->mMeshes[i]->mTextureCoords[j][0]; //just grab the first TCs
-			VertexPNT tempVPNT;
-			tempVPNT.position = vec3(tempV.x, tempV.y, tempV.z);
-			tempVPNT.normal = vec3(tempN.x, tempN.y, tempN.z);
-			tempVPNT.texture = vec2(tempT.x, tempT.y);
-			points.push_back(tempVPNT);
-		}
-		for(int j = 0; j < (int)ourMesh->mMeshes[i]->mNumFaces; j++)
-		{
-			aiFace tempFace = ourMesh->mMeshes[i]->mFaces[i];
-			if(tempFace.mNumIndices != 3)
-				printf("Not a triangle face! HOW DO I QUAD\n");
-			ivec3 temptrig = ivec3(tempFace.mIndices[0], tempFace.mIndices[1], tempFace.mIndices[2]);
-			trigs.push_back(temptrig);
-		}
-	}
+	////read in the file!
+	//ourMesh = importer.ReadFile(filename.c_str(), aiProcess_Triangulate | aiProcess_GenSmoothNormals); //might need to change the pFlags???
+	//if(ourMesh == NULL)
+	//	printf(importer.GetErrorString());
+	////get the vertices!
+	//for(int i = 0; i < (int)ourMesh->mNumMeshes; i++)
+	//{
+	//	for(int j = 0; j < (int)ourMesh->mMeshes[i]->mNumVertices; j++)
+	//	{
+	//		//grab the data to make points!
+	//		aiVector3D tempV = ourMesh->mMeshes[i]->mVertices[j];
+	//		aiVector3D tempN = ourMesh->mMeshes[i]->mNormals[j];
+	//		aiVector3D tempT = ourMesh->mMeshes[i]->mTextureCoords[j][0]; //just grab the first TCs
+	//		VertexPNT tempVPNT;
+	//		tempVPNT.position = vec3(tempV.x, tempV.y, tempV.z);
+	//		tempVPNT.normal = vec3(tempN.x, tempN.y, tempN.z);
+	//		tempVPNT.texture = vec2(tempT.x, tempT.y);
+	//		points.push_back(tempVPNT);
+	//	}
+	//	for(int j = 0; j < (int)ourMesh->mMeshes[i]->mNumFaces; j++)
+	//	{
+	//		aiFace tempFace = ourMesh->mMeshes[i]->mFaces[i];
+	//		if(tempFace.mNumIndices != 3)
+	//			printf("Not a triangle face! HOW DO I QUAD\n");
+	//		ivec3 temptrig = ivec3(tempFace.mIndices[0], tempFace.mIndices[1], tempFace.mIndices[2]);
+	//		trigs.push_back(temptrig);
+	//	}
+	//}
 	
 
 }
