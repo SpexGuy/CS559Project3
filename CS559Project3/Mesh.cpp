@@ -338,12 +338,27 @@ Mesh::Mesh(const string filename)
 	ourMesh = importer.ReadFile(filename, 0); //might need to change the pFlags???
 
 	//get the vertices!
-	for(int i = 0; i < ourMesh->mNumMeshes; i++)
+	for(int i = 0; i < (int)ourMesh->mNumMeshes; i++)
 	{
-		for(int j = 0; j < ourMesh->mMeshes[i]->mNumVertices)
+		for(int j = 0; j < (int)ourMesh->mMeshes[i]->mNumVertices; j++)
 		{
-			aiVector3D temp = ourMesh->mMeshes[i]->mVertices[i];
-			//points.push_back(vec3(temp.x, temp.y, temp.z));
+			//grab the data to make points!
+			aiVector3D tempV = ourMesh->mMeshes[i]->mVertices[j];
+			aiVector3D tempN = ourMesh->mMeshes[i]->mNormals[j];
+			aiVector3D tempT = ourMesh->mMeshes[i]->mTextureCoords[j][0]; //just grab the first TCs
+			VertexPNT tempVPNT;
+			tempVPNT.position = vec3(tempV.x, tempV.y, tempV.z);
+			tempVPNT.normal = vec3(tempN.x, tempN.y, tempN.z);
+			tempVPNT.texture = vec2(tempT.x, tempT.y);
+			points.push_back(tempVPNT);
+		}
+		for(int j = 0; j < (int)ourMesh->mMeshes[i]->mNumFaces; j++)
+		{
+			aiFace tempFace = ourMesh->mMeshes[i]->mFaces[i];
+			if(tempFace.mNumIndices != 3)
+				printf("Not a triangle face! HOW DO I QUAD\n");
+			ivec3 temptrig = ivec3(tempFace.mIndices[0], tempFace.mIndices[1], tempFace.mIndices[2]);
+			trigs.push_back(temptrig);
 		}
 	}
 	
