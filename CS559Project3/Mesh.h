@@ -4,6 +4,7 @@
 #include "Vertex.h"
 #include "Drawable.h"
 #include "Texture.h"
+#include "Spline.h"
 #include <glm/glm.hpp>
 
 class Mesh : public Drawable {
@@ -145,3 +146,17 @@ public:
 	virtual bool draw(const glm::mat4 &model);
 
 };
+
+
+
+void primeRibbonBuilder(SplinePoint3 firstPoint,
+						SplinePoint1 firstAngle,
+						glm::vec3 arbitrary,
+						glm::vec3 startAbsolute);
+
+Mesh *makeRibbonSegment(const SplinePoint3 &after,
+				 const SplinePoint1 &afterAngle,
+				 float width,
+				 int resolution,
+				 Texture *texture = NULL);
+

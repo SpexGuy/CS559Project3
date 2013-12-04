@@ -53,6 +53,10 @@ Drawable *Drawable::disableDepthTest() {
 	return pushDecorator(new DisableDepthTest());
 }
 
+Drawable *Drawable::disableCullFace() {
+	return pushDecorator(new DisableCullFace());
+}
+
 Drawable *Drawable::inColor(vec4 color) {
 	return pushDecorator(new Color(color));
 }
@@ -206,6 +210,18 @@ bool DisableDepthTest::draw(const mat4 &model) {
 }
 Drawable *DisableDepthTest::copyStack() {
 	DisableDepthTest *copy = new DisableDepthTest(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
+
+bool DisableCullFace::draw(const mat4 &model) {
+	glDisable(GL_CULL_FACE);
+	bool ret = child->draw(model);
+	glEnable(GL_CULL_FACE);
+	return ret;
+}
+Drawable *DisableCullFace::copyStack() {
+	DisableCullFace *copy = new DisableCullFace(*this);
 	copy->setChild(child->copyStack());
 	return copy;
 }

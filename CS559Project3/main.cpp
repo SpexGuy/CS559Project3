@@ -51,6 +51,7 @@ public:
 	Drawable * sphere;
 	Drawable * sphereCopy;
 	Drawable * virtualSphere;
+	Drawable *ribbon;
 	LinearPathSpawner *spawner;
 
 	Drawable * testMesh;
@@ -97,13 +98,13 @@ bool Globals::initialize() {
 		->inMaterial(1.0f, 0.0f, 50)
 		->useShader(SHADER_TEXTURE);
 
-	sphere = Mesh::newSphere(30, 30, 1.0f, genTexture)
+	sphere = Mesh::newSphere(30, 30, 0.05f, genTexture)
 		//->translated(vec3(-1.0f, 0.0f, 0.0f))
 		->inMaterial(0.3f, 1.0f, 50)
 		->useShader(SHADER_TEXTURE);
 	sphereCopy = sphere
 		->copyStack()
-		->translated(vec3(2.0f, 0.0f, 0.0f))
+		->translated(vec3(1.0f, 1.0f, 1.0f))
 		->breakDelete();
 
 // Not working.
@@ -111,6 +112,31 @@ bool Globals::initialize() {
 //	testMesh->inColor(RED)
 //			->inMaterial(0.7f, 0.3f, 20)
 //			->useShader(SHADER_ADS);
+	primeRibbonBuilder(SplinePoint3(1.0f, vec3(-1.0f), 0, 0),
+					   SplinePoint1(0.0f, 0.0f),
+					   vec3(1.0f, 0.0f, 0.0f),
+					   vec3(0.0f, 1.0f, 0.0f));
+
+	DrawableGroup *ribbonTemp = new DrawableGroup();
+	ribbonTemp->addElement(
+		makeRibbonSegment(SplinePoint3(1.0f, vec3(1.0f), 0, 90),
+						  SplinePoint1(0.0f, 90.0f),
+						  0.5f, 30, marsTexture)
+			->disableCullFace()
+			->useShader(SHADER_TEXTURE)
+			->inColor(BLUE)
+			->inMaterial(0.2f, 0.5f, 50.0f));
+
+	ribbonTemp->addElement(
+		makeRibbonSegment(SplinePoint3(2.0f, vec3(0.0f), 180, 90),
+						  SplinePoint1(0.0f, 0.0f),
+						  0.5f, 30, marsTexture)
+			->disableCullFace()
+			->useShader(SHADER_TEXTURE)
+			->inColor(BLUE)
+			->inMaterial(0.2f, 0.5f, 50.0f));
+
+	ribbon = ribbonTemp;
 
 	spawner = new LinearPathSpawner(sphere, 2.0f/1000.0f, 2.0f, -10.0f, 0.25f/period, model);
 
@@ -130,9 +156,9 @@ bool Globals::initialize() {
 
 	//Building the models
 	model->addLight(light[0]);
-//	model->addElement(sphere);
-//	model->addElement(sphereCopy);
-//	model->addElement(testMesh);
+	model->addElement(sphere);
+	model->addElement(ribbon);
+	model->addElement(sphereCopy);
 	vmodel->addLight(light[0]);
 	vmodel->addElement(virtualSphere);
 	//Building the cameras
@@ -205,6 +231,8 @@ bool Globals::initialize() {
 	if (!marsTexture->initialize())
 		return false;
 	if (!genTexture->initialize())
+		return false;
+	if (!ribbon->initialize())
 		return false;
 
 	Frame *f = new Frame(genTexture, proj, vcam, vmodel, mainOverlay);
@@ -398,7 +426,7 @@ void windowDisplay() {
 	for (uint c = 0; c < globals.frames.size(); c++) {
 		globals.frames[c]->render();
 	}
-	globals.spawner->update();
+	//globals.spawner->update();
 	globals.window->render();
 }
 

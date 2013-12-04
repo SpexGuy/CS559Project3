@@ -71,6 +71,10 @@ public:
 	 * Returns a pointer to the base of the stack */
 	Drawable *disableDepthTest();
 	
+	/* pushes a DisableCullFace onto the decorator stack
+	 * Returns a pointer to the base of the stack */
+	Drawable *disableCullFace();
+	
 	/* pushes a Color onto the decorator stack
 	 * Returns a pointer to the base of the stack */
 	Drawable *inColor(glm::vec4 color);
@@ -197,6 +201,18 @@ private:
 class DisableDepthTest : public DrawableDecorator {
 public:
 	DisableDepthTest() {}
+	
+	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
+};
+
+/**
+ * Disables the cull face on the way down the decorator stack,
+ * then reenables it on the way back up.
+ */
+class DisableCullFace : public DrawableDecorator {
+public:
+	DisableCullFace() {}
 	
 	virtual bool draw(const glm::mat4 &model);
 	virtual Drawable *copyStack();
