@@ -71,6 +71,10 @@ public:
 	 * Returns a pointer to the base of the stack */
 	Drawable *disableDepthTest();
 	
+	/* pushes a DisableDepthMask onto the decorator stack
+	 * Returns a pointer to the base of the stack */
+	Drawable *disableDepthMask();
+	
 	/* pushes a DisableCullFace onto the decorator stack
 	 * Returns a pointer to the base of the stack */
 	Drawable *disableCullFace();
@@ -201,6 +205,35 @@ private:
 class DisableDepthTest : public DrawableDecorator {
 public:
 	DisableDepthTest() {}
+	
+	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
+};
+
+/**
+ * Enables/sets the GL blend function on the way down the stack,
+ * and restores it to default/inital values on the way up.
+ */
+class SetGlBlendFunc : public DrawableDecorator {
+private:
+	SetGlBlendFunc() {}
+protected:
+	GLenum sfactor, dfactor;
+public:
+	SetGlBlendFunc(GLenum sfactor, GLenum dfactor) : 
+		sfactor(sfactor), dfactor(dfactor)
+	{}
+
+	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
+}
+/**
+ * Disables the depth mask on the way down the decorator stack,
+ * then reenables it on the way back up.
+ */
+class DisableDepthMask : public DrawableDecorator {
+public:
+	DisableDepthMask() {}
 	
 	virtual bool draw(const glm::mat4 &model);
 	virtual Drawable *copyStack();

@@ -40,8 +40,7 @@ public:
 		 const std::vector<glm::ivec3> &trigs,
 		 const std::vector<glm::vec3> &norms);
 
-	// Generates a mesh from a file using Open Asset Importer.
-	Mesh(const string filename);
+
 
 	virtual bool initialize();
 	
@@ -105,13 +104,37 @@ public:
 		const std::vector<glm::vec2> &points,
 		int slices, bool crosshatch = false);
 
-	/** creates a vector of pairs of indices that coorespond to the vector of points to discribe triangles. 
+	/** creates a vector of pairs of indices that correspond to the vector of points to describe triangles. 
 	 */
 	static std::vector<glm::ivec3> generateTrigs(
 		const std::vector<glm::vec3> &points,
 		int width, int height,
 		bool endcaps, bool wrap,
 		bool crosshatch = false);
+
+	/* creates a mesh object from an external .obj file */
+	/* Texture can be null - kinda like the ribbon constructor I think? */
+	static Mesh *newMeshFromFile(const string filename, Texture * texture, bool reCenterMesh = false, bool genTang = false);
+
+	/* These are some utility functions taken from the cookbook - used by the obj importing mesh constructor. */
+	/* could also be used by general mesh constructor if we need the mesh to store tangents???*/
+	//Not sure if these should be static?
+	//does something to a string???
+	static void trimString(string & string);
+	//recenters a mesh
+	static void center(std::vector<glm::vec3> & points);
+	//generates averaged normals!
+	static void generateAveragedNormals(
+        const std::vector<glm::vec3> & points,
+        std::vector<glm::vec3> & normals,
+        const std::vector<glm::ivec3> & faces );
+	//generates tangents
+	static void generateTangents(
+        const std::vector<glm::vec3> & points,
+        const std::vector<glm::vec3> & normals,
+        const std::vector<glm::ivec3> & faces,
+        const std::vector<glm::vec2> & texCoords,
+        std::vector<glm::vec4> & tangents);
 };
 
 class TexturedMesh : public Mesh {
@@ -134,10 +157,6 @@ public:
 				 const std::vector<glm::vec3> &norms,
 				 Texture *texture) :
 		Mesh(points, texCoords, trigs, norms),
-		texture(texture)
-	{}
-	TexturedMesh(const string filename, Texture *texture) :
-		Mesh(filename),
 		texture(texture)
 	{}
 

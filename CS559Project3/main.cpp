@@ -47,7 +47,7 @@ public:
 
 	SpheroidLight *light[NUM_LIGHTS];
 
-	DrawableGroup *model, *vmodel;
+	DrawableGroup *model, *solidmodel, *translucentmodel, *vmodel;
 	Drawable * sphere;
 	Drawable * sphereCopy;
 	Drawable * virtualSphere;
@@ -88,6 +88,13 @@ bool Globals::initialize() {
 
 	//Creates the models which will hold the meshes for a given Scene.
 	model = new DrawableGroup();
+	solidmodel = new DrawableGroup();
+	translucentmodel = new DrawableGroup();
+	translucentmodel
+		->disableCullFace() //we can see through translucent things
+		->disableDepthMask() //we can draw over translucent things
+		->setGlBlendFunc();
+
 	vmodel = new DrawableGroup();
 
 	virtualSphere = Mesh::newSphere(10, 10, 1.0f, marsTexture)
@@ -107,11 +114,10 @@ bool Globals::initialize() {
 		->translated(vec3(1.0f, 1.0f, 1.0f))
 		->breakDelete();
 
-// Not working.
-//	testMesh = new Mesh("L:\\Desktop\\test.obj");
-//	testMesh->inColor(RED)
-//			->inMaterial(0.7f, 0.3f, 20)
-//			->useShader(SHADER_ADS);
+
+	testMesh = Mesh::newMeshFromFile("L:\\Desktop\\test.obj", NULL);
+	testMesh->useShader(SHADER_SOLID);
+
 	primeRibbonBuilder(SplinePoint3(1.0f, vec3(-1.0f), 0, 0),
 					   SplinePoint1(0.0f, 0.0f),
 					   vec3(1.0f, 0.0f, 0.0f),
@@ -155,10 +161,17 @@ bool Globals::initialize() {
 		light[i] = NULL;
 
 	//Building the models
+	//Slightly more complex stuff here - model contains solidmodel and translucentmodel
+	//solidmodel draws first, then translucentmodel draws without writing to depth buffer!
+	//or at least that's how I'm planning on implementing it.
+
 	model->addLight(light[0]);
-	model->addElement(sphere);
-	model->addElement(ribbon);
-	model->addElement(sphereCopy);
+	model->addElement(solidmodel);
+	model->addElement(translucentmodel);
+	solidmodel->addElement(sphere);
+	solidmodel->addElement(ribbon);
+//	model->addElement(testMesh); Using the test mesh produces a draw error! weird.
+	solidmodel->addElement(sphereCopy);
 	vmodel->addLight(light[0]);
 	vmodel->addElement(virtualSphere);
 	//Building the cameras

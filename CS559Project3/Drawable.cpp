@@ -214,6 +214,32 @@ Drawable *DisableDepthTest::copyStack() {
 	return copy;
 }
 
+bool SetGlBlendFunc::draw(const mat4 &model) {
+	glEnable(GL_BLEND);
+	glBlendFunc(this->sfactor, this->dfactor);
+	bool ret = child->draw(model);
+	glBlendFunc(GL_ONE,GL_ZERO); //this is the default value for glBlendFunc
+	glDisable(GL_BLEND);
+	return ret;
+}
+Drawable *SetGlBlendFunc::copyStack() {
+	SetGlBlendFunc *copy = new SetGlBlendFunc(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
+
+bool DisableDepthMask::draw(const mat4 &model) {
+	glDepthMask(GL_FALSE);
+	bool ret = child->draw(model);
+	glDepthMask(GL_TRUE);
+	return ret;
+}
+Drawable *DisableDepthMask::copyStack() {
+	DisableDepthTest *copy = new DisableDepthTest(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
+
 bool DisableCullFace::draw(const mat4 &model) {
 	glDisable(GL_CULL_FACE);
 	bool ret = child->draw(model);
