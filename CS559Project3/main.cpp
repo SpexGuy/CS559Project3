@@ -92,8 +92,7 @@ bool Globals::initialize() {
 	translucentmodel = new DrawableGroup();
 	translucentmodel
 		->disableCullFace() //we can see through translucent things
-		->disableDepthMask() //we can draw over translucent things
-		->setGlBlendFunc();
+		->disableDepthMask(); //we can draw over translucent things
 
 	vmodel = new DrawableGroup();
 
