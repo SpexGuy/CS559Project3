@@ -226,7 +226,7 @@ public:
 
 	virtual bool draw(const glm::mat4 &model);
 	virtual Drawable *copyStack();
-}
+};
 /**
  * Disables the depth mask on the way down the decorator stack,
  * then reenables it on the way back up.
