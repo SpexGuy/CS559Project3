@@ -112,6 +112,9 @@ public:
 	 * Returns a pointer to the base of the stack */
 	Drawable *useShader(int name);
 
+	/* pushes a setGlBlendFunc onto the stack
+	 * Returns a pointer to the base of the stack */
+	Drawable *setGlBlendFunc(GLenum sfactor, GLenum dfactor);
 };
 
 /**

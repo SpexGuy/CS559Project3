@@ -90,9 +90,6 @@ bool Globals::initialize() {
 	model = new DrawableGroup();
 	solidmodel = new DrawableGroup();
 	translucentmodel = new DrawableGroup();
-	translucentmodel
-		->disableCullFace() //we can see through translucent things
-		->disableDepthMask(); //we can draw over translucent things
 
 	vmodel = new DrawableGroup();
 
@@ -108,11 +105,14 @@ bool Globals::initialize() {
 		//->translated(vec3(-1.0f, 0.0f, 0.0f))
 		->inMaterial(0.3f, 1.0f, 50)
 		->useShader(SHADER_TEXTURE);
-	sphereCopy = sphere
-		->copyStack()
+	sphereCopy = Mesh::newSphere(30,30,0.06f)
 		->translated(vec3(1.0f, 1.0f, 1.0f))
-		->breakDelete();
-
+		->inColor(YELLOW)
+		->inMaterial(0.5f,0.4f,20.0f)
+		->useShader(SHADER_SOLID)
+		->disableCullFace()
+		->disableDepthMask()
+		->setGlBlendFunc(GL_ZERO, GL_SRC_COLOR);
 
 	testMesh = Mesh::newMeshFromFile("L:\\Desktop\\test.obj", NULL);
 	testMesh->useShader(SHADER_SOLID);
@@ -169,8 +169,8 @@ bool Globals::initialize() {
 	model->addElement(translucentmodel);
 	solidmodel->addElement(sphere);
 	solidmodel->addElement(ribbon);
-//	model->addElement(testMesh); Using the test mesh produces a draw error! weird.
-	solidmodel->addElement(sphereCopy);
+//	solidmodel->addElement(testMesh); //Using the test mesh produces a draw error! weird.
+	translucentmodel->addElement(sphereCopy);
 	vmodel->addLight(light[0]);
 	vmodel->addElement(virtualSphere);
 	//Building the cameras
@@ -217,7 +217,7 @@ bool Globals::initialize() {
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_CULL_FACE);
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	if (glewInit() != GLEW_OK) {
 		cerr << "GLEW failed to initialize." << endl;

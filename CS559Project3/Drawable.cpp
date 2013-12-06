@@ -53,6 +53,10 @@ Drawable *Drawable::disableDepthTest() {
 	return pushDecorator(new DisableDepthTest());
 }
 
+Drawable *Drawable::disableDepthMask() {
+	return pushDecorator(new DisableDepthMask());
+}
+
 Drawable *Drawable::disableCullFace() {
 	return pushDecorator(new DisableCullFace());
 }
@@ -91,6 +95,10 @@ Drawable *Drawable::breakDelete() {
 
 Drawable *Drawable::useShader(int name) {
 	return pushDecorator(new ShaderUse(name));
+}
+
+Drawable *Drawable::setGlBlendFunc(GLenum sfactor, GLenum dfactor) {
+	return pushDecorator(new SetGlBlendFunc(sfactor, dfactor));
 }
 
 
@@ -235,7 +243,7 @@ bool DisableDepthMask::draw(const mat4 &model) {
 	return ret;
 }
 Drawable *DisableDepthMask::copyStack() {
-	DisableDepthTest *copy = new DisableDepthTest(*this);
+	DisableDepthMask *copy = new DisableDepthMask(*this);
 	copy->setChild(child->copyStack());
 	return copy;
 }

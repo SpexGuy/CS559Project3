@@ -509,9 +509,9 @@ Mesh * Mesh::newMeshFromFile(const string filename, Texture * texture, bool reCe
     cout << " " << texCoords.size() << " texture coordinates." << endl;
 
 	if(texture != NULL)
-	return new TexturedMesh(points, texCoords, faces, normals, texture);
+		return new TexturedMesh(points, texCoords, faces, normals, texture);
 	else
-	return new Mesh(points, texCoords, faces, normals);
+		return new Mesh(points, texCoords, faces, normals);
 }
 
 void Mesh::trimString( string & str ) {
