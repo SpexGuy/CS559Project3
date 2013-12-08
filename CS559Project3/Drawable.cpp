@@ -407,7 +407,6 @@ bool OffscreenObselescence::draw(const glm::mat4 &model) {
 	vec4 eyePos = (Graphics::inst()->getView() * model) * vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	return (eyePos.z <= 0 && child->draw(model));
 }
-void OffscreenObselescence::takeDown() {}
 Drawable *OffscreenObselescence::copyStack() {
 	OffscreenObselescence *copy = new OffscreenObselescence(*this);
 	copy->setChild(child->copyStack());
@@ -421,6 +420,7 @@ NoDeletion::~NoDeletion() {
 	//deletion chain
 	this->child = NULL;
 }
+void NoDeletion::takeDown() {}
 Drawable *NoDeletion::copyStack() {
 	NoDeletion *copy = new NoDeletion(*this);
 	copy->setChild(child->copyStack());

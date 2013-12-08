@@ -22,6 +22,7 @@
 #define SHADER_ADS 1
 #define SHADER_STAR 2
 #define SHADER_TEXTURE 3
+#define SHADER_NOISE 4
 
 class ShaderFlyweight {
 public:

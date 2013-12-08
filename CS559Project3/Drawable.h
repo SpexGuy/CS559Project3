@@ -408,13 +408,13 @@ public:
 	OffscreenObselescence() {}
 
 	virtual bool draw(const glm::mat4 &model);
-	virtual void takeDown();
 	virtual Drawable *copyStack();
 };
 
 class NoDeletion : public DrawableDecorator {
 public:
 	virtual ~NoDeletion();
+	virtual void takeDown();
 	virtual Drawable *copyStack();
 };
 

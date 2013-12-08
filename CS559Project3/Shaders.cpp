@@ -44,6 +44,13 @@ bool ShaderFlyweight::initialize() {
 	solidshader->compileShader("wireframe_solid.geom", GLSLShader::GEOMETRY);
 	solidshader->link();
 	addShader(SHADER_SOLID, solidshader);
+
+	GLSLProgram * noiseshader = new TexLightShader();
+	noiseshader->compileShader("noiseShader.frag", GLSLShader::FRAGMENT);
+	noiseshader->compileShader("texture_shader.vert", GLSLShader::VERTEX);
+	noiseshader->compileShader("wireframe_solid.geom", GLSLShader::GEOMETRY);
+	noiseshader->link();
+	addShader(SHADER_NOISE, noiseshader);
 	return true;
 }
 

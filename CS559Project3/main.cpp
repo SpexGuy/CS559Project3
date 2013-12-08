@@ -13,6 +13,7 @@
 #include "FrameBuffer.h"
 #include "Frame.h"
 #include "LinearPathSpawner.h"
+#include "Ribbon.h"
 #include <GL/freeglut.h>
 #include <IL/il.h>
 #include <IL/ilu.h>
@@ -53,6 +54,7 @@ public:
 	Drawable * virtualSphere;
 	Drawable *ribbon;
 	Drawable * translucentSphere[5];
+	RibbonBuilder *ribbonBuilder;
 	LinearPathSpawner *spawner;
 
 	Drawable * testMesh;
@@ -122,30 +124,32 @@ bool Globals::initialize() {
 
 
 
-	testMesh = Mesh::newMeshFromFile("L:\\Desktop\\test.obj", NULL);
-	testMesh->useShader(SHADER_SOLID);
+	//testMesh = Mesh::newMeshFromFile("L:\\Desktop\\test.obj", NULL);
+	//testMesh->useShader(SHADER_SOLID);
 
 	primeRibbonBuilder(SplinePoint3(1.0f, vec3(-1.0f), 0, 0),
 					   SplinePoint1(0.0f, 0.0f),
 					   vec3(1.0f, 0.0f, 0.0f),
 					   vec3(0.0f, 1.0f, 0.0f));
 
+	ribbonBuilder = new RibbonBuilder(vmodel, vec3(0.0f, 0.0f, -10.0f), 0.25f/1000.0f, 2, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+
 	DrawableGroup *ribbonTemp = new DrawableGroup();
 	ribbonTemp->addElement(
 		makeRibbonSegment(SplinePoint3(1.0f, vec3(1.0f), 0, 90),
-						  SplinePoint1(0.0f, 90.0f),
-						  0.5f, 30, marsTexture)
+						  SplinePoint1(0.0f, 360.0f),
+						  0.5f, 30)
 			->disableCullFace()
-			->useShader(SHADER_TEXTURE)
+			->useShader(SHADER_NOISE)
 			->inColor(BLUE)
 			->inMaterial(0.2f, 0.5f, 50.0f));
 
 	ribbonTemp->addElement(
 		makeRibbonSegment(SplinePoint3(2.0f, vec3(0.0f), 180, 90),
 						  SplinePoint1(0.0f, 0.0f),
-						  0.5f, 30, marsTexture)
+						  0.5f, 30)
 			->disableCullFace()
-			->useShader(SHADER_TEXTURE)
+			->useShader(SHADER_NOISE)
 			->inColor(BLUE)
 			->inMaterial(0.2f, 0.5f, 50.0f));
 
@@ -225,7 +229,7 @@ bool Globals::initialize() {
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_CULL_FACE);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 	if (glewInit() != GLEW_OK) {
 		cerr << "GLEW failed to initialize." << endl;
@@ -259,6 +263,8 @@ bool Globals::initialize() {
 		if(!translucentSphere[i]->initialize())
 			return false;
 	}
+	if (!ribbonBuilder->initialize())
+		return false;
 
 	Frame *f = new Frame(genTexture, proj, vcam, vmodel, mainOverlay);
 	frames.push_back(f);
@@ -452,6 +458,7 @@ void windowDisplay() {
 		globals.frames[c]->render();
 	}
 	//globals.spawner->update();
+	globals.ribbonBuilder->update();
 	globals.window->render();
 }
 
