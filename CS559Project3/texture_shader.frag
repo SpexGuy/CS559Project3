@@ -23,7 +23,8 @@ in vec3 GNormal;
 in vec2 GUV;
 
 vec4 ads() {
-	vec3 color = texture( textureIndex, flipUCoord ? vec2(GUV.x, 1-GUV.y) : GUV ).rgb;
+	vec4 allcolor = texture( textureIndex, flipUCoord ? vec2(GUV.x, 1-GUV.y) : GUV );
+	vec3 color = allcolor.rgb;
 	vec3 n = normalize(GNormal);
 	vec3 return_color = vec3(0.0f);
 	if (!gl_FrontFacing)
@@ -47,7 +48,7 @@ vec4 ads() {
 		}
 	}
 
-	return vec4(return_color, 1.0f);
+	return vec4(return_color, allcolor.a);
 }
 
 void main(){

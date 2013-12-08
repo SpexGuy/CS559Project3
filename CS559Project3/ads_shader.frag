@@ -2,17 +2,18 @@
 
 layout (location = 0) out vec4 FragColor;
 
+//lights
 uniform vec3 light_position[5];
+uniform vec4 lightColor[5];
 
-//The lower the bigger the shine
-uniform float shininess;
-
-//these shoud add to (1, 1, 1, 1)
+//material properties
 uniform vec3 ambientScale;
 uniform vec3 diffuseScale;
-uniform vec4 specularColor[5];
+uniform vec3 specularScale;
+uniform float shininess;
 
 uniform bool wireframe;
+uniform bool flipUCoord;
 
 flat in vec4 GColor;
 in vec3 GPosition;
@@ -20,33 +21,31 @@ in vec3 GNormal;
 noperspective in vec3 GEdgeDistance;
 
 vec4 ads() {
-  vec3 color = vec3(GColor);
-  vec3 n = normalize(GNormal);
-  vec4 return_color;
-  if (!gl_FrontFacing)
+	vec3 color = GColor.rgb;
+	vec3 n = normalize(GNormal);
+	vec3 return_color = vec3(0.0f);
+	if (!gl_FrontFacing)
 	n = -n;
-  for(int i = 0; i < 5; i++)
-  {
-  vec3 s = normalize(light_position[i] - GPosition);
-  float s_dot_n = max(dot(s, n), 0.0);
+	for(int i = 0; i < 5; i++) {
+		if (lightColor[i].w != 0) {
+			vec3 s = normalize(light_position[i] - GPosition);
+			float s_dot_n = max(dot(s, n), 0.0);
 
-  vec3 specular = vec3(0.0);
-  vec3 v;
-  vec3 r;
-  if (specularColor[i].w != 0) {
-	v = normalize(-GPosition);
-	r = reflect(-s, n);
-	specular = (s_dot_n > 0 ? vec3(specularColor[i])*pow(max(dot(r, v), 0.0), shininess) : vec3(0.0));
-  }
+			vec3 specular = vec3(0.0);
+			vec3 v;
+			vec3 r;
 
-  return_color += vec4(
-	ambientScale*color +
-	diffuseScale*color*s_dot_n +
-	specular,
-	1.0);
-  }
+			v = normalize(-GPosition);
+			r = reflect(-s, n);
+			specular = (s_dot_n > 0 ? vec3(lightColor[i])*pow(max(dot(r, v), 0.0), shininess) : vec3(0.0));
+			return_color +=
+				ambientScale*lightColor[i].xyz*color +
+				diffuseScale*lightColor[i].xyz*color*s_dot_n +
+				specularScale*specular;
+		}
+	}
 
-  return return_color;
+	return vec4(return_color, GColor.a);
 }
 
 void main() {

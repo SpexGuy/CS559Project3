@@ -5,6 +5,7 @@
 #include <vector>
 #include "Graphics.h"
 #include "ErrorCheck.h"
+#include "Drawable.h"
 #include <GL/freeglut.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -268,6 +269,32 @@ mat4 Graphics::getModelview(const mat4 &model) {
 
 mat3 Graphics::getNormalMatrix(const mat4 &mv) {
 	return inverse(transpose(mat3(mv)));
+}
+
+void Graphics::addZDrawable(Drawable * child, mat4 model) {
+	ZDrawable newZDraw;
+	newZDraw.object = child;
+	newZDraw.mvmatrix = model;
+	float key = (view * model)[2][3]; //depth in clip space!
+	zOrderDrawables.insert(make_pair(key, newZDraw));
+}
+
+void Graphics::clearZDrawables() {
+	zOrderDrawables.clear();
+}
+
+bool Graphics::drawZDrawables() {
+	for (
+		multimap<float, ZDrawable>::const_iterator
+			iterator = zOrderDrawables.begin(),
+			end = zOrderDrawables.end();
+		iterator != end;
+		++iterator)
+	{
+		if(!(*iterator).second.object->draw((*iterator).second.mvmatrix))
+			return false;
+	}
+	return true;
 }
 
 

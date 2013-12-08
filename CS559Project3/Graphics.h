@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <map>
 #include "Shaders.h"
 #include <GL/freeglut.h>
 #include <glm/glm.hpp>
@@ -19,11 +20,22 @@
 
 // number of lights!
 #define NUM_LIGHTS 5
+
+class Drawable;
 /**
  * The Graphics class encapsulates all logic related to drawing 3D shapes
  * It also serves to accumulate state for the shaders.
  */
 class Graphics {
+
+public:
+
+	/* Struct for z-ordered drawables */
+	typedef struct{
+		Drawable * object;
+		glm::mat4 mvmatrix;
+	} ZDrawable;
+
 
 private:
 
@@ -65,11 +77,14 @@ private:
 
 	static Graphics instance;
 
+	std::multimap<float, ZDrawable> zOrderDrawables; 
+
 	/* creates a Graphics instance but DOES NOT INITIALIZE IT */
 	Graphics();
 
 
 public:
+
 	/* Graphics is a Singleton */
 	static Graphics *inst();
 
@@ -135,7 +150,14 @@ public:
 	/* asserts that takeDown() has been called */
 	~Graphics();
 
-	
+	/* Inserts a ZDrawable into the ZOrderDrawables multimap */
+	void addZDrawable(Drawable * child, mat4 model);
+
+	/* Clears the zOrderDrawables multimap */
+	void clearZDrawables();
+
+	/* Draws all of the zDrawables */
+	bool drawZDrawables();
 	
 	//---------------- getters and setters -----------------
 

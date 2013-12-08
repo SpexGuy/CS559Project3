@@ -47,11 +47,12 @@ public:
 
 	SpheroidLight *light[NUM_LIGHTS];
 
-	DrawableGroup *model, *solidmodel, *translucentmodel, *vmodel;
+	DrawableGroup *model, *vmodel;
 	Drawable * sphere;
 	Drawable * sphereCopy;
 	Drawable * virtualSphere;
 	Drawable *ribbon;
+	Drawable * translucentSphere[5];
 	LinearPathSpawner *spawner;
 
 	Drawable * testMesh;
@@ -88,8 +89,6 @@ bool Globals::initialize() {
 
 	//Creates the models which will hold the meshes for a given Scene.
 	model = new DrawableGroup();
-	solidmodel = new DrawableGroup();
-	translucentmodel = new DrawableGroup();
 
 	vmodel = new DrawableGroup();
 
@@ -105,14 +104,23 @@ bool Globals::initialize() {
 		//->translated(vec3(-1.0f, 0.0f, 0.0f))
 		->inMaterial(0.3f, 1.0f, 50)
 		->useShader(SHADER_TEXTURE);
-	sphereCopy = Mesh::newSphere(30,30,0.06f)
-		->translated(vec3(1.0f, 1.0f, 1.0f))
-		->inColor(YELLOW)
-		->inMaterial(0.5f,0.4f,20.0f)
-		->useShader(SHADER_SOLID)
+	sphereCopy = sphere->copyStack()
+		->translated(vec3(-1.0f, 0.0f, 0.0f));
+	
+	for(int i = 0; i < 5; i++)
+	{
+	translucentSphere[i] = Mesh::newSphere(30, 30, 0.05f)
+		->translated(vec3(0.0f,(float(i)/10.0f + 0.1f),(float(i)/10.0f + 0.1f)))
+		->drawZOrdered()
 		->disableCullFace()
 		->disableDepthMask()
-		->setGlBlendFunc(GL_ZERO, GL_SRC_COLOR);
+		->setGlBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		->inRandomColor(vec2(0.2f, 0.5f))
+		->inMaterial(0.2f, 1.0f, 100)
+		->useShader(SHADER_ADS);
+	}
+
+
 
 	testMesh = Mesh::newMeshFromFile("L:\\Desktop\\test.obj", NULL);
 	testMesh->useShader(SHADER_SOLID);
@@ -160,17 +168,17 @@ bool Globals::initialize() {
 		light[i] = NULL;
 
 	//Building the models
-	//Slightly more complex stuff here - model contains solidmodel and translucentmodel
-	//solidmodel draws first, then translucentmodel draws without writing to depth buffer!
-	//or at least that's how I'm planning on implementing it.
+
 
 	model->addLight(light[0]);
-	model->addElement(solidmodel);
-	model->addElement(translucentmodel);
-	solidmodel->addElement(sphere);
-	solidmodel->addElement(ribbon);
+	model->addElement(sphere);
+	model->addElement(ribbon);
 //	solidmodel->addElement(testMesh); //Using the test mesh produces a draw error! weird.
-	translucentmodel->addElement(sphereCopy);
+	model->addElement(sphereCopy);
+	for(int i = 0; i < 5; i++)
+	{
+		model->addElement(translucentSphere[i]);
+	}
 	vmodel->addLight(light[0]);
 	vmodel->addElement(virtualSphere);
 	//Building the cameras
@@ -246,6 +254,11 @@ bool Globals::initialize() {
 		return false;
 	if (!ribbon->initialize())
 		return false;
+	for(int i = 0; i < 5; i++)
+	{
+		if(!translucentSphere[i]->initialize())
+			return false;
+	}
 
 	Frame *f = new Frame(genTexture, proj, vcam, vmodel, mainOverlay);
 	frames.push_back(f);

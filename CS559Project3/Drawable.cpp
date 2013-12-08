@@ -101,6 +101,19 @@ Drawable *Drawable::setGlBlendFunc(GLenum sfactor, GLenum dfactor) {
 	return pushDecorator(new SetGlBlendFunc(sfactor, dfactor));
 }
 
+Drawable *Drawable::drawZOrdered() {
+	return pushDecorator(new DrawZOrdered());
+}
+
+Drawable *Drawable::inRandomColor(const vec2 alpha,
+								  const vec2 red,
+								  const vec2 green,
+								  const vec2 blue) {
+	return pushDecorator(new InRandomColor(alpha, red, green, blue));
+}
+
+
+
 
 
 //---------------- DrawableDecorator ---------------
@@ -209,6 +222,39 @@ list<Drawable *> *DrawableGroup::getElements() {
 
 
 //------------ Decorator Implementations ---------------
+
+
+
+void InRandomColor::setColor() {
+	thisColor = vec4(0.0f);
+	thisColor.r = (float(rand())/float(RAND_MAX) * (red.y - red.x) + red.x);
+	thisColor.g = (float(rand())/float(RAND_MAX) * (green.y - green.x) + green.x);
+	thisColor.b = (float(rand())/float(RAND_MAX) * (blue.y - blue.x) + blue.x);
+	thisColor.a = (float(rand())/float(RAND_MAX) * (alpha.y - alpha.x) + alpha.x);
+}
+
+bool InRandomColor::draw(const glm::mat4 &model) {
+	Graphics::inst()->setColor(thisColor);
+	bool ret = child->draw(model);
+	return ret;
+}
+
+Drawable *InRandomColor::copyStack() {
+	InRandomColor *copy = new InRandomColor(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
+
+bool DrawZOrdered::draw(const mat4 &model) {
+	Graphics::inst()->addZDrawable(child, model);
+	return true;
+}
+
+Drawable *DrawZOrdered::copyStack() {
+	DrawZOrdered *copy = new DrawZOrdered(*this);
+	copy->setChild(child->copyStack());
+	return copy;
+}
 
 bool DisableDepthTest::draw(const mat4 &model) {
 	glDisable(GL_DEPTH_TEST);

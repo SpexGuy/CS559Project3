@@ -30,6 +30,7 @@ void TexLightShader::setup(const mat4 &model)
 	this->setUniform("flipUCoord", g->isFlipU());
 	this->setUniform("wireframe", g->isWireframe());
 	this->setUniform("ViewportMatrix", g->getViewportMatrix());
+	this->setUniform("color", g->getColor());
 }
 
 TexLightShader::~TexLightShader(void)

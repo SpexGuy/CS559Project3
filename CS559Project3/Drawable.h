@@ -115,6 +115,17 @@ public:
 	/* pushes a setGlBlendFunc onto the stack
 	 * Returns a pointer to the base of the stack */
 	Drawable *setGlBlendFunc(GLenum sfactor, GLenum dfactor);
+
+	/* pushes a drawZOrdered onto the stack
+	 * Returns a pointer to the base of the stack */
+	Drawable *drawZOrdered();
+
+	/* pushes a inRandomColor onto the stack
+	 * Returns a pointer to the base of the stack */
+	Drawable *inRandomColor(const vec2 alpha,
+		const vec2 red = vec2(0.0f, 1.0f),
+		const vec2 green = vec2(0.0f, 1.0f),
+		const vec2 blue = vec2(0.0f, 1.0f));
 };
 
 /**
@@ -199,6 +210,56 @@ public:
 
 private:
 	std::list<Drawable*> elements;
+};
+
+/**
+ * Generates a random color between given ranges of alpha/color
+ * and draws the object in that color. 
+ */
+class InRandomColor : public DrawableDecorator {
+public:
+	InRandomColor(const glm::vec2 alpha,
+		const glm::vec2 red = vec2(0.0f, 1.0f),
+		const glm::vec2 green = vec2(0.0f, 1.0f),
+		const glm::vec2 blue = vec2(0.0f, 1.0f)) :
+		alpha(alpha),
+		red(red),
+		green(green),
+		blue(blue)
+		{this->setColor();};
+
+	InRandomColor(const InRandomColor &other) :
+		alpha(other.alpha),
+		red(other.red),
+		green(other.green),
+		blue(other.blue)
+	{this->setColor();};
+
+	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
+
+private:
+	InRandomColor();
+
+protected:
+	void setColor();
+	vec4 thisColor;
+	vec2 alpha;
+	vec2 red;
+	vec2 green;
+	vec2 blue;
+};
+
+/**
+ * Takes the Drawable and stores it in a ZDrawable, and places that ZDrawable
+ * in Graphics in the multimap of Z ordered drawables.
+ */
+class DrawZOrdered : public DrawableDecorator {
+public:
+	DrawZOrdered() {}
+
+	virtual bool draw(const glm::mat4 &model);
+	virtual Drawable *copyStack();
 };
 
 /**

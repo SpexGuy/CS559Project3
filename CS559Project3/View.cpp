@@ -23,6 +23,9 @@ void View::render() {
 	glEnable(GL_DEPTH_TEST);
 	model->draw(context);
 
+	Graphics::inst()->drawZDrawables();
+	Graphics::inst()->clearZDrawables();
+
 	glDisable(GL_DEPTH_TEST);
 	overlay->draw(context);
 }

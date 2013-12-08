@@ -18,9 +18,6 @@ void main()
 	//get the vertex color
 	VColor = color;
 	VNormal = normalize(normal_matrix * vertex_normal);
-	//color = normal is a cool shader.
-	//color = normal;
-
 
 	//Position is the vertex position in eye space.
 	VPosition = vec3(modelview_matrix * vec4(vertex_position,1.0));
