@@ -19,6 +19,7 @@ void TexLightShader::setup(const mat4 &model)
 	mat3 nm = g->getNormalMatrix(mv);
 	this->setUniform("mvp", mvp);
 	this->setUniform("modelview_matrix", mv);
+	this->setUniform("model_matrix", model);
 	this->setUniform("normal_matrix", nm);
 	this->setUniform("textureIndex", g->getTexture());
 	this->setUniform("light_position", NUM_LIGHTS, g->getLightArray());

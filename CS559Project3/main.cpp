@@ -132,7 +132,7 @@ bool Globals::initialize() {
 					   vec3(1.0f, 0.0f, 0.0f),
 					   vec3(0.0f, 1.0f, 0.0f));
 
-	ribbonBuilder = new RibbonBuilder(vmodel, vec3(0.0f, 0.0f, -10.0f), 0.25f/1000.0f, 2, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	ribbonBuilder = new RibbonBuilder(model, vec3(0.0f, 0.0f, -10.0f), 0.25f/1000.0f, 2, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
 	DrawableGroup *ribbonTemp = new DrawableGroup();
 	ribbonTemp->addElement(
