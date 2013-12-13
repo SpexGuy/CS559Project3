@@ -134,6 +134,6 @@ SplinePoint3 RibbonBuilder::generatePoint() {
 SplinePoint1 RibbonBuilder::generateAngle() {
 	SplinePoint1 point;
 	point.position = 360 * (float(rand())/RAND_MAX) - 180;
-	point.distance = 0.5 + float(rand())/RAND_MAX;
+	point.distance = 0.5f + float(rand())/RAND_MAX;
 	return point;
 }

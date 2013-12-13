@@ -64,6 +64,18 @@ bool ShaderFlyweight::initialize() {
 	pposhader->link();
 	addShader(PPO_INVERTED, pposhader);
 
+	pposhader = new PostProcessingShader();
+	pposhader->compileShader("simple_scanline_ppo.frag", GLSLShader::FRAGMENT);
+	pposhader->compileShader("ppo_shader.vert", GLSLShader::VERTEX);
+	pposhader->link();
+	addShader(PPO_SCANLINE, pposhader);
+
+	pposhader = new PostProcessingShader();
+	pposhader->compileShader("static_noise_ppo.frag", GLSLShader::FRAGMENT);
+	pposhader->compileShader("ppo_shader.vert", GLSLShader::VERTEX);
+	pposhader->link();
+	addShader(PPO_STATIC_NOISE, pposhader);
+
 	return true;
 }
 
@@ -99,4 +111,5 @@ ShaderFlyweight::~ShaderFlyweight() {
 
 void PostProcessingShader::setup(const glm::mat4 &model) {
 	setUniform("size", vec2(Graphics::inst()->getSize()));
+	setUniform("time", float(Graphics::inst()->getTime())/1000.0f);
 }

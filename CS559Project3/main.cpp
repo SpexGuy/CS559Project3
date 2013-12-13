@@ -199,7 +199,9 @@ bool Globals::initialize() {
 	cam->setRadius(3.0f);
 
 	vector<int> ppos;
-	view = new Frame(ivec2(1,1), proj, cam, model, mainOverlay);
+	ppos.push_back(PPO_SCANLINE);
+	ppos.push_back(PPO_STATIC_NOISE);
+	view = new Frame(ivec2(1,1), ppos, proj, cam, model, mainOverlay);
 
 	window = new SingleViewportWindow(view);
 
