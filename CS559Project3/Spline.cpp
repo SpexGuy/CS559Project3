@@ -18,16 +18,16 @@ float SplinePoint1::getBeforePoint() const {
 
 vec3 SplinePoint3::getAfterPoint() const {
 	return position +
-		vec3(distance * sin(angle * M_PI / 180) * sin(axisAngle * M_PI / 180),
-			 distance * cos(axisAngle * M_PI / 180),
-			 distance * cos(angle * M_PI / 180) * sin(axisAngle * M_PI / 180));
+		vec3(distance * cos(angle * M_PI / 180) * sin(axisAngle * M_PI / 180),
+			 distance * sin(angle * M_PI / 180) * sin(axisAngle * M_PI / 180),
+			 distance * cos(axisAngle * M_PI / 180));
 }
 
 vec3 SplinePoint3::getBeforePoint() const {
 	return position -
-		vec3(distance * sin(angle * M_PI / 180) * sin(axisAngle * M_PI / 180),
-			 distance * cos(axisAngle * M_PI / 180),
-			 distance * cos(angle * M_PI / 180) * sin(axisAngle * M_PI / 180));
+		vec3(distance * cos(angle * M_PI / 180) * sin(axisAngle * M_PI / 180),
+			 distance * sin(angle * M_PI / 180) * sin(axisAngle * M_PI / 180),
+			 distance * cos(axisAngle * M_PI / 180));
 }
 
 

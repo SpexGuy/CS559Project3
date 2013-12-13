@@ -1,9 +1,8 @@
+#pragma once
 #include "Drawable.h"
 #include "Spline.h"
 #include "Mesh.h"
 #include <vector>
-
-using namespace std;
 
 class RibbonBuilder {
 protected:
@@ -15,9 +14,9 @@ protected:
 
 	SplinePoint3 lastRibbonPoint;
 	SplinePoint1 lastRibbonAngle;
-	vec3 arb;
-	vec3 absolute;
-	vec3 lastPoint;
+	glm::vec3 arb;
+	glm::vec3 absolute;
+	glm::vec3 lastPoint;
 
 	Texture *texture;
 	int resolution;
@@ -36,8 +35,8 @@ public:
 					float length,
 					float width,
 					int resolution,
-					vec3 arbitrary,
-					vec3 startAbsolute,
+					glm::vec3 arbitrary,
+					glm::vec3 startAbsolute,
 					Texture *texture = NULL);
 
 	virtual bool initialize();
