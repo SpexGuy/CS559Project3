@@ -13,6 +13,7 @@
 #include "FrameBuffer.h"
 #include "Frame.h"
 #include "LinearPathSpawner.h"
+#include "FancyPathSpawner.h"
 #include "Ribbon.h"
 #include <GL/freeglut.h>
 #include <IL/il.h>
@@ -53,11 +54,9 @@ public:
 	Drawable *sphereCopy;
 	Drawable *virtualSphere;
 	Drawable *ribbon;
-	Drawable *translucentSphere[5];
+	Drawable *translucentSphere;
 	RibbonBuilder *ribbonBuilder;
-	LinearPathSpawner *spawner;
-
-//	Drawable * testMesh;
+	FancyPathSpawner *spawner;
 
 	Texture *marsTexture;
 
@@ -127,16 +126,6 @@ bool Globals::initialize() {
 		->useShader(SHADER_TEXTURE);
 	sphereCopy = sphere->copyStack()
 		->translated(vec3(-1.0f, 0.0f, 0.0f));
-	
-	for(int i = 0; i < 5; i++) {
-		translucentSphere[i] = Mesh::newSphere(30, 30, 0.05f)
-			->translated(vec3(0.0f,(float(i)/10.0f + 0.1f),(float(i)/10.0f + 0.1f)))
-			->drawZOrdered()
-			->setGlBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-			->inRandomColor(vec2(0.2f, 0.5f))
-			->inMaterial(0.2f, 1.0f, 100)
-			->useShader(SHADER_ADS);
-	}
 
 	primeRibbonBuilder(SplinePoint3(1.0f, vec3(-1.0f), 0, 0),
 					   SplinePoint1(0.0f, 0.0f),
@@ -166,7 +155,8 @@ bool Globals::initialize() {
 
 	ribbon = ribbonTemp;
 
-	spawner = new LinearPathSpawner(sphere, 2.0f/1000.0f, 2.0f, -10.0f, 0.25f/period, model);
+	translucentSphere = Mesh::newSphere(5, 10, 0.05f);
+	spawner = new FancyPathSpawner(translucentSphere, 2.0f/1000.0f, 0.0f, 0.0f, 1.0f/period, model, 2.0f);
 
 	light[0] = new SpheroidLight(0, WHITE);
 	light[0]->setAngle(90);
@@ -188,12 +178,7 @@ bool Globals::initialize() {
 	model->addLight(light[0]);
 	model->addElement(sphere);
 	model->addElement(ribbon);
-//	solidmodel->addElement(testMesh); //Using the test mesh produces a draw error! weird.
 	model->addElement(sphereCopy);
-	for(int i = 0; i < 5; i++)
-	{
-		model->addElement(translucentSphere[i]);
-	}
 	vmodel->addLight(light[0]);
 	vmodel->addElement(virtualSphere);
 	//Building the cameras
@@ -202,7 +187,7 @@ bool Globals::initialize() {
 
 
 	ppos.clear();
-	ppos.push_back(PPO_SEPIA);
+	//ppos.push_back(PPO_SEPIA);
 	ppos.push_back(PPO_STATIC_NOISE);
 	view = new Frame(ivec2(1,1), ppos, proj, cam, model, mainOverlay);
 
@@ -254,10 +239,8 @@ bool Globals::initialize() {
 		return false;
 	if (!ribbon->initialize())
 		return false;
-	for(int i = 0; i < 5; i++) {
-		if(!translucentSphere[i]->initialize())
-			return false;
-	}
+	if(!translucentSphere->initialize())
+		return false;
 	if (!ribbonBuilder->initialize())
 		return false;
 
@@ -455,7 +438,7 @@ void windowDisplay() {
 	for (uint c = 0; c < globals.frames.size(); c++) {
 		globals.frames[c]->render();
 	}
-	//globals.spawner->update();
+	globals.spawner->update();
 	globals.ribbonBuilder->update();
 	globals.window->render();
 }

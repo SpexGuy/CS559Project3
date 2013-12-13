@@ -416,6 +416,7 @@ public:
 	virtual ~NoDeletion();
 	virtual void takeDown();
 	virtual Drawable *copyStack();
+	virtual bool initialize(){return true;}
 };
 
 class ShaderUse : public DrawableDecorator {
