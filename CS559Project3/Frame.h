@@ -36,7 +36,7 @@ public:
 	{}
 
 	virtual inline bool initialize() {
-		for (int c = 0; c < ppo_names.size(); c++)
+		for (unsigned int c = 0; c < ppo_names.size(); c++)
 			ppos.push_back(ShaderFlyweight::inst()->getShader(ppo_names[c]));
 
 		return fbo->initialize();

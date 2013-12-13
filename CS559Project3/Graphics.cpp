@@ -284,6 +284,8 @@ void Graphics::clearZDrawables() {
 }
 
 bool Graphics::drawZDrawables() {
+	glDisable(GL_CULL_FACE);
+	glDepthMask(GL_FALSE);
 	for (
 		multimap<float, ZDrawable>::const_iterator
 			iterator = zOrderDrawables.begin(),
@@ -294,6 +296,8 @@ bool Graphics::drawZDrawables() {
 		if(!(*iterator).second.object->draw((*iterator).second.mvmatrix))
 			return false;
 	}
+	glEnable(GL_CULL_FACE);
+	glDepthMask(GL_TRUE);
 	return true;
 }
 

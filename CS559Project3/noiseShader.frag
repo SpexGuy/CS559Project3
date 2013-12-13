@@ -157,7 +157,7 @@ vec4 ads() {
 		}
 	}
 
-	return vec4(return_color, 1.0f);
+	return vec4(return_color, 0.5f);
 }
 
 void main(){

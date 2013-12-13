@@ -21,12 +21,16 @@ void RibbonBuilder::spawn(int time) {
 	SplinePoint3 newPoint = generatePoint();
 	SplinePoint1 newAngle = generateAngle();
 	//generate mesh
-	Mesh *mesh = makeRibbonSegment(newPoint, newAngle);
-	//translate mesh into position
-	ribbons->addElement(
-		mesh
+	Drawable *mesh = makeRibbonSegment(newPoint, newAngle)
 		->translated(vec3(0.0f, 0.0f, -segmentLength * time/segmentTime))
-		->obselesceOffscreen());
+		->obselesceOffscreen()
+		->drawZOrdered()
+		->setGlBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		->useShader(SHADER_NOISE);
+
+
+	//translate mesh into position
+	ribbons->addElement(mesh);
 	//trigger obselescence
 	//add to group
 	mesh->initialize();
@@ -77,9 +81,7 @@ RibbonBuilder::RibbonBuilder(
 							new ConstantTimeFunction(position.x),
 							new ConstantTimeFunction(position.y),
 							new LinearTimeFunction(velocity, position.z)))
-					->useShader(SHADER_NOISE)
 					->inMaterial(0.2f, 0.5f, 50.0f)
-					->disableCullFace()
 	);
 }
 

@@ -130,8 +130,6 @@ bool Globals::initialize() {
 		translucentSphere[i] = Mesh::newSphere(30, 30, 0.05f)
 			->translated(vec3(0.0f,(float(i)/10.0f + 0.1f),(float(i)/10.0f + 0.1f)))
 			->drawZOrdered()
-			->disableCullFace()
-			->disableDepthMask()
 			->setGlBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 			->inRandomColor(vec2(0.2f, 0.5f))
 			->inMaterial(0.2f, 1.0f, 100)
@@ -201,8 +199,7 @@ bool Globals::initialize() {
 	cam->setRadius(3.0f);
 
 	vector<int> ppos;
-	ppos.push_back(PPO_INVERTED);
-	view = new Frame(ivec2(1,1), ppos, proj, cam, model, mainOverlay);
+	view = new Frame(ivec2(1,1), proj, cam, model, mainOverlay);
 
 	window = new SingleViewportWindow(view);
 
