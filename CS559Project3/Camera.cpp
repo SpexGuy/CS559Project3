@@ -95,9 +95,12 @@ glm::mat4 BetterCamera::generateViewMatrix() {
 
 //change the position on the mouse delta
 void BetterCamera::mouseUpdate(ivec2 newMouse){
-	ivec2 delta = prevMouse - newMouse;
+	ivec2 delta = ivec2(prevMouse.x - newMouse.x,newMouse.y - prevMouse.y);
 	vec2 rotationdelta = vec2(delta) * 0.25f * (float(M_PI)/180.0f); //mess with this magic number???
 	rotation += rotationdelta;
+	//force angles between known good values
+	rotation.x = glm::clamp(rotation.x,3.0f *float(M_PI)/4.0f, 5.0f * float(M_PI)/4.0f);
+	rotation.y = glm::clamp(rotation.y, float(M_PI)/4.0f, 3.0f * float(M_PI)/4.0f);
 	//update the previous mouse position!
 	prevMouse = newMouse;
 }

@@ -139,7 +139,7 @@ private:
 
 public:
 
-	BetterCamera(glm::vec3 pos) : position(pos) {rotation = glm::vec2(9.385,float(M_PI)/4.0f);} //very kludgy number.
+	BetterCamera(glm::vec3 pos) : position(pos) {rotation = glm::vec2(M_PI,M_PI/2.0f);} //very kludgy number.
 
 	virtual glm::mat4 generateViewMatrix();
 	

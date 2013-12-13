@@ -133,7 +133,7 @@ float snoise(vec3 v)
 
 
 vec4 ads() {
-	vec3 color = 0.5 + 0.5*vec3(snoise(GWPosition), snoise(GVPosition), snoise(GPPosition));
+	vec3 color = 0.5 + 0.5*vec3(snoise(GVPosition.zxy), snoise(GVPosition.xyz), snoise(GVPosition.yzx));
 	vec3 n = normalize(GNormal);
 	vec3 return_color = vec3(0.0f);
 	if (!gl_FrontFacing)

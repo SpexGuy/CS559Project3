@@ -25,5 +25,5 @@ void main(void ) {
 	float green	= (sin(PI*color/0.5+ttime*3.0)+1.0)/2.0;
 	float blue	= (sin(+ttime*3.0)+1.0)/2.0;
 	
-    FragColor = vec4(red, green, blue, 1.0);
+    FragColor = 0.5*vec4(red, green, blue, 1.0);
 }
