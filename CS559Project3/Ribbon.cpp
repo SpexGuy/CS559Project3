@@ -124,8 +124,8 @@ Mesh *RibbonBuilder::makeRibbonSegment(
 
 SplinePoint3 RibbonBuilder::generatePoint() {
 	SplinePoint3 point;
-	point.angle = 178 * (float(rand())/RAND_MAX) + 91;
-	point.axisAngle = 180 * (float(rand())/RAND_MAX);
+	point.angle = 360 * (float(rand())/RAND_MAX);
+	point.axisAngle = 135 + 45 * (float(rand())/RAND_MAX);
 	point.distance = 1 + 2*(float(rand())/RAND_MAX);
 	point.position = vec3(0.0f);
 	return point;
@@ -134,6 +134,6 @@ SplinePoint3 RibbonBuilder::generatePoint() {
 SplinePoint1 RibbonBuilder::generateAngle() {
 	SplinePoint1 point;
 	point.position = 360 * (float(rand())/RAND_MAX) - 180;
-	point.distance = 0.5f + float(rand())/RAND_MAX;
+	point.distance = 1 + 1*float(rand())/RAND_MAX;
 	return point;
 }
