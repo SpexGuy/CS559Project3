@@ -60,7 +60,7 @@ RibbonBuilder::RibbonBuilder(
 
 		lastSpawnTime(0),
 		segmentLength(length),
-		segmentTime(length/velocity),
+		segmentTime(int(length/velocity)),
 		width(width),
 		resolution(resolution),
 		arb(normalize(arbitrary)),

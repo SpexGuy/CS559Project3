@@ -76,6 +76,18 @@ bool ShaderFlyweight::initialize() {
 	pposhader->link();
 	addShader(PPO_STATIC_NOISE, pposhader);
 
+	pposhader = new PostProcessingShader();
+	pposhader->compileShader("solar_ppo.frag", GLSLShader::FRAGMENT);
+	pposhader->compileShader("ppo_shader.vert", GLSLShader::VERTEX);
+	pposhader->link();
+	addShader(PPO_SOLAR, pposhader);
+
+	pposhader = new PostProcessingShader();
+	pposhader->compileShader("sepia_ppo.frag", GLSLShader::FRAGMENT);
+	pposhader->compileShader("ppo_shader.vert", GLSLShader::VERTEX);
+	pposhader->link();
+	addShader(PPO_SEPIA, pposhader);
+
 	return true;
 }
 

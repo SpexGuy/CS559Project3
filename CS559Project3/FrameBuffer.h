@@ -21,7 +21,7 @@ protected:
 public:
 	FrameBufferObject(glm::ivec2 size, int number_of_color_attachments = 1, bool allocate_depth_buffer = true) :
 		size(size),
-		number_of_color_attachments(number_of_color_attachments),
+		number_of_color_attachments(glm::min(number_of_color_attachments, 2)),
 		allocateDepthBuffer(allocate_depth_buffer),
 		color_buffer_index(0),
 		framebuffer_handle(-1),
@@ -36,7 +36,7 @@ public:
 		useBuffer(0);
 	}
 	virtual inline void incrementBuffer() {
-		useBuffer(color_buffer_index + 1);
+		useBuffer(1-color_buffer_index);
 	}
 
 	virtual void bindTexture();

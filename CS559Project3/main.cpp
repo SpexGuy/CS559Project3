@@ -115,7 +115,9 @@ bool Globals::initialize() {
 		->inMaterial(1.0f, 0.0f, 50)
 		->useShader(SHADER_TEXTURE);
 
-	Frame *f = new Frame(ivec2(1024, 1024), proj, vcam, vmodel, mainOverlay);
+	vector<int> ppos;
+	ppos.push_back(PPO_SEPIA);
+	Frame *f = new Frame(ivec2(1024, 1024), ppos, proj, vcam, vmodel, mainOverlay);
 
 	model = new DrawableGroup();
 
@@ -198,8 +200,9 @@ bool Globals::initialize() {
 	cam = new SpheroidCamera();
 	cam->setRadius(3.0f);
 
-	vector<int> ppos;
-	ppos.push_back(PPO_SCANLINE);
+
+	ppos.clear();
+	ppos.push_back(PPO_SEPIA);
 	ppos.push_back(PPO_STATIC_NOISE);
 	view = new Frame(ivec2(1,1), ppos, proj, cam, model, mainOverlay);
 
@@ -270,6 +273,10 @@ void Globals::takeDown() {
 	}
 	Graphics::inst()->takeDown();
 	ShaderFlyweight::inst()->takeDown();
+	for (uint c = 0; c < frames.size(); c++) {
+		frames[c]->takeDown();
+	}
+	view->takeDown();
 }
 
 Globals::~Globals() {

@@ -8,7 +8,7 @@ void Frame::render() {
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	View::render();
 	fbo->unbindDraw();
-	for (int c = 0; c < ppos.size(); c++) {
+	for (uint c = 0; c < ppos.size(); c++) {
 		advance(ppos[c]);
 	}
 }

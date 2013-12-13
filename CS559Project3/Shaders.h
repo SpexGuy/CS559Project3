@@ -25,8 +25,11 @@
 #define SHADER_NOISE 4
 #define PPO_IDENTITY 5
 #define PPO_INVERTED 6
+#define PPO_SOLAR 7
+#define PPO_SEPIA 8
 #define PPO_SCANLINE 9
 #define PPO_STATIC_NOISE 10
+
 class ShaderFlyweight {
 public:
 	/* ShaderFlyweight is a Singleton */
