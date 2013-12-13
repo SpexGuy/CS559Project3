@@ -16,6 +16,11 @@ bool FrameBufferObject::initialize() {
 	if (checkError("FrameBufferObject::Initialize - purging errors prior to initializing frame buffer object."))
 		return false;
 
+	this->texture_handles = new GLuint[number_of_color_attachments];
+	for (int i = 0; i < number_of_color_attachments; i++)
+		this->texture_handles[i] = GLuint(-1);
+
+
 	glGenFramebuffers(1, &this->framebuffer_handle);
 	glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer_handle);
 
@@ -32,6 +37,14 @@ bool FrameBufferObject::initialize() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, this->texture_handles[i], 0);
+
+		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		if (status != GL_FRAMEBUFFER_COMPLETE)
+		{
+			cout << "FrameBufferObject::Initialize failed to complete texture buffer " << i << ": " << FramebufferCompletenessError(status) << endl;
+			return false;
+		}
+
 	}
 
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -87,6 +100,12 @@ void FrameBufferObject::takeDown() {
 		delete [] this->texture_handles;
 		this->texture_handles = NULL;
 	}
+}
+
+void FrameBufferObject::resize(int x, int y) {
+	takeDown();
+	this->size = glm::ivec2(x, y);
+	initialize();
 }
 
 FrameBufferObject::~FrameBufferObject() {

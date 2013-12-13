@@ -69,13 +69,13 @@ void Window::exitFullscreen() {
 
 
 
-SingleViewportWindow::SingleViewportWindow(View *view) {
+SingleViewportWindow::SingleViewportWindow(Frame *view) {
 	this->view = view;
 }
 
 void SingleViewportWindow::renderViews() {
-	Graphics::inst()->viewport(0, 0, size.x, size.y);
 	view->render();
+	view->drawToScreen();
 }
 
 

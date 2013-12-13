@@ -23,6 +23,8 @@
 #define SHADER_STAR 2
 #define SHADER_TEXTURE 3
 #define SHADER_NOISE 4
+#define PPO_IDENTITY 5
+#define PPO_INVERTED 6
 
 class ShaderFlyweight {
 public:
@@ -39,4 +41,9 @@ private:
 	ShaderFlyweight();
 	~ShaderFlyweight();
 
+};
+
+class PostProcessingShader : public GLSLProgram {
+public:
+	virtual void setup(const glm::mat4 &model);
 };

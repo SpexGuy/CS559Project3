@@ -51,6 +51,19 @@ bool ShaderFlyweight::initialize() {
 	noiseshader->compileShader("wireframe_noise.geom", GLSLShader::GEOMETRY);
 	noiseshader->link();
 	addShader(SHADER_NOISE, noiseshader);
+
+	GLSLProgram * pposhader = new PostProcessingShader();
+	pposhader->compileShader("identity_ppo.frag", GLSLShader::FRAGMENT);
+	pposhader->compileShader("ppo_shader.vert", GLSLShader::VERTEX);
+	pposhader->link();
+	addShader(PPO_IDENTITY, pposhader);
+
+	pposhader = new PostProcessingShader();
+	pposhader->compileShader("invert_ppo.frag", GLSLShader::FRAGMENT);
+	pposhader->compileShader("ppo_shader.vert", GLSLShader::VERTEX);
+	pposhader->link();
+	addShader(PPO_INVERTED, pposhader);
+
 	return true;
 }
 
@@ -78,4 +91,12 @@ void ShaderFlyweight::takeDown() {
 
 ShaderFlyweight::~ShaderFlyweight() {
 	assert(loadedShaders.size() == 0);
+}
+
+
+
+
+
+void PostProcessingShader::setup(const glm::mat4 &model) {
+	setUniform("size", vec2(Graphics::inst()->getSize()));
 }

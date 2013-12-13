@@ -70,10 +70,10 @@ bool Graphics::initialize() {
 
 	lineSegs.push_back(ivec2(0, 1));
 
-	squarePoints.push_back(vec3(0, 0, 0));
-	squarePoints.push_back(vec3(0, 1, 0));
+	squarePoints.push_back(vec3(-1, -1, 0));
+	squarePoints.push_back(vec3(-1, 1, 0));
 	squarePoints.push_back(vec3(1, 1, 0));
-	squarePoints.push_back(vec3(1, 0, 0));
+	squarePoints.push_back(vec3(1, -1, 0));
 
 	squareTrigs.push_back(ivec3(2, 1, 0));
 	squareTrigs.push_back(ivec3(0, 3, 2));

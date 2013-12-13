@@ -38,7 +38,7 @@ void PassiveMotionFunc(int x, int y);
 class Globals {
 public:
 	Window *window;
-	View *view;
+	Frame *view;
 
 	Drawable *mainOverlay;
 
@@ -49,19 +49,17 @@ public:
 	SpheroidLight *light[NUM_LIGHTS];
 
 	DrawableGroup *model, *vmodel;
-	Drawable * sphere;
-	Drawable * sphereCopy;
-	Drawable * virtualSphere;
+	Drawable *sphere;
+	Drawable *sphereCopy;
+	Drawable *virtualSphere;
 	Drawable *ribbon;
-	Drawable * translucentSphere[5];
+	Drawable *translucentSphere[5];
 	RibbonBuilder *ribbonBuilder;
 	LinearPathSpawner *spawner;
 
-	Drawable * testMesh;
+//	Drawable * testMesh;
 
 	Texture *marsTexture;
-
-	FrameBufferObject *genTexture;
 
 	vector<Frame *> frames;
 
@@ -86,14 +84,29 @@ bool Globals::initialize() {
 	proj = new PerspectiveProjection(45.0f);
 	proj->setPlanes(0.01f, 100.0f);
 
-	marsTexture = new ILContainer("earth_texture.jpg");
-	genTexture = new FrameBufferObject(ivec2(1024, 1024), 1, true);
+	vcam = new SpheroidCamera();
+	vcam->setRadius(3.0f);
 
-	//Creates the models which will hold the meshes for a given Scene.
-	model = new DrawableGroup();
+	vector<char*> text;
+	text.push_back("Image credit: http://openuniverse.sourceforge.net/");
+	text.push_back("");
+	text.push_back("Left/Right UP/DOWN PgUP/PgDn - Camera Controls");
+	text.push_back("O/L ;/K - Light Controls");
+	text.push_back("W - wireframe");
+	text.push_back("P - Pause");
+	text.push_back("N - Normals");
+	text.push_back("F11 - Full Screen");
+	text.push_back("F1 - Cycle Camera/Scene");
+	text.push_back("");
+	text.push_back("MARS MODE");
+
+	mainOverlay = (new HudOverlay(text))
+		->inColor(WHITE)
+		->pushDecorator(new ShaderUse(SHADER_SOLID));
 
 	vmodel = new DrawableGroup();
 
+	marsTexture = new ILContainer("earth_texture.jpg");
 	virtualSphere = Mesh::newSphere(10, 10, 1.0f, marsTexture)
 		->rotated(vec3(1,0,0), 15)
 		->animateRotation(vec3(0, 1, 0),
@@ -102,30 +115,28 @@ bool Globals::initialize() {
 		->inMaterial(1.0f, 0.0f, 50)
 		->useShader(SHADER_TEXTURE);
 
-	sphere = Mesh::newSphere(30, 30, 0.05f, genTexture)
+	Frame *f = new Frame(ivec2(1024, 1024), proj, vcam, vmodel, mainOverlay);
+
+	model = new DrawableGroup();
+
+	sphere = Mesh::newSphere(30, 30, 0.05f, f->getFBO())
 		//->translated(vec3(-1.0f, 0.0f, 0.0f))
 		->inMaterial(0.3f, 1.0f, 50)
 		->useShader(SHADER_TEXTURE);
 	sphereCopy = sphere->copyStack()
 		->translated(vec3(-1.0f, 0.0f, 0.0f));
 	
-	for(int i = 0; i < 5; i++)
-	{
-	translucentSphere[i] = Mesh::newSphere(30, 30, 0.05f)
-		->translated(vec3(0.0f,(float(i)/10.0f + 0.1f),(float(i)/10.0f + 0.1f)))
-		->drawZOrdered()
-		->disableCullFace()
-		->disableDepthMask()
-		->setGlBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-		->inRandomColor(vec2(0.2f, 0.5f))
-		->inMaterial(0.2f, 1.0f, 100)
-		->useShader(SHADER_ADS);
+	for(int i = 0; i < 5; i++) {
+		translucentSphere[i] = Mesh::newSphere(30, 30, 0.05f)
+			->translated(vec3(0.0f,(float(i)/10.0f + 0.1f),(float(i)/10.0f + 0.1f)))
+			->drawZOrdered()
+			->disableCullFace()
+			->disableDepthMask()
+			->setGlBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+			->inRandomColor(vec2(0.2f, 0.5f))
+			->inMaterial(0.2f, 1.0f, 100)
+			->useShader(SHADER_ADS);
 	}
-
-
-
-	//testMesh = Mesh::newMeshFromFile("L:\\Desktop\\test.obj", NULL);
-	//testMesh->useShader(SHADER_SOLID);
 
 	primeRibbonBuilder(SplinePoint3(1.0f, vec3(-1.0f), 0, 0),
 					   SplinePoint1(0.0f, 0.0f),
@@ -188,29 +199,10 @@ bool Globals::initialize() {
 	//Building the cameras
 	cam = new SpheroidCamera();
 	cam->setRadius(3.0f);
-	vcam = new SpheroidCamera();
-	vcam->setRadius(3.0f);
 
-	//Building the overlays
-	//Setting the hud overlays to display the associated text.
-	vector<char*> text;
-	text.push_back("Image credit: http://openuniverse.sourceforge.net/");
-	text.push_back("");
-	text.push_back("Left/Right UP/DOWN PgUP/PgDn - Camera Controls");
-	text.push_back("O/L ;/K - Light Controls");
-	text.push_back("W - wireframe");
-	text.push_back("P - Pause");
-	text.push_back("N - Normals");
-	text.push_back("F11 - Full Screen");
-	text.push_back("F1 - Cycle Camera/Scene");
-	text.push_back("");
-	text.push_back("MARS MODE");
-
-	mainOverlay = (new HudOverlay(text))
-		->inColor(WHITE)
-		->pushDecorator(new ShaderUse(SHADER_SOLID));
-
-	view = new View(proj, cam, model, mainOverlay);
+	vector<int> ppos;
+	ppos.push_back(PPO_INVERTED);
+	view = new Frame(ivec2(1,1), ppos, proj, cam, model, mainOverlay);
 
 	window = new SingleViewportWindow(view);
 
@@ -254,19 +246,19 @@ bool Globals::initialize() {
 		return false;
 	if (!marsTexture->initialize())
 		return false;
-	if (!genTexture->initialize())
+	if (!view->initialize())
+		return false;
+	if (!f->initialize())
 		return false;
 	if (!ribbon->initialize())
 		return false;
-	for(int i = 0; i < 5; i++)
-	{
+	for(int i = 0; i < 5; i++) {
 		if(!translucentSphere[i]->initialize())
 			return false;
 	}
 	if (!ribbonBuilder->initialize())
 		return false;
 
-	Frame *f = new Frame(genTexture, proj, vcam, vmodel, mainOverlay);
 	frames.push_back(f);
 
 	return true;

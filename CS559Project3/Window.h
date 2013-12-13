@@ -1,5 +1,6 @@
 #pragma once
 #include "View.h"
+#include "Frame.h"
 #include "Graphics.h"
 #include <glm/glm.hpp>
 
@@ -58,12 +59,16 @@ class SingleViewportWindow : public Window {
 private:
 	SingleViewportWindow();
 protected:
-	View *view;
+	Frame *view;
 
 	virtual void renderViews();
+	virtual inline void reshape(int x, int y) {
+		Window::reshape(x, y);
+		view->resize(x, y);
+	}
 
 public:
-	SingleViewportWindow(View *view);
+	SingleViewportWindow(Frame *view);
 };
 
 /**
