@@ -263,63 +263,6 @@ vector<ivec3> Mesh::generateTrigs(const vector<vec3> &points,
 }
 
 
-SplinePoint3 lastRibbonPoint;
-SplinePoint1 lastRibbonAngle;
-vec3 arb;
-vec3 absolute;
-vec3 lastPoint;
-
-void primeRibbonBuilder(SplinePoint3 firstPoint,
-						SplinePoint1 firstAngle,
-						vec3 arbitrary,
-						vec3 startAbsolute)
-{
-	lastRibbonPoint = firstPoint;
-	lastRibbonAngle = firstAngle;
-	arb = normalize(arbitrary);
-	absolute = normalize(startAbsolute);
-	lastPoint = firstPoint.getBeforePoint();
-	assert(arb != absolute);
-}
-
-Mesh *makeRibbonSegment(
-				const SplinePoint3 &after,
-				const SplinePoint1 &afterAngle,
-				float width,
-				int resolution,
-				Texture *texture)
-{
-	vector<vec3> points;
-	vector<vec2> texCoords;
-	for (int c = 0; c <= resolution; c++) {
-		float t = float(c)/resolution;
-		vec3 point = bezier(lastRibbonPoint, after, t);
-		float angle = bezier(lastRibbonAngle, afterAngle, t);
-		vec3 tangent = normalize(lastPoint - point);
-		if (tangent != arb)
-			absolute = normalize(cross(tangent, arb));
-		vec3 rotabs = vec3(rotate(mat4(1.0f), angle, tangent) * vec4(absolute, 1.0f));
-
-		points.push_back(point + rotabs * (width/2));
-		texCoords.push_back(vec2(t, 0));
-		points.push_back(point - rotabs * (width/2));
-		texCoords.push_back(vec2(t, 1));
-
-		if (c != resolution)
-			lastPoint = point;
-	}
-
-	vector<ivec3> trigs = Mesh::generateTrigs(points, 2, resolution+1, false, false, false);
-
-	lastRibbonPoint = after;
-	lastRibbonAngle = afterAngle;
-
-	if (texture == NULL)
-		return new Mesh(points, texCoords, trigs);
-	else
-		return new TexturedMesh(points, texCoords, trigs, texture);
-}
-
 
 Mesh::Mesh(const vector<vec3> &ppoints,
 		   const vector<vec2> &texCoords,

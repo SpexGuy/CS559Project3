@@ -53,7 +53,6 @@ public:
 	Drawable *sphere;
 	Drawable *sphereCopy;
 	Drawable *virtualSphere;
-	Drawable *ribbon;
 	Drawable *translucentSphere;
 	RibbonBuilder *ribbonBuilder;
 	FancyPathSpawner *spawner;
@@ -127,33 +126,7 @@ bool Globals::initialize() {
 	sphereCopy = sphere->copyStack()
 		->translated(vec3(-1.0f, 0.0f, 0.0f));
 
-	primeRibbonBuilder(SplinePoint3(1.0f, vec3(-1.0f), 0, 0),
-					   SplinePoint1(0.0f, 0.0f),
-					   vec3(1.0f, 0.0f, 0.0f),
-					   vec3(0.0f, 1.0f, 0.0f));
-
 	ribbonBuilder = new RibbonBuilder(model, vec3(0.0f, 0.0f, -10.0f), 0.25f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-
-	DrawableGroup *ribbonTemp = new DrawableGroup();
-	ribbonTemp->addElement(
-		makeRibbonSegment(SplinePoint3(1.0f, vec3(1.0f), 0, 90),
-						  SplinePoint1(0.0f, 360.0f),
-						  0.5f, 30)
-			->disableCullFace()
-			->useShader(SHADER_NOISE)
-			->inColor(BLUE)
-			->inMaterial(0.2f, 0.5f, 50.0f));
-
-	ribbonTemp->addElement(
-		makeRibbonSegment(SplinePoint3(2.0f, vec3(0.0f), 180, 90),
-						  SplinePoint1(0.0f, 0.0f),
-						  0.5f, 30)
-			->disableCullFace()
-			->useShader(SHADER_NOISE)
-			->inColor(BLUE)
-			->inMaterial(0.2f, 0.5f, 50.0f));
-
-	ribbon = ribbonTemp;
 
 	translucentSphere = Mesh::newSphere(5, 10, 0.05f);
 	spawner = new FancyPathSpawner(translucentSphere, 2.0f/1000.0f, 0.0f, 0.0f, 1.0f/period, model, 2.0f);
@@ -193,7 +166,6 @@ bool Globals::initialize() {
 	model->addLight(light[3]->animateRotation(vec3(0.0f,0.0f,1.0f), new LinearTimeFunction(16.0f/1000.0f, 0.0f)));
 	model->addLight(light[4]->animateRotation(vec3(0.0f,0.0f,1.0f), new LinearTimeFunction(16.0f/1000.0f, 0.0f)));
 	model->addElement(sphere);
-	model->addElement(ribbon);
 	model->addElement(sphereCopy);
 	vmodel->addLight(light[0]);
 	vmodel->addElement(virtualSphere);
@@ -251,8 +223,6 @@ bool Globals::initialize() {
 	if (!view->initialize())
 		return false;
 	if (!f->initialize())
-		return false;
-	if (!ribbon->initialize())
 		return false;
 	if(!translucentSphere->initialize())
 		return false;
