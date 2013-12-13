@@ -29,6 +29,7 @@
 #define PPO_SEPIA 8
 #define PPO_SCANLINE 9
 #define PPO_STATIC_NOISE 10
+#define PPO_PLASMA 11
 
 class ShaderFlyweight {
 public:

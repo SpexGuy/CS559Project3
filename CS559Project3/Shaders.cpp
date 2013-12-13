@@ -88,6 +88,12 @@ bool ShaderFlyweight::initialize() {
 	pposhader->link();
 	addShader(PPO_SEPIA, pposhader);
 
+	pposhader = new PostProcessingShader();
+	pposhader->compileShader("plasma_ppo.frag", GLSLShader::FRAGMENT);
+	pposhader->compileShader("ppo_shader.vert", GLSLShader::VERTEX);
+	pposhader->link();
+	addShader(PPO_PLASMA, pposhader);
+
 	return true;
 }
 

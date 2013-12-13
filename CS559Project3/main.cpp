@@ -114,9 +114,9 @@ bool Globals::initialize() {
 		->inMaterial(1.0f, 0.0f, 50)
 		->useShader(SHADER_TEXTURE);
 
-	vector<int> ppos;
-	ppos.push_back(PPO_SEPIA);
-	Frame *f = new Frame(ivec2(1024, 1024), ppos, proj, vcam, vmodel, mainOverlay);
+	Frame *f = (new Frame(ivec2(1024, 1024)))
+		->renderStuff(proj, vcam, vmodel, mainOverlay)
+		->postProcess(PPO_SEPIA);
 
 	model = new DrawableGroup();
 
@@ -158,24 +158,40 @@ bool Globals::initialize() {
 	translucentSphere = Mesh::newSphere(5, 10, 0.05f);
 	spawner = new FancyPathSpawner(translucentSphere, 2.0f/1000.0f, 0.0f, 0.0f, 1.0f/period, model, 2.0f);
 
+	//set up lights!
 	light[0] = new SpheroidLight(0, WHITE);
 	light[0]->setAngle(90);
 	light[0]->setAxisAngle(90);
-	light[0]->setRadius(15);
+	light[0]->setRadius(10);
 
 	light[1] = new SpheroidLight(1, RED);
 	light[1]->setAngle(0);
 	light[1]->setAxisAngle(90);
-	light[1]->setRadius(15);
+	light[1]->setRadius(10);
 
-	//clear out the lights we don't use
-	for(int i = 2; i < NUM_LIGHTS; i++)
-		light[i] = NULL;
+	light[2] = new SpheroidLight(2, GREEN);
+	light[2]->setAngle(90);
+	light[2]->setAxisAngle(0);
+	light[2]->setRadius(10);
+
+	light[3] = new SpheroidLight(3, BLUE);
+	light[3]->setAngle(180);
+	light[3]->setAxisAngle(90);
+	light[3]->setRadius(10);
+
+	light[4] = new SpheroidLight(4, WHITE);
+	light[4]->setAngle(0);
+	light[4]->setAxisAngle(180);
+	light[4]->setRadius(10);
 
 	//Building the models
 
 
-	model->addLight(light[0]);
+	model->addLight(light[0]->animateRotation(vec3(0.0f,0.0f,1.0f), new LinearTimeFunction(16.0f/1000.0f, 0.0f)));
+	model->addLight(light[1]->animateRotation(vec3(0.0f,0.0f,1.0f), new LinearTimeFunction(16.0f/1000.0f, 0.0f)));
+	model->addLight(light[2]->animateRotation(vec3(0.0f,0.0f,1.0f), new LinearTimeFunction(16.0f/1000.0f, 0.0f)));
+	model->addLight(light[3]->animateRotation(vec3(0.0f,0.0f,1.0f), new LinearTimeFunction(16.0f/1000.0f, 0.0f)));
+	model->addLight(light[4]->animateRotation(vec3(0.0f,0.0f,1.0f), new LinearTimeFunction(16.0f/1000.0f, 0.0f)));
 	model->addElement(sphere);
 	model->addElement(ribbon);
 	model->addElement(sphereCopy);
@@ -185,11 +201,10 @@ bool Globals::initialize() {
 	cam = new SpheroidCamera();
 	cam->setRadius(3.0f);
 
-
-	ppos.clear();
-	//ppos.push_back(PPO_SEPIA);
-	ppos.push_back(PPO_STATIC_NOISE);
-	view = new Frame(ivec2(1,1), ppos, proj, cam, model, mainOverlay);
+	view = (new Frame(ivec2(1,1)))
+		->postProcess(PPO_PLASMA)
+		->renderStuff(proj, cam, model, mainOverlay)
+		->postProcess(PPO_STATIC_NOISE);
 
 	window = new SingleViewportWindow(view);
 

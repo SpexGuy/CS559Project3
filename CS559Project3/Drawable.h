@@ -126,6 +126,7 @@ public:
 		const vec2 red = vec2(0.0f, 1.0f),
 		const vec2 green = vec2(0.0f, 1.0f),
 		const vec2 blue = vec2(0.0f, 1.0f));
+	//Maybe add timed obsolescence???
 };
 
 /**
