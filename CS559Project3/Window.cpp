@@ -75,6 +75,7 @@ SingleViewportWindow::SingleViewportWindow(Frame *view) {
 
 void SingleViewportWindow::renderViews() {
 	view->render();
+	Graphics::inst()->viewport(0,0,size.x, size.y);
 	view->drawToScreen();
 }
 

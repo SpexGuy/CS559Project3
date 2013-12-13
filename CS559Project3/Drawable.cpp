@@ -362,6 +362,7 @@ Drawable *MaterialReset::copyStack() {
  * http://nehe.gamedev.net/article/billboarding_how_to/18011/
  */
 bool BillboardTransform::draw(const mat4 &model) {
+	checkError("Before Billboard Transform");
 	//convert camera position to local coordinate space
 	vec4 cameraPos = inverse(Graphics::inst()->getView() * model) * vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	
@@ -380,7 +381,9 @@ bool BillboardTransform::draw(const mat4 &model) {
 	transform[3] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	
 	//convert back to modelspace
-	return child->draw(model * transform);
+	bool ret = child->draw(model * transform);
+	checkError("After Billboard Transform");
+	return ret;
 }
 Drawable *BillboardTransform::copyStack() {
 	BillboardTransform *copy = new BillboardTransform(*this);

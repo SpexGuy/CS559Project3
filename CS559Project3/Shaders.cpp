@@ -94,6 +94,12 @@ bool ShaderFlyweight::initialize() {
 	pposhader->link();
 	addShader(PPO_PLASMA, pposhader);
 
+	pposhader = new PostProcessingShader();
+	pposhader->compileShader("border_ppo.frag", GLSLShader::FRAGMENT);
+	pposhader->compileShader("ppo_shader.vert", GLSLShader::VERTEX);
+	pposhader->link();
+	addShader(PPO_BORDER, pposhader);
+
 	return true;
 }
 

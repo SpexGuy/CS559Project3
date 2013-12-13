@@ -30,6 +30,7 @@
 #define PPO_SCANLINE 9
 #define PPO_STATIC_NOISE 10
 #define PPO_PLASMA 11
+#define PPO_BORDER 12
 
 class ShaderFlyweight {
 public:

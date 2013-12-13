@@ -57,8 +57,13 @@ public:
 	Drawable *sphereCopy;
 	Drawable *virtualSphere;
 	Drawable *translucentSphere;
-	RibbonBuilder *ribbonBuilder;
+	Drawable *billboard1;
+	Drawable *billboard2;
+	RibbonBuilder *ribbonBuilder1;
+	RibbonBuilder *ribbonBuilder2;
 	FancyPathSpawner *spawner;
+	LinearPathSpawner *boardSpawner1;
+	LinearPathSpawner *boardSpawner2;
 
 	bool lmouse_pressed;
 	bool up_pressed;
@@ -67,6 +72,7 @@ public:
 	bool left_pressed;
 
 	Texture *marsTexture;
+	Frame *recView;
 
 	vector<Frame *> frames;
 
@@ -94,20 +100,12 @@ bool Globals::initialize() {
 	vcam = new SpheroidCamera();
 	vcam->setRadius(3.0f);
 
-	//This is kinda deprecated??? 
-	vector<char*> text;
-	text.push_back("Image credit: http://openuniverse.sourceforge.net/");
-	text.push_back("");
-	text.push_back("Left/Right UP/DOWN PgUP/PgDn - Camera Controls");
-	text.push_back("O/L ;/K - Light Controls");
-	text.push_back("W - wireframe");
-	text.push_back("P - Pause");
-	text.push_back("N - Normals");
-	text.push_back("F11 - Full Screen");
-	text.push_back("F1 - Cycle Camera/Scene");
-	text.push_back("");
-	text.push_back("MARS MODE");
+	recView = (new Frame(ivec2(1024,512)))
+		->postProcess(PPO_STATIC_NOISE)
+		->postProcess(PPO_SOLAR)
+		->postProcess(PPO_BORDER);
 
+	vector<char*> text;
 	mainOverlay = (new HudOverlay(text))
 		->inColor(WHITE)
 		->pushDecorator(new ShaderUse(SHADER_SOLID));
@@ -136,7 +134,8 @@ bool Globals::initialize() {
 	sphereCopy = sphere->copyStack()
 		->translated(vec3(-1.0f, 0.0f, 0.0f));
 
-	ribbonBuilder = new RibbonBuilder(model, vec3(0.0f, 0.0f, -10.0f), 0.25f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	ribbonBuilder1 = new RibbonBuilder(model, vec3(0.0f, -1.0f, -10.0f), 0.25f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	ribbonBuilder2 = new RibbonBuilder(model, vec3(0.0f, 1.0f, -10.0f), 0.25f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
 	translucentSphere = Mesh::newSphere(5, 10, 0.05f);
 	spawner = new FancyPathSpawner(translucentSphere, 2.0f/1000.0f, 0.0f, 0.0f, 1.0f/period, model, 2.0f);
@@ -185,7 +184,16 @@ bool Globals::initialize() {
 	view = (new Frame(ivec2(1,1)))
 		->postProcess(PPO_PLASMA)
 		->renderStuff(proj, cam, model, mainOverlay)
-		->postProcess(PPO_STATIC_NOISE);
+		->transfer(PPO_SCANLINE, recView->getFBO());
+
+	billboard1 = (Mesh::newRect(2, 1, recView->getFBO()))
+		->translated(vec3(2.0f, 0.0f, 0.0f))
+		->useShader(SHADER_TEXTURE);
+	billboard2 = (Mesh::newRect(2, 1, recView->getFBO()))
+		->translated(vec3(-2.0f, 0.0f, 0.0f))
+		->useShader(SHADER_TEXTURE);
+	boardSpawner1 = new BillboardLinearSpawner(billboard1, 1.5f/1000.0f, 4.0f, -10, 10.0f/period, model);
+	boardSpawner2 = new BillboardLinearSpawner(billboard2, 1.5f/1000.0f, 4.0f, -10, 10.0f/period, model);
 
 	window = new SingleViewportWindow(view);
 
@@ -236,11 +244,20 @@ bool Globals::initialize() {
 		return false;
 	if (!f->initialize())
 		return false;
-	if(!translucentSphere->initialize())
+	if (!translucentSphere->initialize())
 		return false;
-	if (!ribbonBuilder->initialize())
+	if (!ribbonBuilder1->initialize())
+		return false;
+	if (!ribbonBuilder2->initialize())
+		return false;
+	if (!billboard1->initialize())
+		return false;
+	if (!billboard2->initialize())
+		return false;
+	if (!recView->initialize())
 		return false;
 
+	frames.push_back(recView);
 	frames.push_back(f);
 
 	return true;
@@ -325,6 +342,10 @@ void KeyboardFunc(unsigned char c, int x, int y) {
 		break;
 	case '-':
 		Graphics::inst()->setTimeScale(Graphics::inst()->getTimeScale() - 0.5f);
+		break;
+
+	case 'p':
+		Graphics::inst()->togglePause();
 		break;
 
 	case 's':
@@ -442,7 +463,10 @@ void windowDisplay() {
 		globals.frames[c]->render();
 	}
 	globals.spawner->update();
-	globals.ribbonBuilder->update();
+	globals.boardSpawner1->update();
+	globals.boardSpawner2->update();
+	globals.ribbonBuilder1->update();
+	globals.ribbonBuilder2->update();
 	globals.window->render();
 }
 

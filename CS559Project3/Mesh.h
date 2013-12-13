@@ -112,6 +112,8 @@ public:
 		bool endcaps, bool wrap,
 		bool crosshatch = false);
 
+	static Mesh *newRect(float width, float height, Texture *texture = NULL);
+
 	/* creates a mesh object from an external .obj file */
 	/* Texture can be null - kinda like the ribbon constructor I think? */
 	static Mesh *newMeshFromFile(const string filename, Texture * texture, bool reCenterMesh = false, bool genTang = false);

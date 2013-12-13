@@ -3,9 +3,6 @@
 using namespace glm;
 
 void Frame::render() {
-	fbo->resetBufferIndex();
-	fbo->bindDraw();
-	glClear(GL_COLOR_BUFFER_BIT);
 	for (uint c = 0; c < ops.size(); c++) {
 		ops[c]->render(fbo);
 	}
@@ -20,6 +17,14 @@ void Frame::drawToScreen() {
 	Graphics::inst()->setShader(texShader);
 	fbo->bindTexture();
 	paint();
+}
+
+
+
+void ClearColorBuffer::render(FrameBufferObject *fbo) {
+	fbo->bindDraw();
+	glClear(GL_COLOR_BUFFER_BIT);
+	fbo->unbindDraw();
 }
 
 
@@ -61,5 +66,13 @@ void DrawPostProcess::takeDown() {
 
 }
 
+
+void ChangeBuffer::render(FrameBufferObject *fbo) {
+	Graphics::inst()->setShader(shader);
+	fbo->bindTexture();
+	other->bindDraw();
+	paint();
+	other->unbindDraw();
+}
 
 

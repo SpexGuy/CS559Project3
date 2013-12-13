@@ -65,6 +65,8 @@ private:
 	bool wireframe;
 	bool flipUCoords;
 
+	bool paused;
+
 	std::vector<glm::ivec3> circleTrigs;
 	std::vector<glm::ivec3> squareTrigs;
 	std::vector<glm::ivec2> lineSegs;
@@ -187,8 +189,12 @@ public:
 	}
 	inline void update() {
 		int newTime = glutGet(GLUT_ELAPSED_TIME);
-		time += int(timeScale * (newTime - lastTrueTime));
+		if (!paused)
+			time += int(timeScale * (newTime - lastTrueTime));
 		lastTrueTime = newTime;
+	}
+	inline void togglePause() {
+		paused = !paused;
 	}
 	inline void resetTime() {
 		this->time = 0;

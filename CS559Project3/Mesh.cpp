@@ -220,6 +220,34 @@ Mesh *Mesh::newSurfaceOfRotation(const vector<vec2> &points,
 	return new Mesh(verts, tex, trigs);
 }
 
+Mesh *Mesh::newRect(float width, float height, Texture *tex) {
+	vector<vec3> points;
+	points.push_back(vec3(-width/2,-height/2,0));
+	points.push_back(vec3(width/2,-height/2,0));
+	points.push_back(vec3(width/2,height/2,0));
+	points.push_back(vec3(-width/2,height/2,0));
+
+	vector<vec2> texCoords;
+	texCoords.push_back(vec2(0,1));
+	texCoords.push_back(vec2(1,1));
+	texCoords.push_back(vec2(1,0));
+	texCoords.push_back(vec2(0,0));
+
+	vector<vec3> normals;
+	normals.push_back(vec3(0,1,0));
+	normals.push_back(vec3(0,1,0));
+	normals.push_back(vec3(0,1,0));
+	normals.push_back(vec3(0,1,0));
+
+	vector<ivec3> trigs;
+	trigs.push_back(ivec3(0,1,2));
+	trigs.push_back(ivec3(2,3,0));
+
+	if (tex == NULL)
+		return new Mesh(points, texCoords, trigs, normals);
+	return new TexturedMesh(points, texCoords, trigs, normals, tex);
+}
+
 vector<ivec3> Mesh::generateTrigs(const vector<vec3> &points,
 								  int width, int height,
 								  bool endcaps, bool wrap,

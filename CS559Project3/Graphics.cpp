@@ -40,6 +40,7 @@ Graphics::Graphics() {
 	this->lastTrueTime = 0;
 	this->time = 0;
 	this->wireframe = false;
+	this->paused = false;
 
 	circleCH = circleVH = 
 	squareCH = squareVH =

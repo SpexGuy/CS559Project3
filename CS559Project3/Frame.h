@@ -29,6 +29,13 @@ public:
 	virtual void takeDown();
 };
 
+class ClearColorBuffer : public FrameOperation {
+public:
+	virtual bool initialize() {}
+	virtual void render(FrameBufferObject *fbo);
+	virtual void takeDown() {}
+};
+
 class DrawPostProcess : public FrameOperation {
 protected:
 	int shaderName;
@@ -41,6 +48,25 @@ public:
 	virtual bool initialize();
 	virtual void render(FrameBufferObject *fbo);
 	virtual void takeDown();
+};
+
+class ChangeBuffer : public DrawPostProcess {
+protected:
+	FrameBufferObject *other;
+public:
+	ChangeBuffer(int shader, FrameBufferObject *other) :
+		DrawPostProcess(shader),
+		other(other)
+	{}
+	
+	virtual bool initialize() {
+		return DrawPostProcess::initialize();
+	}
+	virtual void render(FrameBufferObject *fbo);
+	virtual void takeDown() {
+		DrawPostProcess::takeDown();
+	}
+
 };
 
 class Frame {
@@ -96,6 +122,11 @@ public:
 
 	Frame *postProcess(int shaderName) {
 		ops.push_back(new DrawPostProcess(shaderName));
+		return this;
+	}
+
+	Frame *transfer(int shader, FrameBufferObject *other) {
+		ops.push_back(new ChangeBuffer(shader, other));
 		return this;
 	}
 };

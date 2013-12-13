@@ -29,3 +29,15 @@ public:
 	virtual void spawn();
 
 };
+
+class BillboardLinearSpawner : public LinearPathSpawner {
+public:
+	BillboardLinearSpawner(Drawable *prototype, float velocity,
+		float width, float basePos, float probability,
+		DrawableGroup *group) :
+	LinearPathSpawner(prototype, velocity, width, basePos, probability, group)
+	{}
+
+	virtual void spawn();
+};
+
