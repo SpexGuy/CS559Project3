@@ -4,6 +4,8 @@
 #include "Translatable.h"
 #include "Scaleable.h"
 #include "Animation.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 using namespace glm;
 
@@ -82,3 +84,25 @@ FixedCamera::FixedCamera() :
 		vec3(0.0f, 1.0f, 0.0f)))
 {}
 
+glm::mat4 BetterCamera::generateViewMatrix() {
+	vec3 eyeDelta = vec3(
+		(sin(rotation.y) * sin(rotation.x)),
+		(cos(rotation.y)),
+		(sin(rotation.y) * cos(rotation.x))
+		);
+	return lookAt(position, position + eyeDelta, vec3(0.0f,1.0f,0.0f)); 
+}
+
+//change the position on the mouse delta
+void BetterCamera::mouseUpdate(ivec2 newMouse){
+	ivec2 delta = prevMouse - newMouse;
+	vec2 rotationdelta = vec2(delta) * 0.25f * (float(M_PI)/180.0f); //mess with this magic number???
+	rotation += rotationdelta;
+	//update the previous mouse position!
+	prevMouse = newMouse;
+}
+
+//reset the 'old' mouse position on click to avoid jumpiness
+void BetterCamera::mouseClear(ivec2 newMouse){
+	prevMouse = newMouse;
+}

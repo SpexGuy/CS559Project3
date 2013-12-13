@@ -32,8 +32,10 @@ void windowDisplay();
 void KeyboardFunc(unsigned char c, int x, int y);
 void SpecialFunc(int c, int x, int y);
 void TimerFunc(int value);
+void MotionFunc(int x, int y);
 void PassiveMotionFunc(int x, int y);
-
+void MouseFunc(int button, int state, int x, int y);
+void SpecialUpFunc(int c, int x, int y);
 
 
 class Globals {
@@ -45,7 +47,8 @@ public:
 
 	PerspectiveProjection *proj;
 
-	SpheroidCamera *cam, *vcam;
+	SpheroidCamera *vcam;
+	BetterCamera *cam;
 
 	SpheroidLight *light[NUM_LIGHTS];
 
@@ -57,6 +60,12 @@ public:
 	Drawable *translucentSphere;
 	RibbonBuilder *ribbonBuilder;
 	FancyPathSpawner *spawner;
+
+	bool lmouse_pressed;
+	bool up_pressed;
+	bool down_pressed;
+	bool right_pressed;
+	bool left_pressed;
 
 	Texture *marsTexture;
 
@@ -86,6 +95,7 @@ bool Globals::initialize() {
 	vcam = new SpheroidCamera();
 	vcam->setRadius(3.0f);
 
+	//This is kinda deprecated??? 
 	vector<char*> text;
 	text.push_back("Image credit: http://openuniverse.sourceforge.net/");
 	text.push_back("");
@@ -198,8 +208,7 @@ bool Globals::initialize() {
 	vmodel->addLight(light[0]);
 	vmodel->addElement(virtualSphere);
 	//Building the cameras
-	cam = new SpheroidCamera();
-	cam->setRadius(3.0f);
+	cam = new BetterCamera(vec3(0.0f,0.0f,2.0f));
 
 	view = (new Frame(ivec2(1,1)))
 		->postProcess(PPO_PLASMA)
@@ -218,8 +227,11 @@ bool Globals::initialize() {
 	glutDisplayFunc(windowDisplay);
 	glutKeyboardFunc(KeyboardFunc);
 	glutSpecialFunc(SpecialFunc);
-	glutTimerFunc(period, TimerFunc, 0);
+	glutSpecialUpFunc(SpecialUpFunc);
 	glutPassiveMotionFunc(PassiveMotionFunc);
+	glutMotionFunc(MotionFunc);
+	glutMouseFunc(MouseFunc);
+	glutTimerFunc(period, TimerFunc, 0);
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_CULL_FACE);
@@ -297,44 +309,6 @@ void CloseFunc() {
 	globals.takeDown();
 }
 
-/** this function is adapted from a post by Steven Canfield
- * on StackOverflow.com:
- * http://stackoverflow.com/questions/728049/glutpassivemotionfunc-and-glutwarpmousepointer
- */
-int lastX = 512;
-int lastY = 256;
-void PassiveMotionFunc(int x, int y) {
-	////short-circuit return if not in free-fly mode
-	//if(globals.Scenes[globals.currentScene] != globals.marsScene
-	//		|| globals.marsScene->getCurrentCameraIndex() != 1)
-		return;
-
-	//int deltaX = x - lastX;
-	//int deltaY = y - lastY;
-
-	////short-circuit return if no movement
-	//if (deltaX == 0 && deltaY == 0)
-	//	return;
-
-	//lastX = x;
-	//lastY = y;
-
-	//ivec2 size = Graphics::inst()->getSize();
-	//int centerx = size.x/2;
-	//int centery = size.y/2;
-	//
-	//globals.flyCam->addAngle(-deltaX/10.0f);
-	//globals.flyCam->addAxisAngle(deltaY/10.0f);
-
-	////warping the pointer triggers PassiveMotionFunc, so should be done sparingly.
-	////we choose to do it when the cursor is within 10 pixels of the edge of the screen.
-	//if(x <= 10 || (y) <= 10 || x >= size.x-10 || y >= size.y-10) {
-	//	lastX = centerx;
-	//	lastY = centery;
-	//	glutWarpPointer( lastX, lastY );
-	//}
-}
-
 void KeyboardFunc(unsigned char c, int x, int y) {
 
 	switch (c) {
@@ -403,31 +377,65 @@ void SpecialFunc(int c, int x, int y) {
 			break;
 
 		//------ Camera Controls ------
-		case GLUT_KEY_CTRL_R:
-			globals.cam->moveForward(1.0f);
-			break;
-		case GLUT_KEY_CTRL_L:
-			globals.cam->moveForward(-1.0f);
-			break;
-		case GLUT_KEY_LEFT:
-			globals.cam->moveRight(-1.0f);
-			break;
-		case GLUT_KEY_RIGHT:
-			globals.cam->moveRight(1.0f);
-			break;
-		case GLUT_KEY_UP:
-			globals.cam->moveUp(1.0f);
-			break;
-		case GLUT_KEY_DOWN:
-			globals.cam->moveUp(-1.0f);
-			break;
 		case GLUT_KEY_PAGE_UP:
 			globals.proj->addFov(1.0f);
 			break;
 		case GLUT_KEY_PAGE_DOWN:
 			globals.proj->addFov(-1.0f);
 			break;
+		case GLUT_KEY_UP:
+			globals.up_pressed = true;
+			break;
+		case GLUT_KEY_DOWN:
+			globals.down_pressed = true;
+			break;
+		case GLUT_KEY_LEFT:
+			globals.left_pressed = true;
+			break;
+		case GLUT_KEY_RIGHT:
+			globals.right_pressed = true;
+			break;
 	}
+}
+
+void SpecialUpFunc(int key, int x, int y) {
+	switch (key)
+	{
+	case GLUT_KEY_UP:
+		globals.up_pressed = false;
+		break;
+	case GLUT_KEY_DOWN:
+		globals.down_pressed = false;
+		break;
+	case GLUT_KEY_LEFT:
+		globals.left_pressed = false;
+		break;
+	case GLUT_KEY_RIGHT:
+		globals.right_pressed = false;
+		break;
+	}
+}
+
+void MouseFunc(int button, int state, int x, int y) {
+	//if not left mouse, clear the mouse delta stuff
+	if(button == GLUT_LEFT_BUTTON)
+		globals.lmouse_pressed = true;
+	else
+		globals.lmouse_pressed = false;
+}
+void MotionFunc(int x, int y) {
+	//update camera if lmouse pressed
+	if(globals.lmouse_pressed)
+		globals.cam->mouseUpdate(ivec2(x,y));
+	//update previous mouse position otherwise - need it for delta!
+	else
+		globals.cam->mouseClear(ivec2(x,y));
+}
+void PassiveMotionFunc(int x, int y) {
+	//clear the mouse delta when no buttons pressed
+	globals.lmouse_pressed = false;
+	//also update the mouse delta stuff
+	globals.cam->mouseClear(ivec2(x,y));
 }
 
 void TimerFunc(int value) {
@@ -438,6 +446,16 @@ void TimerFunc(int value) {
 		glutTimerFunc(globals.period, TimerFunc, value);
 		//redraw window
 		globals.window->update();
+
+		//update the camera position!
+		if(globals.down_pressed)
+			globals.cam->moveUp(-0.01f);
+		if(globals.up_pressed)
+			globals.cam->moveUp(0.01f);
+		if(globals.right_pressed)
+			globals.cam->moveRight(0.01f);
+		if(globals.left_pressed)
+			globals.cam->moveRight(-0.01f);
 	}
 }
 

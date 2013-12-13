@@ -1,7 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "Function.h"
-
+#define _USE_MATH_DEFINES
+#include <math.h>
 class CameraDecorator;
 
 /** 
@@ -128,4 +129,27 @@ public:
 	inline virtual void moveRight(float offset) {}
 	//@Deprecated
 	inline virtual void moveUp(float offset) {}
+};
+
+class BetterCamera : public Camera {
+private:
+	glm::ivec2 prevMouse;
+	glm::vec2 rotation;
+	glm::vec3 position;
+
+public:
+
+	BetterCamera(glm::vec3 pos) : position(pos) {rotation = glm::vec2(9.385,float(M_PI)/4.0f);} //very kludgy number.
+
+	virtual glm::mat4 generateViewMatrix();
+	
+	inline void virtual moveForward(float offset) {}; //Stuck on an XY plane.
+	
+	inline void virtual moveRight(float offset) {position.x += offset;}
+	
+	inline void virtual moveUp(float offset) {position.y += offset;}
+
+	void mouseUpdate(glm::ivec2 newMouse);
+
+	void mouseClear(glm::ivec2 newMouse);
 };
