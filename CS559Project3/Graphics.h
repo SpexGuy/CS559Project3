@@ -7,6 +7,7 @@
 
 // Some common colors
 #define RED    vec4(1.0f, 0.0f, 0.0f, 1.0f)
+#define PURPLE vec4(1.0f, 0.0f, 1.0f, 1.0f)
 #define YELLOW vec4(1.0f, 1.0f, 0.0f, 1.0f)
 #define GREEN  vec4(0.0f, 1.0f, 0.0f, 1.0f)
 #define BLUE   vec4(0.0f, 0.0f, 1.0f, 1.0f)

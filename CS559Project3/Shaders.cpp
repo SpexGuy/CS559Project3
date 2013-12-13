@@ -100,6 +100,18 @@ bool ShaderFlyweight::initialize() {
 	pposhader->link();
 	addShader(PPO_BORDER, pposhader);
 
+	pposhader = new PostProcessingShader();
+	pposhader->compileShader("hblur_ppo.frag", GLSLShader::FRAGMENT);
+	pposhader->compileShader("ppo_shader.vert", GLSLShader::VERTEX);
+	pposhader->link();
+	addShader(PPO_HBLUR, pposhader);
+
+	pposhader = new PostProcessingShader();
+	pposhader->compileShader("vblur_ppo.frag", GLSLShader::FRAGMENT);
+	pposhader->compileShader("ppo_shader.vert", GLSLShader::VERTEX);
+	pposhader->link();
+	addShader(PPO_VBLUR, pposhader);
+
 	return true;
 }
 

@@ -112,36 +112,21 @@ bool Globals::initialize() {
 
 	vmodel = new DrawableGroup();
 
-	marsTexture = new ILContainer("earth_texture.jpg");
-	virtualSphere = Mesh::newSphere(10, 10, 1.0f, marsTexture)
-		->rotated(vec3(1,0,0), 15)
-		->animateRotation(vec3(0, 1, 0),
-			new LinearTimeFunction(16.0f/1000.0f, 0))
-		->inColor(RED)
-		->inMaterial(1.0f, 0.0f, 50)
-		->useShader(SHADER_TEXTURE);
-
-	Frame *f = (new Frame(ivec2(1024, 1024)))
-		->renderStuff(proj, vcam, vmodel, mainOverlay)
-		->postProcess(PPO_SEPIA);
-
 	model = new DrawableGroup();
 
-	sphere = Mesh::newSphere(30, 30, 0.05f, f->getFBO())
-		//->translated(vec3(-1.0f, 0.0f, 0.0f))
+	sphere = Mesh::newSphere(30, 30, 0.05f)
+		->inColor(BLACK)
 		->inMaterial(0.3f, 1.0f, 50)
-		->useShader(SHADER_TEXTURE);
-	sphereCopy = sphere->copyStack()
-		->translated(vec3(-1.0f, 0.0f, 0.0f));
+		->useShader(SHADER_ADS);
 
-	ribbonBuilder1 = new RibbonBuilder(model, vec3(0.0f, -1.0f, -10.0f), 0.25f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-	ribbonBuilder2 = new RibbonBuilder(model, vec3(0.0f, 1.0f, -10.0f), 0.25f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	ribbonBuilder1 = new RibbonBuilder(model, vec3(0.0f, -1.0f, -10.0f), 1.0f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	ribbonBuilder2 = new RibbonBuilder(model, vec3(0.0f, 1.0f, -10.0f), 1.0f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
 	translucentSphere = Mesh::newSphere(5, 10, 0.05f);
 	spawner = new FancyPathSpawner(translucentSphere, 2.0f/1000.0f, 0.0f, 0.0f, 1.0f/period, model, 2.0f);
 
 	//set up lights!
-	light[0] = new SpheroidLight(0, WHITE);
+	light[0] = new SpheroidLight(0, PURPLE);
 	light[0]->setAngle(90);
 	light[0]->setAxisAngle(90);
 	light[0]->setRadius(10);
@@ -157,11 +142,11 @@ bool Globals::initialize() {
 	light[2]->setRadius(10);
 
 	light[3] = new SpheroidLight(3, BLUE);
-	light[3]->setAngle(180);
+	light[3]->setAngle(-90);
 	light[3]->setAxisAngle(90);
 	light[3]->setRadius(10);
 
-	light[4] = new SpheroidLight(4, WHITE);
+	light[4] = new SpheroidLight(4, YELLOW);
 	light[4]->setAngle(0);
 	light[4]->setAxisAngle(180);
 	light[4]->setRadius(10);
@@ -175,15 +160,15 @@ bool Globals::initialize() {
 	model->addLight(light[3]->animateRotation(vec3(0.0f,0.0f,1.0f), new LinearTimeFunction(16.0f/1000.0f, 0.0f)));
 	model->addLight(light[4]->animateRotation(vec3(0.0f,0.0f,1.0f), new LinearTimeFunction(16.0f/1000.0f, 0.0f)));
 	model->addElement(sphere);
-	model->addElement(sphereCopy);
 	vmodel->addLight(light[0]);
-	vmodel->addElement(virtualSphere);
 	//Building the cameras
 	cam = new BetterCamera(vec3(0.0f,0.0f,2.0f));
 
 	view = (new Frame(ivec2(1,1)))
 		->postProcess(PPO_PLASMA)
 		->renderStuff(proj, cam, model, mainOverlay)
+		->postProcess(PPO_HBLUR)
+		->postProcess(PPO_VBLUR)
 		->transfer(PPO_SCANLINE, recView->getFBO());
 
 	billboard1 = (Mesh::newRect(2, 1, recView->getFBO()))
@@ -232,17 +217,9 @@ bool Globals::initialize() {
 	}
 	if (!sphere->initialize())
 		return false;
-	if (!sphereCopy->initialize())
-		return false;
-	if (!virtualSphere->initialize())
-		return false;
 	if (!mainOverlay->initialize())
 		return false;
-	if (!marsTexture->initialize())
-		return false;
 	if (!view->initialize())
-		return false;
-	if (!f->initialize())
 		return false;
 	if (!translucentSphere->initialize())
 		return false;
@@ -258,7 +235,6 @@ bool Globals::initialize() {
 		return false;
 
 	frames.push_back(recView);
-	frames.push_back(f);
 
 	return true;
 }
