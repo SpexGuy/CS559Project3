@@ -47,15 +47,12 @@ public:
 
 	PerspectiveProjection *proj;
 
-	SpheroidCamera *vcam;
 	BetterCamera *cam;
 
 	SpheroidLight *light[NUM_LIGHTS];
 
-	DrawableGroup *model, *vmodel;
+	DrawableGroup *model;
 	Drawable *sphere;
-	Drawable *sphereCopy;
-	Drawable *virtualSphere;
 	Drawable *translucentSphere;
 	Drawable *billboard1;
 	Drawable *billboard2;
@@ -71,7 +68,6 @@ public:
 	bool right_pressed;
 	bool left_pressed;
 
-	Texture *marsTexture;
 	Frame *recView;
 
 	vector<Frame *> frames;
@@ -95,10 +91,7 @@ bool Globals::initialize() {
 	period = 1000 / 120;
 
 	proj = new PerspectiveProjection(45.0f);
-	proj->setPlanes(0.01f, 100.0f);
-
-	vcam = new SpheroidCamera();
-	vcam->setRadius(3.0f);
+	proj->setPlanes(0.01f, 18.0f);
 
 	recView = (new Frame(ivec2(1024,512)))
 		->postProcess(PPO_STATIC_NOISE)
@@ -110,8 +103,6 @@ bool Globals::initialize() {
 		->inColor(WHITE)
 		->pushDecorator(new ShaderUse(SHADER_SOLID));
 
-	vmodel = new DrawableGroup();
-
 	model = new DrawableGroup();
 
 	sphere = Mesh::newSphere(30, 30, 0.05f)
@@ -119,8 +110,8 @@ bool Globals::initialize() {
 		->inMaterial(0.3f, 1.0f, 50)
 		->useShader(SHADER_ADS);
 
-	ribbonBuilder1 = new RibbonBuilder(model, vec3(0.0f, -1.0f, -10.0f), 1.0f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
-	ribbonBuilder2 = new RibbonBuilder(model, vec3(0.0f, 1.0f, -10.0f), 1.0f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	ribbonBuilder1 = new RibbonBuilder(model, vec3(0.0f, -1.0f, -20.0f), 1.0f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
+	ribbonBuilder2 = new RibbonBuilder(model, vec3(0.0f, 1.0f, -20.0f), 1.0f/1000.0f, 3, 0.5, 50, vec3(1.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
 
 	translucentSphere = Mesh::newSphere(5, 10, 0.05f);
 	spawner = new FancyPathSpawner(translucentSphere, 2.0f/1000.0f, 0.0f, 0.0f, 1.0f/period, model, 2.0f);
@@ -160,15 +151,14 @@ bool Globals::initialize() {
 	model->addLight(light[3]->animateRotation(vec3(0.0f,0.0f,1.0f), new LinearTimeFunction(16.0f/1000.0f, 0.0f)));
 	model->addLight(light[4]->animateRotation(vec3(0.0f,0.0f,1.0f), new LinearTimeFunction(16.0f/1000.0f, 0.0f)));
 	model->addElement(sphere);
-	vmodel->addLight(light[0]);
 	//Building the cameras
 	cam = new BetterCamera(vec3(0.0f,0.0f,2.0f));
 
 	view = (new Frame(ivec2(1,1)))
 		->postProcess(PPO_PLASMA)
 		->renderStuff(proj, cam, model, mainOverlay)
-		->postProcess(PPO_HBLUR)
-		->postProcess(PPO_VBLUR)
+		//->postProcess(PPO_HBLUR)
+		//->postProcess(PPO_VBLUR)
 		->transfer(PPO_SCANLINE, recView->getFBO());
 
 	billboard1 = (Mesh::newRect(2, 1, recView->getFBO()))
@@ -177,8 +167,8 @@ bool Globals::initialize() {
 	billboard2 = (Mesh::newRect(2, 1, recView->getFBO()))
 		->translated(vec3(-2.0f, 0.0f, 0.0f))
 		->useShader(SHADER_TEXTURE);
-	boardSpawner1 = new BillboardLinearSpawner(billboard1, 1.5f/1000.0f, 4.0f, -10, 10.0f/period, model);
-	boardSpawner2 = new BillboardLinearSpawner(billboard2, 1.5f/1000.0f, 4.0f, -10, 10.0f/period, model);
+	boardSpawner1 = new BillboardLinearSpawner(billboard1, 1.5f/1000.0f, 4.0f, -20, 10.0f/period, model);
+	boardSpawner2 = new BillboardLinearSpawner(billboard2, 1.5f/1000.0f, 4.0f, -20, 10.0f/period, model);
 
 	window = new SingleViewportWindow(view);
 
@@ -240,6 +230,15 @@ bool Globals::initialize() {
 }
 
 void Globals::takeDown() {
+
+	view->takeDown();
+
+	mainOverlay->takeDown();
+
+	sphere->takeDown();
+	translucentSphere->takeDown();
+	billboard1->takeDown();
+	billboard2->takeDown();
 	for(int i = 0; i < NUM_LIGHTS; i++){
 		if(light[i] != NULL)
 			light[i]->takeDown();
@@ -265,6 +264,23 @@ Globals::~Globals() {
 	delete cam;
 
 	delete model;
+
+	for (int c = 0; c < NUM_LIGHTS; c++) {
+		delete light[c];
+	}
+
+
+	delete sphere;
+	delete translucentSphere;
+	delete billboard1;
+	delete billboard2;
+	delete ribbonBuilder1;
+	delete ribbonBuilder2;
+	delete spawner;
+	delete boardSpawner1;
+	delete boardSpawner2;
+
+	delete recView;
 }
 
 void CloseFunc() {
@@ -336,11 +352,23 @@ void KeyboardFunc(unsigned char c, int x, int y) {
 	}
 }
 
+int screenshotIndex = 0;
 void SpecialFunc(int c, int x, int y) {
-
+	std::string filename;
+	ILuint imageID;
 	switch (c) {
 		case GLUT_KEY_F11:
 			globals.window->toggleFullscreen();
+			break;
+		case GLUT_KEY_F5:
+			filename = std::string("screenshot").append(std::to_string(screenshotIndex++)).append(".jpg");
+			imageID = ilGenImage();
+			ilBindImage(imageID);
+			ilutGLScreen();
+			ilEnable(IL_FILE_OVERWRITE);
+			ilSaveImage(filename.c_str());
+			ilDeleteImage(imageID);
+			printf("Screenshot saved to: %s\n", filename.c_str());
 			break;
 
 		//------ Camera Controls ------
@@ -361,6 +389,9 @@ void SpecialFunc(int c, int x, int y) {
 			break;
 		case GLUT_KEY_RIGHT:
 			globals.right_pressed = true;
+			break;
+		default:
+			cout << "Special: " << c << endl;
 			break;
 	}
 }

@@ -156,8 +156,8 @@ vec4 ads() {
 				specularScale*specular;
 		}
 	}
-
-	return vec4(return_color, 0.8f);
+	//return vec4(vec3(GPPosition.z), 1.0);
+	return vec4(return_color, /*GPPosition.z > 0.9 ? 0.8*10*(1-GPPosition.z) : */0.8);
 }
 
 void main(){

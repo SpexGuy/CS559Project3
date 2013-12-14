@@ -19,3 +19,13 @@ We have organized our code to make it easy to apply post-processing effects.
 Simply list the shaders and draw operations when you create the frame,
 and they will be applied when it draws.
 
+Controls:
+
+F11 toggles fullscreen.
+F5 takes a screenshot.
+Arrow keys move the camera
+click and drag to rotate the camera
+pgup and pgdn control the perspective
++ and - control the speed
+p toggles pause
+hold s to make more bubbles

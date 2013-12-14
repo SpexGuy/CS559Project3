@@ -89,6 +89,8 @@ void FrameBufferObject::unbindDraw() {
 }
 
 void FrameBufferObject::takeDown() {
+	unbindDraw();
+	glBindTexture(GL_TEXTURE_2D, 0);
 	if (this->framebuffer_handle != GLuint(-1))
 		glDeleteFramebuffers(1, &this->framebuffer_handle);
 
